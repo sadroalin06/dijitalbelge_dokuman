@@ -21,6 +21,8 @@ nav:
   - Hatalar: errors.md
   - Örnekler:
       - Curl: examples/curl.md
+extra_css:
+  - assets/extra.css
 
 markdown_extensions:
   - admonition

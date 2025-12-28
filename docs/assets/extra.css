@@ -1,0 +1,4 @@
+/* Alt footer tamamen kapatılır */
+.md-footer {
+  display: none;
+}
