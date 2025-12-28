@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  docs:
+    container_name: dijitalbelge-docs
+    build: .
+    ports:
+      - "8085:8000"
+    volumes:
+      - .:/docs
+    restart: unless-stopped
