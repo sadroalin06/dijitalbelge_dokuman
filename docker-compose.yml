@@ -3,8 +3,26 @@ services:
   docs:
     container_name: dijitalbelge-docs
     build: .
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dijitalbelgedokumanhttp.rule=Host(`dokuman.dijitalbelge.com`)"
+      - "traefik.http.routers.dijitalbelgedokumanhttp.entrypoints=web"
+      - "traefik.http.routers.dijitalbelgedokumanhttp.middlewares=redirecthttps"
+
+
+      - "traefik.http.routers.dijitalbelgedokuman.rule=Host(`dokuman.dijitalbelge.com`)"
+      - "traefik.http.routers.dijitalbelgedokuman.entrypoints=websecure"
+      - "traefik.http.routers.dijitalbelgedokuman.tls.certresolver=myresolver"
+      - "traefik.http.services.dijitalbelgedokuman.loadbalancer.server.port=8000"
+
     ports:
       - "8085:8000"
     volumes:
       - .:/docs
     restart: unless-stopped
+
+networks:
+  web:
+    external: true
