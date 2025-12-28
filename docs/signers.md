@@ -31,6 +31,53 @@ Kimlik doğrulama **Client ID / Client Secret** başlıkları ile yapılır.
 |------|---------|
 | `signer:read` | İmzacı okuma |
 | `signer:managment` | İmzacı ekleme / güncelleme / silme |
+### Gerekli HTTP Header’lar
+
+| Header | Açıklama |
+|------|---------|
+| `X-Client-Id` | Entegrasyon Client ID |
+| `X-Client-Secret` | Entegrasyon Client Secret |
+| `Content-Type` | `application/json` |
+
+---
+
+## 📥 Request Body (SignerDto List)
+
+İstek gövdesi **SignerDto** nesnelerinden oluşan bir JSON dizisidir.
+
+### Alanlar
+
+| Alan | Tip | Zorunlu | Açıklama |
+|----|----|----|----|
+| `fullName` | `String` | ✅ | İmzacının ad soyadı |
+| `email` | `String` | ❌ | E-posta adresi |
+| `phone` | `String` | ❌ | Telefon numarası |
+| `identityNumber` | `String` | ❌ | TCKN / Kimlik No |
+| `partyTypeId` | `Long` | ❌ | Taraf tipi ID |
+| `partyTypeName` | `String` | ❌ | Taraf tipi adı |
+| `active` | `Boolean` | ❌ | Varsayılan `true` |
+
+> ⚠️ `email`, `phone` veya `identityNumber` alanlarından **en az biri** dolu olmalıdır.
+
+---
+
+## 📦 Örnek Request
+
+```json
+[
+  {
+    "fullName": "Ali Veli",
+    "email": "ali.veli@example.com",
+    "phone": "+905551112233",
+    "identityNumber": "12345678901",
+    "partyTypeName": "CUSTOMER"
+  },
+  {
+    "fullName": "Ayşe Demir",
+    "email": "ayse.demir@example.com",
+    "partyTypeName": "EMPLOYEE"
+  }
+]
 
 ---
 
