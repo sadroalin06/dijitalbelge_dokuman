@@ -22,3 +22,5 @@ mümkün hale gelir.
 Bu API’yi kullanabilmek için DijitalBelge platformu üzerinden
 **üyelik oluşturmanız** ve entegrasyon erişim bilgilerinizi
 (`ClientId` ve `ClientSecret`) almanız gerekmektedir.
+
+
