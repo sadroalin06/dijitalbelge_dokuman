@@ -8,7 +8,7 @@ API, entegrasyon uygulamaları tarafından kullanılmak üzere tasarlanmıştır
 ## Base Path
 
 ```
-https://app.dijitalbelge.com/api/external/signers
+https://app.dijitalbelge.com/api
 ```
 ---
 
@@ -42,7 +42,7 @@ Kimlik doğrulama **Client ID / Client Secret** başlıkları ile yapılır.
 
 ### Endpoint
 
-GET /partytype
+GET /external/signers/partytype
 ### Required Scope
 
 ### Response Alanları
