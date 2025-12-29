@@ -65,6 +65,7 @@ GET /partytype
     "name": "Çalışan"
   }
 ]
+```
 ---
 ## 📥 Request Body (SignerDto List)
 
@@ -103,7 +104,7 @@ GET /partytype
     "partyTypeName": "EMPLOYEE"
   }
 ]
-
+```
 ---
 
 ## 🔍 Signer Search (Pagination)
