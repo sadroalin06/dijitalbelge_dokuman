@@ -43,7 +43,7 @@ header olarak gönderilmelidir.
 X-Client-Id: your-client-id
 X-Client-Secret: your-client-secret
 
-```md
+```
 ## 📦 Örnek API İstekleri
 
 === "cURL"
