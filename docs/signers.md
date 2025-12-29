@@ -51,7 +51,6 @@ GET /partytype
 |----|----|----|
 | `id` | `Long` | Ünvan ID |
 | `name` | `String` | Ünvan adı |
-| `code` | `String` | Ünvan kodu |
 
 ### Örnek Response
 
@@ -59,13 +58,11 @@ GET /partytype
 [
   {
     "id": 1,
-    "name": "Müşteri",
-    "code": "CUSTOMER"
+    "name": "Müşteri"
   },
   {
     "id": 2,
-    "name": "Çalışan",
-    "code": "EMPLOYEE"
+    "name": "Çalışan"
   }
 ]
 ---
