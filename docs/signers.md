@@ -73,8 +73,22 @@ signer:read
   }
 ]
 ```
+
 ---
-## 📥 Request Body (Signer List)
+
+## 📥 Bulk Insert
+
+### Endpoint
+```
+POST /external/signers/bulk-insert
+```
+
+### Required Scope
+```
+signer:managment
+```
+
+### Request Body (Signer List)
 
 İstek gövdesi **Signer** nesnelerinden oluşan bir JSON dizisidir.
 
