@@ -1,16 +1,14 @@
 # Signer API (External)
 
 Bu doküman, **Signer (İmzacı)** yönetimi için kullanılan **External Signer API** uç noktalarını açıklar.  
-API, entegrasyon uygulamaları tarafından kullanılmak üzere tasarlanmıştır.
+API, entegrasyon uygulamaları tarafından kullanılmak üzere tasarlanmıştır. İmzacı tanımı hesabınızdaki tanımlı ünvanlara yapılır. Tanımlamadan önce ünvan listesini çekmeniz gerekmektedir
 
 ---
 
 ## Base Path
 
 ```
-/external/signers
-```
-
+https://app.dijitalbelge.com/api/external/signers
 ---
 
 ## 🔐 Authentication & Authorization
@@ -18,19 +16,6 @@ API, entegrasyon uygulamaları tarafından kullanılmak üzere tasarlanmıştır
 Bu API **OAuth2 kullanmaz**.  
 Kimlik doğrulama **Client ID / Client Secret** başlıkları ile yapılır.
 
-### Zorunlu HTTP Header’lar
-
-| Header | Açıklama |
-|------|---------|
-| `X-Client-Id` | Entegrasyon Client ID |
-| `X-Client-Secret` | Entegrasyon Client Secret |
-
-### Scope Bazlı Yetkilendirme
-
-| Scope | Açıklama |
-|------|---------|
-| `signer:read` | İmzacı okuma |
-| `signer:managment` | İmzacı ekleme / güncelleme / silme |
 ### Gerekli HTTP Header’lar
 
 | Header | Açıklama |
@@ -41,6 +26,48 @@ Kimlik doğrulama **Client ID / Client Secret** başlıkları ile yapılır.
 
 ---
 
+### Scope Bazlı Yetkilendirme
+
+| Scope | Açıklama |
+|------|---------|
+| `signer:read` | İmzacı ve ünvan listesi okuma |
+| `signer:managment` | İmzacı ekleme / güncelleme / silme |
+
+---
+
+## 📌 Tanımlı Ünvan Listesi (PartyType)
+
+İmzacı ekleme işleminden önce, hesabınıza tanımlı ünvanların listelenmesi gerekir.
+
+### Endpoint
+
+GET /partytype
+### Required Scope
+
+### Response Alanları
+
+| Alan | Tip | Açıklama |
+|----|----|----|
+| `id` | `Long` | Ünvan ID |
+| `name` | `String` | Ünvan adı |
+| `code` | `String` | Ünvan kodu |
+
+### Örnek Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Müşteri",
+    "code": "CUSTOMER"
+  },
+  {
+    "id": 2,
+    "name": "Çalışan",
+    "code": "EMPLOYEE"
+  }
+]
+---
 ## 📥 Request Body (SignerDto List)
 
 İstek gövdesi **SignerDto** nesnelerinden oluşan bir JSON dizisidir.
