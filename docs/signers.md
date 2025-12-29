@@ -9,6 +9,7 @@ API, entegrasyon uygulamaları tarafından kullanılmak üzere tasarlanmıştır
 
 ```
 https://app.dijitalbelge.com/api/external/signers
+```
 ---
 
 ## 🔐 Authentication & Authorization
