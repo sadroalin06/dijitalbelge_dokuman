@@ -49,6 +49,7 @@ X-Client-Secret: your-client-secret
 === "cURL"
 
     ```bash
+    
     curl -X GET "https://api.dijitalbelge.com/api/external/signers/search" \
       -H "X-Client-Id: app_xxxxx" \
       -H "X-Client-Secret: secret_xxxxx"
@@ -57,6 +58,7 @@ X-Client-Secret: your-client-secret
 === "Java"
 
     ```java
+
     HttpHeaders headers = new HttpHeaders();
     headers.set("X-Client-Id", "app_xxxxx");
     headers.set("X-Client-Secret", "secret_xxxxx");
@@ -65,6 +67,7 @@ X-Client-Secret: your-client-secret
 === "JavaScript"
 
     ```javascript
+
     fetch("https://api.dijitalbelge.com/api/external/signers/search", {
       headers: {
         "X-Client-Id": "app_xxxxx",
@@ -76,6 +79,7 @@ X-Client-Secret: your-client-secret
 === "Python"
 
     ```python
+
     import requests
 
     headers = {
