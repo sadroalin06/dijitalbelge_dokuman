@@ -100,7 +100,7 @@ signer:managment
 | `email` | `String` | ✅ | E-posta adresi |
 | `phone` | `String` | ❌ | Telefon numarası |
 | `identityNumber` | `String` | ✅ | TCKN / Kimlik No |
-| `partyTypeId` | `Long` | ✅ | Taraf tipi ID |
+| `partyTypeId` | `Long` | ✅ | Ünvan ID |
 
 
 > ⚠️ `email`, `fullName`,`partyTypeId` veya `identityNumber` alanlarının **hepsi** dolu olmalıdır.
