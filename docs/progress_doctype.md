@@ -92,7 +92,7 @@ POST /api/external/process/{processId}/document/document-type
 
 | Alan | Açıklama |
 |----|---------|
-| id | İmza sırası |
+| id | Taslaktadaki İmzacı sırası |
 | signer | İmzacı  bağlama|
 | signer->id | Tanımlı İmzacı id |
 | signer->fullName | Yeni İmzacı İsim ve soyismi |

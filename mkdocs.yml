@@ -17,6 +17,7 @@ nav:
   - Genel Bakış: index.md
   - Kimlik Doğrulama: authentication.md
   - Yetkiler: scopes.md
+  - Referans API: reference-api.md
   - İmzacı API: signers.md
   - Taslaktan Süreç API: progress_doctype.md
   - Hatalar: errors.md
