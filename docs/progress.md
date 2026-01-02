@@ -1,11 +1,11 @@
-# Sürece Belge Türü Ekleme (Document Type)
+# Sürece döküman tasğalından belge ekleme
 
-Bu endpoint, tanımlı bir **Belge Türü (Document Type)** bilgisini kullanarak ilgili **süreç (process)** içerisine yeni bir belge eklemek için kullanılır.
+Bu endpoint, tanımlı bir **Döküman Taslağı** bilgisini kullanarak ilgili **süreç (process)** içerisine yeni bir belge eklemek için kullanılır.
 
 Belge;
 - imzalanabilir
 - onaylanabilir
-- yalnızca yükleme gerektiren
+- belgenin kullanıcı tarafından yüklenmesi veya yüklü belgeyi görüntülenmesi
 bir yapı olarak tanımlanabilir.
 
 ---
@@ -38,28 +38,32 @@ POST /api/external/process/{processId}/document/document-type
 
 ---
 
-## Request Body – DocumentTypeDto
+## Request Body – Döküman Taslağı
 
 ```json
 {
-  "id": 1,
-  "name": "Sözleşme Formu",
-  "description": "Yeni abonelik sözleşmesi için standart form",
-  "isSign": true,
-  "isForm": false,
-  "isActive": true,
-  "isApprove": false,
-  "isUpload": true,
-  "document": {
-    "content": "<base64-pdf-content>"
-  },
-  "signings": [
-    {
-      "stepOrder": 1,
-      "signatureTypeId": 2,
-      "mustSign": true
-    }
-  ]
+    "id": 22,
+    "name": "Ticari İletişim İzni (varsa)",
+    "description": "",
+    "isSign": true,
+    "isForm": false,
+    "isActive": true,
+    "isApprove": true,
+    "isUpload": false,
+    "document": {
+        "base64": "",
+        "fileName": "deneme.pdf"
+    },
+    "signings": [
+        {
+            "id": 14,
+           
+            "signer": {
+                "id": 138
+                
+            }
+        }
+    ]
 }
 ```
 
@@ -69,7 +73,7 @@ POST /api/external/process/{processId}/document/document-type
 
 | Alan | Tip | Açıklama |
 |----|----|---------|
-| id | Long | Belge türü ID |
+| id | Long | Belge Taslağı ID |
 | name | String | Belge adı |
 | description | String | Belge açıklaması |
 | isSign | Boolean | Belge imzalanabilir mi |
@@ -84,24 +88,41 @@ POST /api/external/process/{processId}/document/document-type
 
 ## İmzacı Tanımı (signings)
 
-`signings` alanı, belge üzerinde kimlerin hangi sırayla imza atacağını tanımlar.
+`signings` alanı, belge üzerinde kimlerin hangi sırayla imza atacağını tanımlar. Bu alan döküman taslağındaki `signings` alanını referans verir ve ilgili taslakdaki imzalama sırasına göre tanımlanır. Taslaktaki ayarlara göre imzacı bilgisi bağlanması yapılır.
 
 | Alan | Açıklama |
 |----|---------|
-| stepOrder | İmza sırası |
-| signatureTypeId | İmza tipi |
-| mustSign | İmza zorunlu mu |
+| id | İmza sırası |
+| signer | İmzacı  bağlama|
+| signer->id | Tanımlı İmzacı id |
+| signer->fullName | Yeni İmzacı İsim ve soyismi |
+| signer->email | Yeni İmzacı email |
+| signer->phone | Yeni İmzacı telefon |
+| signer->identityNumber | Yeni İmzacı TC kimlik numarası |
 
+```json
+"signer": {
+                 "fullName": "ali veli",
+                 "email": "sadro@gmail.com",
+                 "phone": "5333333333",
+                 "identityNumber": "123456789011"
+                
+            }
+```    
+```json
+"signer": {
+                "id":24
+                
+            }
+```            
 ---
 
 ## Response – 201 Created
 
 ```json
 {
-  "id": 45,
-  "processInstanceId": 12,
-  "documentTypeId": 1,
-  "status": "CREATED"
+    "id": 7203,
+    
 }
 ```
 
