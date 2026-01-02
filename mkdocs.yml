@@ -18,7 +18,7 @@ nav:
   - Kimlik Doğrulama: authentication.md
   - Yetkiler: scopes.md
   - İmzacı API: signers.md
-  - Süreç API: progress.md
+  - Taslaktan Süreç API: progress_doctype.md
   - Hatalar: errors.md
   - Örnekler:
       - Curl: examples/curl.md
