@@ -40,6 +40,4 @@ markdown_extensions:
 
 plugins:
   - search
-  - sitemap:
-      changefreq: weekly
-      priority: 0.6
+ 
