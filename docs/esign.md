@@ -455,10 +455,9 @@ done
 
 Sümen uygulamasının sunduğu lokal API ve WebSocket protokolleri ayrı bir dokümantasyon ile sağlanacaktır. Entegrasyon sırasında Sümen API dokümanına ihtiyaç duyacaksınız; doküman sağlandığında burada bir bağlantı eklenecektir.
 
-Örnek referans (eklenecek): `sumen-api.md`
 
 ## İlgili Kaynaklar
 
-- [Süreç Yönetimi API](progress.md)
+- [Sumen  API](sumen-api.md)
 - [Kimlik Doğrulama](authentication.md)
 - [Hata Kodları](errors.md)
