@@ -62,15 +62,20 @@ Hesapda tanımlı döküman taslakları listelenir
 
 Kullanılabilir imzalama türleri listelenir
 
+**Scope:** documenttype:read
+
 ```json
 [
   { "id": 1, "code": "E_SIGNATURE", "name": "Elektronik İmza" },
   { "id": 2, "code": "EMAIL_TIMESTAMP", "name": "Email üzerinden Dijital Onay" }
 ]
 ```
-| Alan | Açıklama |
-|----|---------|
-| id | imza tipi ID |
-| code | İmzalama türü kodu|
-| name | İmza ismi |
+
+**Response Alanları:**
+
+| Alan | Tip | Açıklama |
+|------|-----|---------|
+| `id` | number | İmza tipi ID |
+| `code` | string | İmzalama türü kodu |
+| `name` | string | İmza türü adı |
 
