@@ -333,7 +333,6 @@ async function signLoginChallenge(ws, pin, slot, loginTxId, challenge, istest = 
       command: "signLogin",
       pin: pin,
       slot: slot,
-      istest: istest,
       loginTxId: loginTxId,
       challenge: challenge
     };
@@ -382,7 +381,7 @@ async function loginWithSignature() {
       // 2. Sümen'de imzala
       const signResponse = await signLoginChallenge(
         ws,
-        "820650", // PIN
+        "xxxxxx", // PIN
         0,         // Slot
         loginTxId,
         challenge,
