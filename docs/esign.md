@@ -397,7 +397,7 @@ echo "İşlem başlatıldı: $TX_ID"
 for i in {1..30}; do
   sleep 5
   
-  POLL_RESPONSE=$(curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/$TX_ID/poll \
+  POLL_RESPONSE=$(curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/$TX_ID \
     -H "X-Client-Id: app_xxxxx" \
     -H "X-Client-Secret: secret_xxxxx")
   
