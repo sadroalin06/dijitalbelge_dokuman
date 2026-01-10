@@ -40,39 +40,24 @@ Kimlik doğrulama **Client ID / Client Secret** başlıkları ile yapılır.
 
 İmzacı ekleme işleminden önce, hesabınıza tanımlı ünvanların listelenmesi gerekir.
 
-### Endpoint
+PartyType (Ünvan) listesi **[Reference API](reference-api.md#party-types)** ile çekilir.
 
-```
-GET /external/signers/partytype
-```
-
-### Required Scope
-
-```
-signer:read
+**Endpoint:**
+```http
+GET /external/referance/partytype
 ```
 
-### Response Alanları
+**Scope:** `signer:read`
 
-| Alan | Tip | Açıklama |
-|----|----|----|
-| `id` | `Long` | Ünvan ID |
-| `name` | `String` | Ünvan adı |
-
-### Örnek Response
-
+**Örnek Yanıt:**
 ```json
 [
-  {
-    "id": 1,
-    "name": "Müşteri"
-  },
-  {
-    "id": 2,
-    "name": "Çalışan"
-  }
+  { "id": 1, "name": "Müşteri" },
+  { "id": 2, "name": "Çalışan" }
 ]
 ```
+
+Daha detaylı bilgi için [Reference API - Party Types](reference-api.md#party-types) sayfasını ziyaret edin.
 
 ---
 
@@ -163,20 +148,6 @@ signer:read
 | `identityNumber` | `String` | Kimlik No |
 | `page` | `int` | Sayfa |
 | `size` | `int` | Boyut |
-
----
-
-## 📥 Bulk Insert
-
-### Endpoint
-```
-POST /external/signers/bulk-insert
-```
-
-### Required Scope
-```
-signer:managment
-```
 
 ---
 
