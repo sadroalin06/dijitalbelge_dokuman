@@ -1,5 +1,9 @@
-FROM squidfunk/mkdocs-material:9
+# 1️⃣ Build stage
+FROM squidfunk/mkdocs-material:9 AS build
 WORKDIR /docs
-COPY . /docs
-EXPOSE 8000
-CMD ["serve", "--dev-addr=0.0.0.0:8000"]
+COPY . .
+RUN mkdocs build --clean
+
+# 2️⃣ Runtime stage
+FROM nginx:alpine
+COPY --from=build /docs/site /usr/share/nginx/html
