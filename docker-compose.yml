@@ -18,7 +18,7 @@ services:
       - "traefik.http.services.dijitalbelgedokuman.loadbalancer.server.port=8000"
 
     ports:
-      - "8085:8000"
+      - "8085:80"
     volumes:
       - .:/docs
     restart: unless-stopped
