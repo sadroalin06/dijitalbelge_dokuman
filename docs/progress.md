@@ -33,7 +33,6 @@ Her oluşturulan sürecin **otomatik olarak benzersiz bir QR kodu** oluşturulur
 - **Mobil cihazlardan** taranarak sürece hızlı erişim sağlar
 - **Takip ve doğrulama** amacıyla kullanılır
 
-s
 ---
 
 ## Endpoints
