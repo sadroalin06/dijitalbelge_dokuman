@@ -15,10 +15,10 @@ services:
       - "traefik.http.routers.dijitalbelgedokuman.rule=Host(`dokuman.dijitalbelge.com`)"
       - "traefik.http.routers.dijitalbelgedokuman.entrypoints=websecure"
       - "traefik.http.routers.dijitalbelgedokuman.tls.certresolver=myresolver"
-      - "traefik.http.services.dijitalbelgedokuman.loadbalancer.server.port=8000"
+      - "traefik.http.services.dijitalbelgedokuman.loadbalancer.server.port=80"
 
-    ports:
-      - "8085:80"
+    #ports:
+    #  - "8085:80"
     volumes:
       - .:/docs
     restart: unless-stopped
