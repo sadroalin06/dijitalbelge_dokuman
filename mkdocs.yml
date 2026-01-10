@@ -19,7 +19,7 @@ nav:
   - Yetkiler: scopes.md
   - Referans API: reference-api.md
   - İmzacı API: signers.md
-  - Süreç API: processes.md
+  - Süreç API: progress.md
   - Taslaktan Süreç API: progress_doctype.md
   - Hatalar: errors.md
   - Örnekler:
