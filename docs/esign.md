@@ -218,7 +218,7 @@ GET {baseURL}/auth/tx/{loginTxId}/poll
 #### Örnek cURL
 
 ```bash
-curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/TX-20260110-ABC123XYZ/poll \
+curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/TX-20260110-ABC123XYZ \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
