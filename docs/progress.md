@@ -2,6 +2,17 @@
 
 Dijital Belge Sistemi'nde belge işleme süreçlerini yönetmek için kullanılan API'dir.
 
+## Genel Bakış
+
+**Süreç**, imzalama akışının yönetildiği merkezi bir birimdür. Bir süreç içinde:
+
+- **Birden fazla döküman** imzalanabilir veya yüklenebilir
+- **Tüm imza akışları** süreç altında gruplanır
+- **İmzalama sayfasına** yönlendirme yapılır
+- **Benzersiz bir QR kodu** otomatik olarak oluşturulur ve sayfaya basılır
+
+Süreçler **API aracılığıyla oluşturulabilir, yönetilebilir, başlatılabilir, tamamlanabilir veya iptal edilebilir**.
+
 ## Özet
 
 | Özellik | Değer |
@@ -11,6 +22,18 @@ Dijital Belge Sistemi'nde belge işleme süreçlerini yönetmek için kullanıla
 | Base URL | `https://api.dijitalbelge.com/api/external` |
 | Kimlik Doğrulama | X-Client-Id, X-Client-Secret |
 
+---
+
+## QR Kod Özelliği
+
+Her oluşturulan sürecin **otomatik olarak benzersiz bir QR kodu** oluşturulur. Bu QR kod:
+
+- **Sürecin kimliğini** taşır ve güvenli bir şekilde kodlanır
+- **İmzalama sayfasına basılabilir** ve yazdırılan belgelerde yer alır
+- **Mobil cihazlardan** taranarak sürece hızlı erişim sağlar
+- **Takip ve doğrulama** amacıyla kullanılır
+
+s
 ---
 
 ## Endpoints
