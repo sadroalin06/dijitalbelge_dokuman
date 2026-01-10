@@ -21,6 +21,7 @@ nav:
   - İmzacı API: signers.md
   - Süreç API: progress.md
   - Taslaktan Süreç API: progress_doctype.md
+  - E-İmza Login API: esign.md
   - Hatalar: errors.md
   - Örnekler:
       - Curl: examples/curl.md
