@@ -21,8 +21,10 @@ Yeni bir belge işleme süreci oluşturur.
 #### İstek
 
 ```http
-POST https://api.dijitalbelge.com/api/external/process-instances
+POST {baseURL}/process-instances
 ```
+
+**Base URL:** `https://api.dijitalbelge.com/api/external`
 
 **Content-Type:** `application/json`
 
@@ -97,7 +99,7 @@ Belirtilen süreci başlatır.
 #### İstek
 
 ```http
-PUT https://api.dijitalbelge.com/api/external/process-instances/{processId}/status/start
+PUT {baseURL}/process-instances/{processId}/status/start
 ```
 
 **Path Parameters:**
@@ -136,7 +138,7 @@ Belirtilen süreci iptal eder.
 #### İstek
 
 ```http
-PUT https://api.dijitalbelge.com/api/external/process-instances/{processId}/status/cancel
+PUT {baseURL}/process-instances/{processId}/status/cancel
 ```
 
 **Path Parameters:**
@@ -201,6 +203,115 @@ PUT /api/external/process-instances/{processId}/status/complete
 
 ```bash
 curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/proc-12345/status/complete \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 5. Süreç Detayını Getir
+
+Belirtilen sürecin detaylı bilgilerini döndürür.
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+{
+  "id": 147,
+  "accountId": 202,
+  "createdByUserId": null,
+  "name": "Test Süreci",
+  "statusCode": "IN_PROGRESS",
+  "signers": [
+    {
+      "id": 1,
+      "name": "İmzacı 1",
+      "email": "imzaci1@example.com",
+      "signedAt": null
+    }
+  ],
+  "documents": [
+    {
+      "id": 101,
+      "name": "Sözleşme.pdf",
+      "uploadedAt": "2026-01-05T19:59:29Z"
+    }
+  ],
+  "createdAt": "2026-01-05T19:59:29.5282888",
+  "updatedAt": "2026-01-05T19:59:29.5282888",
+  "hasQrCode": false,
+  "responsibleBy": null,
+  "accessToken": "kQQQioa",
+  "tokenExpiry": null
+}
+```
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `id` | number | Sürecin benzersiz ID'si |
+| `accountId` | number | Hesap ID'si |
+| `createdByUserId` | number | Süreci oluşturan kullanıcı ID'si |
+| `name` | string | Sürecin adı |
+| `statusCode` | string | Sürecin durum kodu |
+| `signers` | array | İmzalayan taraflar listesi |
+| `documents` | array | Sürece ait belgeler listesi |
+| `createdAt` | string | Oluşturulma tarihi |
+| `updatedAt` | string | Son güncellenme tarihi |
+| `hasQrCode` | boolean | QR kod bulunup bulunmadığı |
+| `responsibleBy` | string | Sorumlu kişi |
+| `accessToken` | string | Erişim token'ı |
+| `tokenExpiry` | string | Token geçerlilik süresi |
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://api.dijitalbelge.com/api/external/process-instances/147 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 6. Süreci Sil
+
+Belirtilen süreci sistemden siler.
+
+#### İstek
+
+```http
+DELETE {baseURL}/process-instances/{processId}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Silinecek sürecin ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 204 No Content**
+
+Başarılı silme işleminden sonra hiçbir içerik döndürülmez.
+
+#### Örnek cURL
+
+```bash
+curl -X DELETE https://api.dijitalbelge.com/api/external/process-instances/147 \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
