@@ -1,6 +1,6 @@
 # E-İmza ile Login API
 
-Üçüncü taraf platformların kendi kullanıcılarını Dijital Belge sistemine e-imza ile giriş yaptırmak için kullandığı API'dir.
+Üçüncü taraf platformların kendi kullanıcılarını Dijital Belge sistemi ile  e-imza ile giriş yaptırmak için kullandığı API'dir.
 
 ## Genel Bakış
 
@@ -22,13 +22,17 @@
    ↓
 3. Dijital Belge API'sine Gönder (/external/auth/tx)
    ↓
-4. Dijital Belge, Sümen ile Eşleştir
+4. Dijital Belge, geçici bir giriş Token oluşturur
    ↓
-5. E-imza Doğrulama
+5. Sümen uygulamasına token bilgisi gönderilir.Platform kullanıcının PC deki Sümen ile Local websoket ile haberleşir
    ↓
-6. Login Token Döndür
+6. Sümen imzalar ve Dijital Belge platformuna gönderim yapar
    ↓
-7. Kullanıcı Platformda Giriş Yap
+7. Dijital Belge platformun login için gerekli tüm güvenlik doğrulamalarını yapar ve bir auditlog oluşturur
+   ↓
+8. Sümen platforma websoket üzerinden işlem sonucu döner
+   ↓
+9. Platform elindeki token ile Dijital Belge platformunda audidlogu okur ve kullanıcısını login yapar
 ```
 
 ---
