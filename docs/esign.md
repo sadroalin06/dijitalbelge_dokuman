@@ -146,14 +146,14 @@ Login işleminin durumunu kontrol eder. Kullanıcı Sümen'de imzayı onaylayana
 #### İstek
 
 ```http
-GET {baseURL}/auth/tx/{transactionId}/poll
+GET {baseURL}/auth/tx/{loginTxId}/poll
 ```
 
 **Path Parameters:**
 
 | Parametre | Tip | Açıklama |
 |-----------|-----|----------|
-| `transactionId` | string | İşlem ID'si (önceki endpoint'ten döndürülen) |
+| `loginTxId` | string | İşlem ID'si (önceki endpoint'ten döndürülen) |
 
 #### Başarılı Yanıt (İşlem Tamamlanmadı)
 
@@ -161,7 +161,7 @@ GET {baseURL}/auth/tx/{transactionId}/poll
 
 ```json
 {
-  "transactionId": "TX-20260110-ABC123XYZ",
+  "loginTxId": "TX-20260110-ABC123XYZ",
   "status": "PENDING",
   "message": "İmza onaylanması bekleniyor",
   "expiresIn": 250,
@@ -175,7 +175,7 @@ GET {baseURL}/auth/tx/{transactionId}/poll
 
 ```json
 {
-  "transactionId": "TX-20260110-ABC123XYZ",
+  "loginTxId": "TX-20260110-ABC123XYZ",
   "status": "COMPLETED",
   "message": "İmza başarıyla doğrulandı",
   "loginToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -191,7 +191,7 @@ GET {baseURL}/auth/tx/{transactionId}/poll
 
 | Alan | Tip | Açıklama |
 |------|-----|----------|
-| `transactionId` | string | İşlem kimliği |
+| `loginTxId` | string | İşlem kimliği |
 | `status` | string | İşlem durumu |
 | `message` | string | Durum mesajı |
 | `loginToken` | string | Login token'ı (üçüncü taraf platform tarafından kullanılır) |
@@ -208,7 +208,7 @@ GET {baseURL}/auth/tx/{transactionId}/poll
 
 ```json
 {
-  "transactionId": "TX-20260110-ABC123XYZ",
+  "loginTxId": "TX-20260110-ABC123XYZ",
   "status": "EXPIRED",
   "message": "İşlem zaman aşımına uğradı. Lütfen tekrar deneyin",
   "timestamp": "2026-01-10T12:35:45.123Z"
@@ -222,6 +222,90 @@ curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/TX-20260110-ABC123
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
+
+---
+
+### 3. Tekrar Doğrulama (Token Detayı)
+
+Bu endpoint, `loginTxId` veya Sümen'den dönen token string ile işlem detaylarını ve sunucunun gözlemlediği bağlamı (IP, TLS, UA vb.) döndürür. Tekrar doğrulama gerektiğinde (ör. audit, manuel inceleme veya ek güvenlik adımları) bu endpoint kullanılır.
+
+#### İstek
+
+```http
+GET {baseURL}/auth/tx/{tokenstr}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `tokenstr` | string | `loginTxId` veya doğrulama token'ı |
+
+#### Başarılı Yanıt (Detaylı Obje)
+
+**HTTP 200 OK**
+
+```json
+{
+  "loginTxId": "tx_eb698381-a758-4cd2-9b3c-aacffd506372",
+  "accountId": 202,
+  "email": "ahmet@x.com",
+  "tcknHash": "sha256:...",
+  "ceptel": "5443476573",
+  "platformUserId": "U-91",
+
+  "challenge": "9EZlfZMuZcuLc/8ppCjc3r5pWSE0bziAFBp0ZmvZH+Q=",
+  "createdAt": 1672955969528,
+  "expiresAt": 1672956089528,
+
+  "status": "PENDING",
+
+  "serverContext": {
+    "observedIp": "1.2.3.4",
+    "observedUserAgent": "Chrome/120 Windows 11",
+    "tlsProtocol": "TLS1.3",
+    "serverReceivedAt": 1672955969528
+  },
+
+  "platformContext": {
+    "ipAddress": "1.2.3.4",
+    "userAgent": "Chrome/120 Windows 11",
+    "deviceHint": "DESKTOP",
+    "locale": "tr-TR",
+    "timeZone": "Europe/Istanbul"
+  },
+
+  "deviceContext": {
+    "hostName": "AHMET-PC",
+    "os": "Windows 11",
+    "sumenVersion": "2.5.1",
+    "certificateSerial": "ABCD1234..."
+  }
+}
+```
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `loginTxId` | string | Oturum işlem kimliği |
+| `accountId` | number | Hesap ID'si |
+| `email` | string | Kullanıcı e-posta adresi |
+| `tcknHash` | string | T.C. kimlik numarasının hash'i (gizlilik için) |
+| `ceptel` | string | Cep telefonu |
+| `platformUserId` | string | Platformdaki kullanıcı ID |
+| `challenge` | string | Başlangıç challenge değeri (base64) |
+| `createdAt` | long | Oluşturulma zamanı (epoch ms) |
+| `expiresAt` | long | Geçerlilik süresi sonu (epoch ms) |
+| `status` | string | `LoginTxStatus` (PENDING, VERIFIED, COMPLETED, FAILED, EXPIRED) |
+| `serverContext` | object | Backend'in gözlemlediği bağlantı bilgileri (SERVER_OBSERVED) |
+| `platformContext` | object | Platformun beyan ettiği kullanıcı ortam bilgileri (PLATFORM_ASSERTED) |
+| `deviceContext` | object | Sümen uygulamasının gönderdiği cihaz bilgileri (SUMENAPP_REPORTED) |
+
+Açıklamalar:
+- `serverContext` : Sunucu tarafında gözlemlenen IP, TLS protokolü, alınma zamanı gibi bilgiler.
+- `platformContext` : Platformun kullanıcıdan topladığı bilgilerin aynısıdır (IP, UA, locale vb.).
+- `deviceContext` : Sümen uygulamasından gelen PC/cihaz bilgileri; imza sertifika serisi veya Sümen versiyonu gibi doğrulama amaçlı veriler içerir.
+
+`LoginTxStatus` örnek değerleri: `PENDING`, `VERIFIED` (Sümen tarafından imza doğrulandı ancak login token henüz üretilmedi), `COMPLETED` (loginToken üretildi), `FAILED`, `EXPIRED`.
 
 ---
 
@@ -306,7 +390,7 @@ RESPONSE=$(curl -X POST https://api.dijitalbelge.com/api/external/auth/tx \
     }
   }')
 
-TX_ID=$(echo $RESPONSE | jq -r '.transactionId')
+TX_ID=$(echo $RESPONSE | jq -r '.loginTxId')
 echo "İşlem başlatıldı: $TX_ID"
 
 # 2. İşlem sonucunu poll et (max 5 dakika)
@@ -361,6 +445,12 @@ done
 - [ ] Login token'ı session'da tutulmuş
 
 ---
+
+### Sümen API Referansı
+
+Sümen uygulamasının sunduğu lokal API ve WebSocket protokolleri ayrı bir dokümantasyon ile sağlanacaktır. Entegrasyon sırasında Sümen API dokümanına ihtiyaç duyacaksınız; doküman sağlandığında burada bir bağlantı eklenecektir.
+
+Örnek referans (eklenecek): `sumen-api.md`
 
 ## İlgili Kaynaklar
 
