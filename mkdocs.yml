@@ -1,5 +1,7 @@
-site_name:  API Dokümantasyonu
+#site_name:  API Dokümantasyonu
 site_description: DijitalBelge External API entegrasyon rehberi
+site_name: DijitalBelge Dokümantasyon
+site_url: https://dokuman.dijitalbelge.com
 
 
 theme:
