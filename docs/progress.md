@@ -8,6 +8,7 @@ Dijital Belge Sistemi'nde belge işleme süreçlerini yönetmek için kullanıla
 |---------|-------|
 | Temel URL | `https://api.dijitalbelge.com/api` |
 | Temel Path | `/external` |
+| Base URL | `https://api.dijitalbelge.com/api/external` |
 | Kimlik Doğrulama | X-Client-Id, X-Client-Secret |
 
 ---
@@ -23,8 +24,6 @@ Yeni bir belge işleme süreci oluşturur.
 ```http
 POST {baseURL}/process-instances
 ```
-
-**Base URL:** `https://api.dijitalbelge.com/api/external`
 
 **Content-Type:** `application/json`
 
