@@ -176,7 +176,7 @@ GET {baseURL}/auth/tx/{loginTxId}/poll
 ```json
 {
   "loginTxId": "TX-20260110-ABC123XYZ",
-  "status": "COMPLETED",
+  "status": "USED",
   "message": "İmza başarıyla doğrulandı",
   "loginToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "user": {
@@ -305,7 +305,12 @@ Açıklamalar:
 - `platformContext` : Platformun kullanıcıdan topladığı bilgilerin aynısıdır (IP, UA, locale vb.).
 - `deviceContext` : Sümen uygulamasından gelen PC/cihaz bilgileri; imza sertifika serisi veya Sümen versiyonu gibi doğrulama amaçlı veriler içerir.
 
-`LoginTxStatus` örnek değerleri: `PENDING`, `VERIFIED` (Sümen tarafından imza doğrulandı ancak login token henüz üretilmedi), `COMPLETED` (loginToken üretildi), `FAILED`, `EXPIRED`.
+`LoginTxStatus` örnek değerleri: `PENDING`, `USED`, `EXPIRED`.
+
+Açıklama:
+- `PENDING`: Login transaction henüz kullanılmadı (Sümen tarafından imzalama bekleniyor).
+- `USED`: Kullanıcı Sümen ile doğrulandı ve işlem başarıyla tamamlandı (loginToken üretildi).
+- `EXPIRED`: İşlem zaman aşımına uğradı veya başarısız oldu.
 
 ---
 
