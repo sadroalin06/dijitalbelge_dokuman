@@ -31,6 +31,12 @@ nav:
 extra_css:
   - assets/extra.css
 
+extra:
+  analytics:
+    provider: google
+    property: G-Z4PJ77FKJD
+
+
 markdown_extensions:
   - admonition
   - tables
