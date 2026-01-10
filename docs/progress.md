@@ -66,7 +66,7 @@ POST https://api.dijitalbelge.com/api/external/process-instances
 | `accountId` | number | Hesap ID'si |
 | `createdByUserId` | number | Süreci oluşturan kullanıcı ID'si |
 | `name` | string | Sürecin adı |
-| `statusCode` | string | Sürecin durum kodu (NEW, STARTED, COMPLETED, CANCELLED) |
+| `statusCode` | string | Sürecin durum kodu (NEW, STARTED, IN_PROGRESS, COMPLETED, ARCHIVED, CANCELED, DELETED) |
 | `signers` | array | İmzalayıcılar listesi |
 | `documents` | array | Belgeler listesi |
 | `createdAt` | string | Oluşturulma tarihi (ISO 8601) |
@@ -96,8 +96,8 @@ Belirtilen süreci başlatır.
 
 #### İstek
 
-```hhttps://api.dijitalbelge.comttp
-PUT /api/external/process-instances/{processId}/status/start
+```http
+PUT https://api.dijitalbelge.com/api/external/process-instances/{processId}/status/start
 ```
 
 **Path Parameters:**
@@ -135,8 +135,8 @@ Belirtilen süreci iptal eder.
 
 #### İstek
 
-```hhttps://api.dijitalbelge.comttp
-PUT /api/external/process-instances/{processId}/status/cancel
+```http
+PUT https://api.dijitalbelge.com/api/external/process-instances/{processId}/status/cancel
 ```
 
 **Path Parameters:**
@@ -199,10 +199,10 @@ PUT /api/external/process-instances/{processId}/status/complete
 
 #### Örnek cURL
 
-```bashdijitalbelge.com/api/external/process-instances/proc-12345/status/complete \
+```bash
+curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/proc-12345/status/complete \
   -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxxi/external/process-instances/proc-12345/status/complete \
-  -H "Authorization: Bearer YOUR_TOKEN"
+  -H "X-Client-Secret: secret_xxxxx"
 ```
 
 ---
@@ -211,11 +211,13 @@ PUT /api/external/process-instances/{processId}/status/complete
 
 | Durum | Açıklama |
 |-------|----------|
-| `CREATED` | Süreç oluşturulmuş, henüz başlamadı |
-| `STARTED` | Süreç aktif olarak çalışıyor |
-| `COMPLETED` | Süreç başarıyla tamamlandı |
-| `CANCELLED` | Süreç iptal edildi |
-| `FAILED` | Süreçte hata oluştu |
+| `NEW` | İlk oluşturulduğunda atanan durum |
+| `STARTED` | Başlayınca imzacılara bildirim gider |
+| `IN_PROGRESS` | İlk imzacı imzaladığında süreç devam ediyor durumuna geçer |
+| `COMPLETED` | Tüm imzacılar imzalamayı tamamladığında süreç tamamlanır |
+| `ARCHIVED` | Tamamlanan süreçler, arşiv hizmeti alınmış ise arşive taşınır |
+| `CANCELED` | Süreç iptal edilmiş durumda |
+| `DELETED` | Süreç silinmiş durumda |
 
 ---
 
@@ -274,18 +276,21 @@ PUT /api/external/process-instances/{processId}/status/complete
 
 ```bash
 # 1. Yeni süreç oluştur
-PROCESS_ID=$(curl -X POST https://api.example.com/api/external/process-instances \
+PROCESS_ID=$(curl -X POST https://api.dijitalbelge.com/api/external/process-instances \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx" \
   -d '{"name":"test süreci"}' | jq -r '.id')
 
 # 2. Süreci başlat
-curl -X PUT https://api.example.com/api/external/process-instances/$PROCESS_ID/status/start \
-  -H "Authorization: Bearer YOUR_TOKEN"
+curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/start \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
 
 # 3. Süreci tamamla
-curl -X PUT https://api.example.com/api/external/process-instances/$PROCESS_ID/status/complete \
-  -H "Authorization: Bearer YOUR_TOKEN"
+curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/complete \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
 ```
 
 ---
