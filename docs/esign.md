@@ -113,7 +113,7 @@ POST {baseURL}/auth/tx
 
 Sümen uygulamasını şu adresten indirebilirsiniz: https://app.dijitalbelge.com/indir
 
-Bu endpoint çağrıldıktan sonra entegrasyon platformu `loginTxId`, `challenge` ve `expiresIn` alanlarını alır. `challenge` değeri Sümen tarafına yönlendirilir ve Sümen tarafından kullanıcının e-imzası ile imzalanır. İmzalama tamamlandığında veya kullanıcı onayladığında, üçüncü taraf platform `GET {baseURL}/auth/tx/{loginTxId}/poll` ile sonucu sorgular ve başarılıysa `loginToken` içeren yanıt döner.
+Bu endpoint çağrıldıktan sonra entegrasyon platformu `loginTxId`, `challenge` ve `expiresIn` alanlarını alır. `challenge` değeri Sümen tarafına yönlendirilir ve Sümen tarafından kullanıcının e-imzası ile imzalanır. İmzalama tamamlandığında veya kullanıcı onayladığında, üçüncü taraf platform `GET {baseURL}/auth/tx/{loginTxId}` ile sonucu sorgular ve başarılıysa `loginToken` içeren yanıt döner.
 
 #### Örnek cURL
 
@@ -139,14 +139,14 @@ curl -X POST https://api.dijitalbelge.com/api/external/auth/tx \
 
 ---
 
-### 2. İşlem Sonucunu Kontrol Et (Polling)
+### 2. İşlem Sonucunu Kontrol Et 
 
 Login işleminin durumunu kontrol eder. Kullanıcı Sümen'de imzayı onaylayana kadar polling yapılır.
 
 #### İstek
 
 ```http
-GET {baseURL}/auth/tx/{loginTxId}/poll
+GET {baseURL}/auth/tx/{loginTxId}
 ```
 
 **Path Parameters:**
@@ -311,6 +311,144 @@ Açıklama:
 - `PENDING`: Login transaction henüz kullanılmadı (Sümen tarafından imzalama bekleniyor).
 - `USED`: Kullanıcı Sümen ile doğrulandı ve işlem başarıyla tamamlandı (loginToken üretildi).
 - `EXPIRED`: İşlem zaman aşımına uğradı veya başarısız oldu.
+
+---
+
+### 4. Audit Log Çekme
+
+Belirtilen login işlemi için tüm audit log kayıtlarını ve işlem geçmişini döndürür.
+
+#### İstek
+
+```http
+GET {baseURL}/auth/tx/{loginTxId}/audit
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `loginTxId` | string | Login işlemi ID'si (örn: `tx_de23d0bf-942f-4c02-a827-a7fb842110ba`) |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+{
+  "loginTxId": "tx_de23d0bf-942f-4c02-a827-a7fb842110ba",
+  "logs": [
+    {
+      "timestamp": "2026-01-11T10:30:00.000Z",
+      "event": "LOGIN_TX_CREATED",
+      "level": "INFO",
+      "actor": "system",
+      "details": {
+        "email": "ahmet@x.com",
+        "platformUserId": "U-91"
+      }
+    },
+    {
+      "timestamp": "2026-01-11T10:30:15.500Z",
+      "event": "CHALLENGE_GENERATED",
+      "level": "INFO",
+      "actor": "system",
+      "details": {
+        "challengeHash": "sha256:9EZlfZMuZcuLc/8ppCjc3r5pWSE0bziAFBp0ZmvZH+Q="
+      }
+    },
+    {
+      "timestamp": "2026-01-11T10:31:00.000Z",
+      "event": "SIGNATURE_RECEIVED",
+      "level": "INFO",
+      "actor": "sumen_app",
+      "details": {
+        "certificateSerial": "ABCD1234...",
+        "sumenVersion": "2.5.1",
+        "ipAddress": "1.2.3.4"
+      }
+    },
+    {
+      "timestamp": "2026-01-11T10:31:05.000Z",
+      "event": "SIGNATURE_VERIFIED",
+      "level": "INFO",
+      "actor": "system",
+      "details": {
+        "verificationStatus": "SUCCESS",
+        "certificateIssuer": "CN=TÜRKTRUST..."
+      }
+    },
+    {
+      "timestamp": "2026-01-11T10:31:05.500Z",
+      "event": "LOGIN_COMPLETED",
+      "level": "INFO",
+      "actor": "system",
+      "details": {
+        "status": "COMPLETED",
+        "loginToken": "eyJhbGciOiJIUzI1NiIs..."
+      }
+    }
+  ],
+  "summary": {
+    "totalEvents": 5,
+    "successCount": 5,
+    "failureCount": 0,
+    "duration": 5500,
+    "status": "SUCCESS"
+  }
+}
+```
+
+**Yanıt Alanları:**
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `loginTxId` | string | Login işlemi ID'si |
+| `logs` | array | Tüm audit log kayıtları |
+| `logs[].timestamp` | string | Olayın gerçekleştiği zaman (ISO 8601) |
+| `logs[].event` | string | Olay türü (LOGIN_TX_CREATED, SIGNATURE_VERIFIED vb.) |
+| `logs[].level` | string | Log seviyesi (INFO, WARNING, ERROR) |
+| `logs[].actor` | string | Eylemi gerçekleştiren sistem/kullanıcı |
+| `logs[].details` | object | Olay hakkında ek bilgiler |
+| `summary` | object | İşlem özeti istatistikleri |
+| `summary.totalEvents` | number | Toplam olay sayısı |
+| `summary.successCount` | number | Başarılı olay sayısı |
+| `summary.failureCount` | number | Başarısız olay sayısı |
+| `summary.duration` | number | Toplam işlem süresi (ms) |
+| `summary.status` | string | Genel işlem durumu (SUCCESS, FAILED, PARTIAL) |
+
+**Yaygın Olay Türleri:**
+
+| Olay | Açıklama |
+|------|----------|
+| `LOGIN_TX_CREATED` | Login işlemi oluşturuldu |
+| `CHALLENGE_GENERATED` | Challenge üretildi |
+| `CHALLENGE_SENT` | Challenge kullanıcıya gönderildi |
+| `SIGNATURE_RECEIVED` | İmza alındı |
+| `SIGNATURE_VERIFIED` | İmza doğrulandı |
+| `ANTI_FRAUD_CHECK` | Anti-fraud kontrolleri çalıştırıldı |
+| `LOGIN_COMPLETED` | Login başarıyla tamamlandı |
+| `LOGIN_FAILED` | Login başarısız oldu |
+| `TIMEOUT` | İşlem zaman aşımına uğradı |
+
+#### Başarısız Yanıt (İşlem Bulunamadı)
+
+**HTTP 404 Not Found**
+
+```json
+{
+  "error": "NOT_FOUND",
+  "message": "Belirtilen login işlemi bulunamadı"
+}
+```
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/tx_de23d0bf-942f-4c02-a827-a7fb842110ba/audit \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
 
 ---
 

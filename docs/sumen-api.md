@@ -224,14 +224,16 @@ E-İmza Login API'sinden alınan challenge'ı sertifika ile imzalar. İmzalama i
 
 ```json
 {
-  "type": "signLogin",
-  "requestId": "req_t3jeg5qm",
+  "type": "signLoginResult",
   "data": {
     "success": true,
-    "signature": "MIIFhAYJKoZIhvcNAQcCoIIFdTCCBXECAQEx...",
-    "certificateId": "x509-1bbdb3294163b9e1def707bf28f6b8e63d8603d700"
+    "status_code": 200,
+    "data": {
+      "loginTxId": "tx_f980f9bd-14c4-4789-a470-e65839d50d5c",
+      "status": "SUCCESS"
+    }
   },
-  "error": null
+  "requestId": "req_t3jeg5qm"
 }
 ```
 
@@ -239,12 +241,12 @@ E-İmza Login API'sinden alınan challenge'ı sertifika ile imzalar. İmzalama i
 
 | Alan | Tip | Açıklama |
 |------|-----|----------|
-| `type` | string | Cevap türü (`signLogin`) |
-| `requestId` | string | İstek kimliği |
+| `type` | string | Cevap türü (`signLoginResult`) |
 | `data.success` | boolean | İmzalama başarılı mı |
-| `data.signature` | string | İmzalama sonucu (base64 encoded) |
-| `data.certificateId` | string | Kullanılan sertifika kimliği |
-| `error` | null/object | Hata varsa hata detayları |
+| `data.status_code` | number | HTTP durum kodu |
+| `data.data.loginTxId` | string | Login işlemi ID'si |
+| `data.data.status` | string | İşlem durumu (`SUCCESS`, `FAILED` vb.) |
+| `requestId` | string | İstek kimliği |
 
 #### Başarısız Yanıtlar
 
