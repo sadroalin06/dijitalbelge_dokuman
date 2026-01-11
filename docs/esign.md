@@ -336,65 +336,112 @@ GET {baseURL}/auth/tx/{loginTxId}/audit
 
 ```json
 {
-  "loginTxId": "tx_de23d0bf-942f-4c02-a827-a7fb842110ba",
-  "logs": [
-    {
-      "timestamp": "2026-01-11T10:30:00.000Z",
-      "event": "LOGIN_TX_CREATED",
-      "level": "INFO",
-      "actor": "system",
-      "details": {
-        "email": "ahmet@x.com",
-        "platformUserId": "U-91"
-      }
-    },
-    {
-      "timestamp": "2026-01-11T10:30:15.500Z",
-      "event": "CHALLENGE_GENERATED",
-      "level": "INFO",
-      "actor": "system",
-      "details": {
-        "challengeHash": "sha256:9EZlfZMuZcuLc/8ppCjc3r5pWSE0bziAFBp0ZmvZH+Q="
-      }
-    },
-    {
-      "timestamp": "2026-01-11T10:31:00.000Z",
-      "event": "SIGNATURE_RECEIVED",
-      "level": "INFO",
-      "actor": "sumen_app",
-      "details": {
-        "certificateSerial": "ABCD1234...",
-        "sumenVersion": "2.5.1",
-        "ipAddress": "1.2.3.4"
-      }
-    },
-    {
-      "timestamp": "2026-01-11T10:31:05.000Z",
-      "event": "SIGNATURE_VERIFIED",
-      "level": "INFO",
-      "actor": "system",
-      "details": {
-        "verificationStatus": "SUCCESS",
-        "certificateIssuer": "CN=TÜRKTRUST..."
-      }
-    },
-    {
-      "timestamp": "2026-01-11T10:31:05.500Z",
-      "event": "LOGIN_COMPLETED",
-      "level": "INFO",
-      "actor": "system",
-      "details": {
-        "status": "COMPLETED",
-        "loginToken": "eyJhbGciOiJIUzI1NiIs..."
-      }
+  "v": 1,
+  "meta": {
+    "schemaVersion": 1,
+    "revocationResult": "SUCCESS"
+  },
+  "loginTxId": "tx_c268f156-5de1-445d-8668-ad07c35a293b",
+  "auditId": "161fc090-454b-40df-9b84-980444ca9a6e",
+  "email": "ahmet@x.com",
+  "tckn": "xxxxxxxxxxxxxxxxxxx",
+  "ceptel": "xxxxxxxxxxxx",
+  "status": "SUCCESS",
+  "createdAt": "2026-01-11T17:23:36.3341608Z",
+  "verifiedAtEpoch": 1768152216,
+  "txExpiresAtEpoch": 1768152302,
+  "failReason": null,
+  "errors": null,
+  "policy": "FAIL_CLOSED",
+  "crypto": {
+    "verifyMethod": "NONEwithRSA",
+    "signedContent": "DigestInfo(SHA-256(challenge))",
+    "signatureValid": true,
+    "challengeHashSha256Hex": "858a7c57692c4e07451dc0d95914a69623c69015b49c6dd42afd67255b908b73",
+    "signatureHashSha256Hex": "2539bcd7895e63c700283219e8dc36a578b579517969857bdb340e5591bbe021"
+  },
+  "device": {
+    "deviceId": "dev_fd10de39-4683-49a5-bb5d-522f8d7e4c46",
+    "hostName": "xxxxx",
+    "osName": "Windows",
+    "osVersion": "10 (10.0.26200)",
+    "arch": "AMD64",
+    "appName": "SumenApp",
+    "appVersion": "1.2.0",
+    "localIp": "192.168.1.xx",
+    "buildHash": "git:cffae2c9fdc21537cf719982a50e814440652b0c"
+  },
+  "server": {
+    "secure": "SERVER_OBSERVED",
+    "publicIp": "0:0:0:0:0:0:0:1",
+    "userAgent": "SumenApp/1.2.0"
+  },
+  "platform": {
+    "source": "PLATFORM_ASSERTED",
+    "userInfo": {
+      "ipAddress": "1.2.3.4",
+      "userAgent": "Chrome/120 Windows 11",
+      "deviceHint": "DESKTOP",
+      "locale": "tr-TR",
+      "timeZone": "Europe/Istanbul"
     }
-  ],
-  "summary": {
-    "totalEvents": 5,
-    "successCount": 5,
-    "failureCount": 0,
-    "duration": 5500,
-    "status": "SUCCESS"
+  },
+  "certificate": {
+    "chainVerified": true,
+    "leafPublicKeySize": 2048,
+    "leafFingerprintSha256Hex": "8ddb3e64548f8c3d8cb36a0e3491d0cc3af37c97d7e0a2221bf293ab16bdf1c2",
+    "issuerFingerprintSha256Hex": "38fb238804ef72e6b506730f172cb8e2406146d5d7055164a20ab59ff8636147",
+    "leaf": {
+      "name": "XXXX XXXX",
+      "tc": "XXXXXXXXX",
+      "email": "xxxxx@xxxxx.xxx",
+      "serialNumber": xxxxxxxxxxxxxx,
+      "version": "3",
+      "validFrom": "2025-02-11T10:40:06.000+00:00",
+      "validTo": "2026-02-11T10:40:06.000+00:00",
+      "publicKeyAlgorithm": "RSA",
+      "signatureAlgorithm": "SHA384withECDSA",
+      "keyUsages": ["digitalSignature", "nonRepudiation"],
+      "issuerAttributes": {
+        "C": "TR",
+        "L": "xxxxxx",
+        "O": "TÜRKTRUST Bilgi İletişim ve Bilişim Güvenliği Hizmetleri A.Ş.",
+        "CN": "TÜRKTRUST Nitelikli Elektronik Sertifika Hizmetleri H7",
+        "OU": "Dayanak: T.C. 5070 sayılı Elektronik İmza Kanunu"
+      },
+      "subjectAttributes": {
+        "C": "TR",
+        "L": "xxxxxx",
+        "CN": "xxxxxx xxxx",
+        "serialNumber": "xxxxxxxxxxx"
+      },
+      "crlUrls": ["http://www.turktrust.com.tr/sil/TURKTRUST_Nitelikli_SIL_h7.crl"],
+      "ocspUrls": ["http://ocsp.turktrust.com.tr"]
+    }
+  },
+  "revocation": {
+    "result": "SUCCESS",
+    "policy": "FAIL_CLOSED",
+    "crl": {
+      "url": "http://www.turktrust.com.tr/sil/TURKTRUST_Nitelikli_SIL_h7.crl",
+      "revoked": false,
+      "thisUpdate": "2026-01-11T17:01:26Z",
+      "nextUpdate": "2026-01-12T17:01:26Z",
+      "crlHashSha256Hex": "88fe8b642932bdf7e51a3d83382c66b344ecb90737344bebc633f29179e14a03",
+      "crlSignatureValid": true
+    },
+    "ocsp": {
+      "url": null,
+      "status": "ERROR",
+      "responseSignatureValid": false
+    }
+  },
+  "auditBinding": {
+    "bindingType": "LOGIN_CHALLENGE",
+    "boundHash": "858a7c57692c4e07451dc0d95914a69623c69015b49c6dd42afd67255b908b73",
+    "signatureHash": "2539bcd7895e63c700283219e8dc36a578b579517969857bdb340e5591bbe021",
+    "certificateFingerprintSha256": "8ddb3e64548f8c3d8cb36a0e3491d0cc3af37c97d7e0a2221bf293ab16bdf1c2",
+    "verifiedAt": "2026-01-11T17:23:43.8718617Z"
   }
 }
 ```
@@ -403,19 +450,51 @@ GET {baseURL}/auth/tx/{loginTxId}/audit
 
 | Alan | Tip | Açıklama |
 |------|-----|----------|
+| `v` | number | Yanıt şeması versiyonu |
+| `meta` | object | Metadata bilgileri |
 | `loginTxId` | string | Login işlemi ID'si |
-| `logs` | array | Tüm audit log kayıtları |
-| `logs[].timestamp` | string | Olayın gerçekleştiği zaman (ISO 8601) |
-| `logs[].event` | string | Olay türü (LOGIN_TX_CREATED, SIGNATURE_VERIFIED vb.) |
-| `logs[].level` | string | Log seviyesi (INFO, WARNING, ERROR) |
-| `logs[].actor` | string | Eylemi gerçekleştiren sistem/kullanıcı |
-| `logs[].details` | object | Olay hakkında ek bilgiler |
-| `summary` | object | İşlem özeti istatistikleri |
-| `summary.totalEvents` | number | Toplam olay sayısı |
-| `summary.successCount` | number | Başarılı olay sayısı |
-| `summary.failureCount` | number | Başarısız olay sayısı |
-| `summary.duration` | number | Toplam işlem süresi (ms) |
-| `summary.status` | string | Genel işlem durumu (SUCCESS, FAILED, PARTIAL) |
+| `auditId` | string | Audit kayıt ID'si |
+| `email` | string | Kullanıcı e-posta adresi |
+| `tckn` | string | T.C. kimlik numarasının şifrelenmiş hali |
+| `ceptel` | string | Cep telefonu numarası |
+| `status` | string | İşlem durumu (SUCCESS, FAILED) |
+| `createdAt` | string | İşlem oluşturulma zamanı (ISO 8601) |
+| `verifiedAtEpoch` | number | Doğrulama zamanı (Unix epoch, saniye) |
+| `txExpiresAtEpoch` | number | İşlem süresi sonu (Unix epoch, saniye) |
+| `failReason` | string/null | Başarısız oldu ise hata sebebi |
+| `errors` | array/null | Hata detayları |
+| `crypto` | object | İmza doğrulama bilgileri |
+| `crypto.verifyMethod` | string | Doğrulama yöntemi |
+| `crypto.signatureValid` | boolean | İmza geçerli mi |
+| `crypto.challengeHashSha256Hex` | string | Challenge'ın SHA256 hash değeri |
+| `crypto.signatureHashSha256Hex` | string | İmzanın SHA256 hash değeri |
+| `device` | object | Cihaz bilgileri (Sümen uygulaması) |
+| `device.deviceId` | string | Benzersiz cihaz ID'si |
+| `device.hostName` | string | Bilgisayar adı |
+| `device.osName` | string | İşletim sistemi adı |
+| `device.osVersion` | string | İşletim sistemi versiyonu |
+| `device.appVersion` | string | Sümen uygulaması versiyonu |
+| `device.localIp` | string | Cihazın yerel IP adresi |
+| `server` | object | Sunucu tarafından gözlemlenen bilgiler |
+| `server.publicIp` | string | Halka açık IP adresi |
+| `server.userAgent` | string | HTTP User-Agent header |
+| `platform` | object | Platform tarafından beyan edilen bilgiler |
+| `platform.userInfo` | object | Kullanıcı ortam bilgileri |
+| `certificate` | object | Sertifika doğrulama bilgileri |
+| `certificate.chainVerified` | boolean | Sertifika zinciri doğrulandı mı |
+| `certificate.leaf` | object | Leaf sertifikası bilgileri |
+| `certificate.leaf.name` | string | Sertifika sahibi adı |
+| `certificate.leaf.tc` | string | Sertifika sahibinin TC numarası |
+| `certificate.leaf.validFrom` | string | Sertifika geçerlilik başlangıcı |
+| `certificate.leaf.validTo` | string | Sertifika geçerlilik sonu |
+| `revocation` | object | Sertifika iptal kontrol bilgileri |
+| `revocation.crl` | object | CRL (Certificate Revocation List) bilgileri |
+| `revocation.ocsp` | object | OCSP (Online Certificate Status Protocol) bilgileri |
+| `auditBinding` | object | Audit ve imza bağlanma bilgileri |
+| `auditBinding.bindingType` | string | Bağlanma türü (LOGIN_CHALLENGE vb.) |
+| `auditBinding.boundHash` | string | Bağlanan hash değeri |
+| `auditBinding.signatureHash` | string | İmza hash değeri |
+| `auditBinding.verifiedAt` | string | Doğrulama zamanı |
 
 **Yaygın Olay Türleri:**
 
@@ -465,7 +544,6 @@ curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/tx_de23d0bf-942f-4
 
 **Yaygın Hataları:**
 - `tckn` 11 haneli olmalıdır
-- `ceptel` format hatalı
 - `platformUserId` boş olamaz
 - `userInfo` alanları eksik
 
@@ -521,7 +599,7 @@ RESPONSE=$(curl -X POST https://api.dijitalbelge.com/api/external/auth/tx \
   -H "X-Client-Secret: secret_xxxxx" \
   -d '{
     "email": "ahmet@x.com",
-    "ceptel": "5443476573",
+    "ceptel": "xxxxxxxxx",
     "tckn": "12345678901",
     "platformUserId": "U-91",
     "userInfo": {
