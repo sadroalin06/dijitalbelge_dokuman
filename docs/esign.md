@@ -67,7 +67,7 @@ POST {baseURL}/auth/tx
 ```json
 {
   "email": "ahmet@x.com",
-  "ceptel": "5443476573",
+  "ceptel": "xxxxxxxxx",
   "tckn": "12345678901",
   "platformUserId": "U-91",
   "userInfo": {
@@ -251,7 +251,7 @@ GET {baseURL}/auth/tx/{tokenstr}
   "accountId": 202,
   "email": "ahmet@x.com",
   "tcknHash": "sha256:...",
-  "ceptel": "5443476573",
+  "ceptel": "xxxxxxxxxxx",
   "platformUserId": "U-91",
 
   "challenge": "9EZlfZMuZcuLc/8ppCjc3r5pWSE0bziAFBp0ZmvZH+Q=",
