@@ -41,9 +41,9 @@
 
 | Özellik | Değer |
 |---------|-------|
-| Temel URL | `https://api.dijitalbelge.com/api` |
+| Temel URL | `https://app.dijitalbelge.com/api` |
 | Temel Path | `/external` |
-| Base URL | `https://api.dijitalbelge.com/api/external` |
+| Base URL | `https://app.dijitalbelge.com/api/external` |
 | Kimlik Doğrulama | X-Client-Id, X-Client-Secret |
 
 ---
@@ -118,7 +118,7 @@ Bu endpoint çağrıldıktan sonra entegrasyon platformu `loginTxId`, `challenge
 #### Örnek cURL
 
 ```bash
-curl -X POST https://api.dijitalbelge.com/api/external/auth/tx \
+curl -X POST https://app.dijitalbelge.com/api/external/auth/tx \
   -H "Content-Type: application/json" \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx" \
@@ -218,7 +218,7 @@ GET {baseURL}/auth/tx/{loginTxId}
 #### Örnek cURL
 
 ```bash
-curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/TX-20260110-ABC123XYZ \
+curl -X GET https://app.dijitalbelge.com/api/external/auth/tx/TX-20260110-ABC123XYZ \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -524,7 +524,7 @@ GET {baseURL}/auth/tx/{loginTxId}/audit
 #### Örnek cURL
 
 ```bash
-curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/tx_de23d0bf-942f-4c02-a827-a7fb842110ba/audit \
+curl -X GET https://app.dijitalbelge.com/api/external/auth/tx/tx_de23d0bf-942f-4c02-a827-a7fb842110ba/audit \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -593,7 +593,7 @@ curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/tx_de23d0bf-942f-4
 #!/bin/bash
 
 # 1. Login işlemini başlat
-RESPONSE=$(curl -X POST https://api.dijitalbelge.com/api/external/auth/tx \
+RESPONSE=$(curl -X POST https://app.dijitalbelge.com/api/external/auth/tx \
   -H "Content-Type: application/json" \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx" \
@@ -618,7 +618,7 @@ echo "İşlem başlatıldı: $TX_ID"
 for i in {1..30}; do
   sleep 5
   
-  POLL_RESPONSE=$(curl -X GET https://api.dijitalbelge.com/api/external/auth/tx/$TX_ID \
+  POLL_RESPONSE=$(curl -X GET https://app.dijitalbelge.com/api/external/auth/tx/$TX_ID \
     -H "X-Client-Id: app_xxxxx" \
     -H "X-Client-Secret: secret_xxxxx")
   

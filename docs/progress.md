@@ -17,9 +17,9 @@ Süreçler **API aracılığıyla oluşturulabilir, yönetilebilir, başlatılab
 
 | Özellik | Değer |
 |---------|-------|
-| Temel URL | `https://api.dijitalbelge.com/api` |
+| Temel URL | `https://app.dijitalbelge.com/api` |
 | Temel Path | `/external` |
-| Base URL | `https://api.dijitalbelge.com/api/external` |
+| Base URL | `https://app.dijitalbelge.com/api/external` |
 | Kimlik Doğrulama | X-Client-Id, X-Client-Secret |
 
 ---
@@ -102,7 +102,7 @@ POST {baseURL}/process-instances
 #### Örnek cURL
 
 ```bash
-curl -X POST https://api.dijitalbelge.com/api/external/process-instances \
+curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
   -H "Content-Type: application/json" \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx" \
@@ -145,7 +145,7 @@ PUT {baseURL}/process-instances/{processId}/status/start
 #### Örnek cURL
 
 ```bash
-curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/proc-12345/status/start \
+curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/proc-12345/status/start \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -197,7 +197,7 @@ Belirtilen süreci tamamlanan duruma alır.
 
 #### İstek
 
-```hhttps://api.dijitalbelge.comttp
+```http
 PUT /api/external/process-instances/{processId}/status/complete
 ```
 
@@ -223,7 +223,7 @@ PUT /api/external/process-instances/{processId}/status/complete
 #### Örnek cURL
 
 ```bash
-curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/proc-12345/status/complete \
+curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/proc-12345/status/complete \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -300,7 +300,7 @@ GET {baseURL}/process-instances/{processId}
 #### Örnek cURL
 
 ```bash
-curl -X GET https://api.dijitalbelge.com/api/external/process-instances/147 \
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147 \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -332,7 +332,7 @@ Başarılı silme işleminden sonra hiçbir içerik döndürülmez.
 #### Örnek cURL
 
 ```bash
-curl -X DELETE https://api.dijitalbelge.com/api/external/process-instances/147 \
+curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147 \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -408,19 +408,19 @@ curl -X DELETE https://api.dijitalbelge.com/api/external/process-instances/147 \
 
 ```bash
 # 1. Yeni süreç oluştur
-PROCESS_ID=$(curl -X POST https://api.dijitalbelge.com/api/external/process-instances \
+PROCESS_ID=$(curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
   -H "Content-Type: application/json" \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx" \
   -d '{"name":"test süreci"}' | jq -r '.id')
 
 # 2. Süreci başlat
-curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/start \
+curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/start \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 
 # 3. Süreci tamamla
-curl -X PUT https://api.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/complete \
+curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/complete \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -448,7 +448,7 @@ Tüm API isteklerine aşağıdaki header'ları eklemeniz zorunludur:
 === "cURL"
 
     ```bash
-    curl -X POST https://api.dijitalbelge.com/api/external/process-instances \
+    curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
       -H "X-Client-Id: app_xxxxx" \
       -H "X-Client-Secret: secret_xxxxx" \
       -H "Content-Type: application/json" \
@@ -466,7 +466,7 @@ Tüm API isteklerine aşağıdaki header'ları eklemeniz zorunludur:
 === "JavaScript"
 
     ```javascript
-    fetch("https://api.dijitalbelge.com/api/external/process-instances", {
+    fetch("https://app.dijitalbelge.com/api/external/process-instances", {
       method: "POST",
       headers: {
         "X-Client-Id": "app_xxxxx",
@@ -488,7 +488,7 @@ Tüm API isteklerine aşağıdaki header'ları eklemeniz zorunludur:
     }
 
     requests.post(
-        "https://api.dijitalbelge.com/api/external/process-instances",
+        "https://app.dijitalbelge.com/api/external/process-instances",
         headers=headers,
         json={"name": "test süreci"}
     )
