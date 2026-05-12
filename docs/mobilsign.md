@@ -28,7 +28,7 @@
    ↓
 6. Kullanıcının telefonuna imza isteği gelir ve PIN ile onaylar
    ↓
-7. Platform /external/auth/{operator}/mobil/{mobileLoginTxId} ile durumu polling yapar
+7. Platform /external/auth/{operator}/mobil/{loginTxId} ile durumu polling yapar
    ↓
 8. İmza başarıyla onaylandığında Dijital Belge bir auditlog oluşturur
    ↓
@@ -66,29 +66,13 @@ GET {baseURL}/auth/operators
 
 ```json
 [
-  {
-    "operatorCode": "TURKCELL",
-    "displayName": "Turkcell",
-    "logoUrl": "https://app.dijitalbelge.com/assets/operators/turkcell.svg"
-  },
-  {
-    "operatorCode": "VODAFONE",
-    "displayName": "Vodafone",
-    "logoUrl": "https://app.dijitalbelge.com/assets/operators/vodafone.svg"
-  },
-  {
-    "operatorCode": "TURKTELEKOM",
-    "displayName": "Türk Telekom",
-    "logoUrl": "https://app.dijitalbelge.com/assets/operators/turktelekom.svg"
-  }
+  "TURKCELL",
+  "TURK_TELEKOM",
+  "VODAFONE"
 ]
 ```
 
-| Alan | Tip | Açıklama |
-|------|-----|----------|
-| `operatorCode` | string | Operatör kodu (API çağrılarında kullanılır) |
-| `displayName` | string | Kullanıcıya gösterilecek operatör adı |
-| `logoUrl` | string | Operatör logo URL'si |
+Dönen değerler, diğer endpoint'lerde `{operator}` path parametresi olarak kullanılır.
 
 #### Örnek cURL
 
@@ -155,21 +139,19 @@ POST {baseURL}/auth/{operator}/mobiltx
 
 ```json
 {
-  "mobileLoginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
-  "operator": "TURKCELL",
-  "status": "PENDING",
+  "loginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
+  "challenge": "v8RAgZcFlbLjbkwwrG+2h6+DNsjSVjF81KIm2cxWrNk=",
   "expiresIn": 120
 }
 ```
 
 | Alan | Tip | Açıklama |
 |------|-----|----------|
-| `mobileLoginTxId` | string | Mobil imza işlem kimliği |
-| `operator` | string | Kullanılan GSM operatörü |
-| `status` | string | İşlem durumu (başlangıçta `PENDING`) |
+| `loginTxId` | string | Mobil imza işlem kimliği |
+| `challenge` | string | Operatör tarafından imzalanacak challenge (base64) |
 | `expiresIn` | number | İşlemin geçerlilik süresi (saniye) |
 
-Bu endpoint çağrıldıktan sonra kullanıcının telefonuna GSM operatörü üzerinden bir imza isteği gönderilir. Kullanıcı telefonda PIN girerek isteği onaylar. Platform bu sürede `mobileLoginTxId` ile polling yaparak sonucu kontrol eder.
+Bu endpoint çağrıldıktan sonra kullanıcının telefonuna GSM operatörü üzerinden bir imza isteği gönderilir. Kullanıcı telefonda PIN girerek isteği onaylar. Platform bu sürede `loginTxId` ile polling yaparak sonucu kontrol eder.
 
 #### Örnek cURL
 
@@ -202,7 +184,7 @@ Mobil imza işleminin durumunu kontrol eder. Kullanıcı telefonunda PIN girip i
 #### İstek
 
 ```http
-GET {baseURL}/auth/{operator}/mobil/{mobileLoginTxId}
+GET {baseURL}/auth/{operator}/mobil/{loginTxId}
 ```
 
 **Path Parameters:**
@@ -210,7 +192,7 @@ GET {baseURL}/auth/{operator}/mobil/{mobileLoginTxId}
 | Parametre | Tip | Açıklama |
 |-----------|-----|----------|
 | `operator` | string | Operatör kodu (örn: `TURKCELL`) |
-| `mobileLoginTxId` | string | İşlem ID'si (önceki endpoint'ten döndürülen, örn: `mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9`) |
+| `loginTxId` | string | İşlem ID'si (önceki endpoint'ten döndürülen, örn: `mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9`) |
 
 #### Başarılı Yanıt (İmza Bekleniyor)
 
@@ -218,7 +200,7 @@ GET {baseURL}/auth/{operator}/mobil/{mobileLoginTxId}
 
 ```json
 {
-  "mobileLoginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
+  "loginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
   "operator": "TURKCELL",
   "status": "PENDING",
   "message": "İmza onayı bekleniyor",
@@ -233,7 +215,7 @@ GET {baseURL}/auth/{operator}/mobil/{mobileLoginTxId}
 
 ```json
 {
-  "mobileLoginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
+  "loginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
   "operator": "TURKCELL",
   "status": "USED",
   "message": "Mobil imza başarıyla doğrulandı",
@@ -250,7 +232,7 @@ GET {baseURL}/auth/{operator}/mobil/{mobileLoginTxId}
 
 | Alan | Tip | Açıklama |
 |------|-----|----------|
-| `mobileLoginTxId` | string | İşlem kimliği |
+| `loginTxId` | string | İşlem kimliği |
 | `operator` | string | Kullanılan GSM operatörü |
 | `status` | string | İşlem durumu (`PENDING`, `USED`, `EXPIRED`) |
 | `message` | string | Durum mesajı |
@@ -277,7 +259,7 @@ GET {baseURL}/auth/{operator}/mobil/{mobileLoginTxId}
 
 ```json
 {
-  "mobileLoginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
+  "loginTxId": "mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9",
   "operator": "TURKCELL",
   "status": "EXPIRED",
   "message": "İşlem zaman aşımına uğradı. Lütfen tekrar deneyin",
@@ -302,14 +284,14 @@ Belirtilen mobil imza login işlemi için tüm audit log kayıtlarını ve işle
 #### İstek
 
 ```http
-GET {baseURL}/auth/tx/{mobileLoginTxId}/audit
+GET {baseURL}/auth/tx/{loginTxId}/audit
 ```
 
 **Path Parameters:**
 
 | Parametre | Tip | Açıklama |
 |-----------|-----|----------|
-| `mobileLoginTxId` | string | Mobil imza işlem ID'si (örn: `mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9`) |
+| `loginTxId` | string | Mobil imza işlem ID'si (örn: `mobiltx_882ee773-7905-49b9-b688-7d0b6230c9b9`) |
 
 #### Başarılı Yanıt
 
@@ -575,7 +557,7 @@ RESPONSE=$(curl -s -X POST https://app.dijitalbelge.com/api/external/auth/TURKCE
     }
   }')
 
-TX_ID=$(echo $RESPONSE | jq -r '.mobileLoginTxId')
+TX_ID=$(echo $RESPONSE | jq -r '.loginTxId')
 echo "Mobil imza isteği gönderildi: $TX_ID"
 echo "Kullanıcı telefonunda PIN girmeyi bekliyor..."
 
