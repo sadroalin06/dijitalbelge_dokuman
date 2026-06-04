@@ -52,8 +52,8 @@ Her oluşturulan sürecin **otomatik olarak benzersiz bir QR kodu** oluşturulur
 | `DELETE` | `/process-instances/{processId}/document/{documentId}` | `document:write` | Dökümanı sil |
 | `POST` | `/process-instances/{processId}/document/{documentId}/signers` | `document:sign` | Dökümana imzacı ekle |
 | `DELETE` | `/process-instances/{processId}/document/{documentId}/signer/{signerId}` | `document:sign` | Döküman imzacısını sil |
-| `POST` | `/process-instances/{processId}/autosign` | `autosign:write` | Otomatik imzalamayı etkinleştir |
-| `DELETE` | `/process-instances/{processId}/autosign` | `autosign:write` | Otomatik imzalamayı devre dışı bırak |
+| `POST` | `/process-instances/{processId}/autosign` | `autosign:write` | Bulut imzalamayı etkinleştir → [detay](autosign.md) |
+| `DELETE` | `/process-instances/{processId}/autosign` | `autosign:write` | Bulut imzalamayı devre dışı bırak → [detay](autosign.md) |
 
 ---
 
@@ -725,101 +725,7 @@ curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/d
 
 ## Otomatik İmzalama
 
-Otomatik imzalama, belirlenen koşullar sağlandığında imzalama işleminin otomatik gerçekleştirilmesini sağlar. Bu endpoint'ler yalnızca **hesaba tanımlı IP whitelist'inden** gelen istekleri kabul eder.
-
-!!! warning
-    Bu endpoint'lere yalnızca hesabınıza tanımlı IP adreslerinden erişilebilir. Diğer IP'lerden gelen istekler `403 Forbidden` döner.
-
-### 14. Otomatik İmzalamayı Etkinleştir
-
-Belirtilen süreç için otomatik imzalamayı etkinleştirir.
-
-**Scope:** `autosign:write`
-
-#### İstek
-
-```http
-POST {baseURL}/process-instances/{processId}/autosign
-```
-
-**Path Parameters:**
-
-| Parametre | Tip | Açıklama |
-|-----------|-----|----------|
-| `processId` | number | Sürecin ID'si |
-
-#### Request Body (Opsiyonel)
-
-```json
-{
-  "expiresHours": 48
-}
-```
-
-| Alan | Tip | Zorunlu | Açıklama |
-|------|-----|---------|----------|
-| `expiresHours` | number | Hayır | Geçerlilik süresi (saat). Varsayılan: 72 |
-
-#### Başarılı Yanıt
-
-**HTTP 200 OK**
-
-```json
-{
-  "processId": 147,
-  "enabled": true,
-  "expiresAt": "2026-01-08T20:00:00",
-  "autoSignToken": "as_xxxxxx"
-}
-```
-
-#### Örnek cURL
-
-```bash
-curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/autosign \
-  -H "Content-Type: application/json" \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx" \
-  -d '{
-    "expiresHours": 48
-  }'
-```
-
----
-
-### 15. Otomatik İmzalamayı Devre Dışı Bırak
-
-Belirtilen süreç için etkin olan otomatik imzalamayı iptal eder.
-
-**Scope:** `autosign:write`
-
-#### İstek
-
-```http
-DELETE {baseURL}/process-instances/{processId}/autosign
-```
-
-**Path Parameters:**
-
-| Parametre | Tip | Açıklama |
-|-----------|-----|----------|
-| `processId` | number | Sürecin ID'si |
-
-#### Başarılı Yanıt
-
-**HTTP 200 OK**
-
-```
-ok
-```
-
-#### Örnek cURL
-
-```bash
-curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/autosign \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx"
-```
+Bulut İmzalama (Autosign) endpoint'leri bu sayfadan ayrılmış olup ayrıntılar için [Bulut İmzalama (Autosign)](autosign.md) sayfasını inceleyin.
 
 ---
 
