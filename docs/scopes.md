@@ -22,9 +22,10 @@ Bazı yetkiler yalnızca belirli paketlerde aktiftir. İlgili scope’u kullanab
 
 | Scope | Açıklama | Minimum Paket |
 |------|---------|---------------|
-| `document:read` | İmzalı / imzasız belge içeriğini okuma | **Pro** |
+| `document:read` | İmzalı / imzasız belge içeriğini okuma ve dosyasını indirme | **Pro** |
+| `document:write` | Sürece tekil belge ekleme / silme | **Plus** |
 | `document:upload` | Sürece belge yükleme | **Plus** |
-| `document:sign` | Belge imzalama işlemi başlatma | **Plus** |
+| `document:sign` | Dökümana imzacı ekleme / kaldırma | **Plus** |
 
 ---
 
@@ -43,10 +44,9 @@ Bazı yetkiler yalnızca belirli paketlerde aktiftir. İlgili scope’u kullanab
 
 | Scope | Açıklama | Minimum Paket |
 |------|---------|---------------|
-| `process:start` | Tanımlı süreç başlatma | **Plus** |
+| `process:start` | Süreç oluşturma, başlatma, iptal etme, tamamlama ve silme | **Plus** |
 | `process:status` | Süreç durumunu görüntüleme | **Plus** |
-| `process:create` | Yeni süreç oluşturma | **Pro** |
-| `process:document:add` | Sürece taslaktan veya manuel belge ekleme | **Pro** |
+| `process:documenttype:write` | Sürece taslaktan belge ekleme | **Pro** |
 | `process:event:subscribe` | Süreç durum değişiklikleri için event alma | **Pro** |
 
 ---
@@ -57,6 +57,14 @@ Bazı yetkiler yalnızca belirli paketlerde aktiftir. İlgili scope’u kullanab
 |------|---------|---------------|
 | `event:read` | Süreç durum event’lerini alma | **Pro** |
 | `webhook:manage` | Webhook tanımlama ve yönetme | **Pro** |
+
+---
+
+### 🤖 AutoSign Scopes
+
+| Scope | Açıklama | Minimum Paket |
+|------|---------|---------------|
+| `autosign:write` | Otomatik imzalamayı etkinleştirme / devre dışı bırakma (IP whitelist zorunlu) | **Enterprise** |
 
 ---
 
@@ -82,18 +90,18 @@ Bazı yetkiler yalnızca belirli paketlerde aktiftir. İlgili scope’u kullanab
 ### Plus
 - ✅ Basit API erişimi
 - ✅ İmzacı yönetimi
-- ✅ Tanımlı süreçlere belge yükleme
-- ✅ Süreç başlatma
-- ❌ Süreç oluşturma
+- ✅ Süreç oluşturma, başlatma, iptal, tamamlama ve silme
+- ✅ Tekil döküman ekleme / silme
+- ✅ Dökümana imzacı ekleme / kaldırma
+- ❌ Taslaktan döküman ekleme
 - ❌ Event / webhook
 
 ---
 
 ### Pro
 - ✅ Tüm Plus özellikleri
-- ✅ Süreç oluşturma
-- ✅ Taslaktan veya manuel belge ekleme
-- ✅ İmzalı belge içeriğine erişim
+- ✅ Taslaktan belge ekleme (`process:documenttype:write`)
+- ✅ İmzalı / imzasız belge içeriğine ve dosyasına erişim (`document:read`)
 - ✅ Süreç event’leri (status change)
 - ✅ Webhook entegrasyonu
 
@@ -101,6 +109,7 @@ Bazı yetkiler yalnızca belirli paketlerde aktiftir. İlgili scope’u kullanab
 
 ### Enterprise
 - ✅ Tüm Pro özellikleri
+- ✅ Otomatik imzalama (`autosign:write`, IP whitelist zorunlu)
 - ✅ Uygulama içinden imzalama (embedded signing)
 - ✅ Sumen uygulama entegrasyonu
 - ✅ İmza akışını bağımsız uygulama içinde yönetme

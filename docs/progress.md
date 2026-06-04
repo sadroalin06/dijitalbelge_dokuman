@@ -35,11 +35,35 @@ Her oluşturulan sürecin **otomatik olarak benzersiz bir QR kodu** oluşturulur
 
 ---
 
-## Endpoints
+## Endpoint Özeti
+
+| Method | Path | Scope | Açıklama |
+|--------|------|-------|----------|
+| `POST` | `/process-instances` | `process:start` | Yeni süreç oluştur |
+| `GET` | `/process-instances/{processId}` | `process:status` | Süreç detayını getir |
+| `PUT` | `/process-instances/{processId}/status/start` | `process:start` | Süreci başlat |
+| `PUT` | `/process-instances/{processId}/status/cancel` | `process:start` | Süreci iptal et |
+| `PUT` | `/process-instances/{processId}/status/complete` | `process:start` | Süreci tamamla |
+| `DELETE` | `/process-instances/{processId}` | `process:start` | Süreci sil |
+| `POST` | `/process-instances/{processId}/document/single` | `document:write` | Sürece tekil döküman ekle |
+| `POST` | `/process-instances/{processId}/document/document-type` | `process:documenttype:write` | Taslaktan döküman ekle |
+| `GET` | `/process-instances/{processId}/document/{documentId}` | `document:read` | Döküman bilgilerini getir |
+| `GET` | `/process-instances/{processId}/document/{documentId}/file` | `document:read` | Döküman dosyasını getir (Base64) |
+| `DELETE` | `/process-instances/{processId}/document/{documentId}` | `document:write` | Dökümanı sil |
+| `POST` | `/process-instances/{processId}/document/{documentId}/signers` | `document:sign` | Dökümana imzacı ekle |
+| `DELETE` | `/process-instances/{processId}/document/{documentId}/signer/{signerId}` | `document:sign` | Döküman imzacısını sil |
+| `POST` | `/process-instances/{processId}/autosign` | `autosign:write` | Otomatik imzalamayı etkinleştir |
+| `DELETE` | `/process-instances/{processId}/autosign` | `autosign:write` | Otomatik imzalamayı devre dışı bırak |
+
+---
+
+## Süreç Yönetimi
 
 ### 1. Yeni Süreç Oluştur
 
 Yeni bir belge işleme süreci oluşturur.
+
+**Scope:** `process:start`
 
 #### İstek
 
@@ -59,7 +83,7 @@ POST {baseURL}/process-instances
 
 | Alan | Tip | Zorunlu | Açıklama |
 |------|-----|---------|----------|
-| `name` | string | Evet | Sürecin adı |
+| `name` | string | Hayır | Sürecin adı |
 
 #### Başarılı Yanıt
 
@@ -89,7 +113,7 @@ POST {baseURL}/process-instances
 | `accountId` | number | Hesap ID'si |
 | `createdByUserId` | number | Süreci oluşturan kullanıcı ID'si |
 | `name` | string | Sürecin adı |
-| `statusCode` | string | Sürecin durum kodu (NEW, STARTED, IN_PROGRESS, COMPLETED, ARCHIVED, CANCELED, DELETED) |
+| `statusCode` | string | Sürecin durum kodu (`NEW`, `STARTED`, `IN_PROGRESS`, `COMPLETED`, `ARCHIVED`, `CANCELED`, `DELETED`) |
 | `signers` | array | İmzalayıcılar listesi |
 | `documents` | array | Belgeler listesi |
 | `createdAt` | string | Oluşturulma tarihi (ISO 8601) |
@@ -113,126 +137,11 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
 
 ---
 
-### 2. Süreci Başlat
+### 2. Süreç Detayını Getir
 
-Belirtilen süreci başlatır.
+Belirtilen sürecin imzacı ve döküman bilgileriyle birlikte detaylı bilgilerini döndürür.
 
-#### İstek
-
-```http
-PUT {baseURL}/process-instances/{processId}/status/start
-```
-
-**Path Parameters:**
-
-| Parametre | Tip | Açıklama |
-|-----------|-----|----------|
-| `processId` | string | Sürecin ID'si |
-
-#### Başarılı Yanıt
-
-**HTTP 200 OK**
-
-```json
-{
-  "id": "proc-12345",
-  "name": "test süreci",
-  "status": "STARTED",
-  "startedAt": "2026-01-10T10:31:00Z"
-}
-```
-
-#### Örnek cURL
-
-```bash
-curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/proc-12345/status/start \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx"
-```
-
----
-
-### 3. Süreci İptal Et
-
-Belirtilen süreci iptal eder.
-
-#### İstek
-
-```http
-PUT {baseURL}/process-instances/{processId}/status/cancel
-```
-
-**Path Parameters:**
-
-| Parametre | Tip | Açıklama |
-|-----------|-----|----------|
-| `processId` | string | Sürecin ID'si |
-
-#### Başarılı Yanıt
-
-**HTTP 200 OK**
-
-```json
-{
-  "id": "proc-12345",
-  "name": "test süreci",
-  "status": "CANCELLED",
-  "cancelledAt": "2026-01-10T10:32:00Z"
-}
-```
-
-#### Örnek cURL
-
-```bashdijitalbelge.com/api/external/process-instances/proc-12345/status/cancel \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxxi/external/process-instances/proc-12345/status/cancel \
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
-
----
-
-### 4. Süreci Tamamla
-
-Belirtilen süreci tamamlanan duruma alır.
-
-#### İstek
-
-```http
-PUT /api/external/process-instances/{processId}/status/complete
-```
-
-**Path Parameters:**
-
-| Parametre | Tip | Açıklama |
-|-----------|-----|----------|
-| `processId` | string | Sürecin ID'si |
-
-#### Başarılı Yanıt
-
-**HTTP 200 OK**
-
-```json
-{
-  "id": "proc-12345",
-  "name": "test süreci",
-  "status": "COMPLETED",
-  "completedAt": "2026-01-10T10:33:00Z"
-}
-```
-
-#### Örnek cURL
-
-```bash
-curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/proc-12345/status/complete \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx"
-```
-
----
-
-### 5. Süreç Detayını Getir
-
-Belirtilen sürecin detaylı bilgilerini döndürür.
+**Scope:** `process:status`
 
 #### İstek
 
@@ -281,22 +190,6 @@ GET {baseURL}/process-instances/{processId}
 }
 ```
 
-| Alan | Tip | Açıklama |
-|------|-----|----------|
-| `id` | number | Sürecin benzersiz ID'si |
-| `accountId` | number | Hesap ID'si |
-| `createdByUserId` | number | Süreci oluşturan kullanıcı ID'si |
-| `name` | string | Sürecin adı |
-| `statusCode` | string | Sürecin durum kodu |
-| `signers` | array | İmzalayan taraflar listesi |
-| `documents` | array | Sürece ait belgeler listesi |
-| `createdAt` | string | Oluşturulma tarihi |
-| `updatedAt` | string | Son güncellenme tarihi |
-| `hasQrCode` | boolean | QR kod bulunup bulunmadığı |
-| `responsibleBy` | string | Sorumlu kişi |
-| `accessToken` | string | Erişim token'ı |
-| `tokenExpiry` | string | Token geçerlilik süresi |
-
 #### Örnek cURL
 
 ```bash
@@ -307,9 +200,119 @@ curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147 \
 
 ---
 
+### 3. Süreci Başlat
+
+Belirtilen süreci başlatır. Başlatılan süreç imzacılara bildirim gönderir.
+
+**Scope:** `process:start`
+
+#### İstek
+
+```http
+PUT {baseURL}/process-instances/{processId}/status/start
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```
+ok
+```
+
+#### Örnek cURL
+
+```bash
+curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/147/status/start \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 4. Süreci İptal Et
+
+Belirtilen süreci iptal eder.
+
+**Scope:** `process:start`
+
+#### İstek
+
+```http
+PUT {baseURL}/process-instances/{processId}/status/cancel
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```
+ok
+```
+
+#### Örnek cURL
+
+```bash
+curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/147/status/cancel \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 5. Süreci Tamamla
+
+Belirtilen süreci tamamlanmış duruma alır.
+
+**Scope:** `process:start`
+
+#### İstek
+
+```http
+PUT {baseURL}/process-instances/{processId}/status/complete
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```
+ok
+```
+
+#### Örnek cURL
+
+```bash
+curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/147/status/complete \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
 ### 6. Süreci Sil
 
 Belirtilen süreci sistemden siler.
+
+**Scope:** `process:start`
 
 #### İstek
 
@@ -325,14 +328,495 @@ DELETE {baseURL}/process-instances/{processId}
 
 #### Başarılı Yanıt
 
-**HTTP 204 No Content**
+**HTTP 200 OK**
 
-Başarılı silme işleminden sonra hiçbir içerik döndürülmez.
+```
+(boş)
+```
 
 #### Örnek cURL
 
 ```bash
 curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+## Döküman Yönetimi
+
+### 7. Sürece Tekil Döküman Ekle
+
+Sürece Base64 formatında bir döküman ekler.
+
+**Scope:** `document:write`
+
+#### İstek
+
+```http
+POST {baseURL}/process-instances/{processId}/document/single
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Request Body
+
+```json
+{
+  "name": "Sözleşme.pdf",
+  "base64": "JVBERi0xLjQK...",
+  "fileName": "sozlesme.pdf"
+}
+```
+
+| Alan | Tip | Zorunlu | Açıklama |
+|------|-----|---------|----------|
+| `name` | string | Evet | Döküman adı |
+| `base64` | string | Evet | PDF dosyasının Base64 içeriği |
+| `fileName` | string | Evet | Dosya adı |
+
+#### Başarılı Yanıt
+
+**HTTP 201 Created**
+
+```json
+{
+  "id": 7203,
+  "name": "Sözleşme.pdf",
+  "statusCode": "PENDING",
+  "createdAt": "2026-01-05T20:00:00"
+}
+```
+
+#### Örnek cURL
+
+```bash
+curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/document/single \
+  -H "Content-Type: application/json" \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx" \
+  -d '{
+    "name": "Sözleşme.pdf",
+    "base64": "JVBERi0xLjQK...",
+    "fileName": "sozlesme.pdf"
+  }'
+```
+
+---
+
+### 8. Taslaktan Döküman Ekle
+
+Tanımlı bir döküman taslağını kullanarak sürece belge ekler. Taslak ID'si ile imzacı bilgileri gönderilir.
+
+**Scope:** `process:documenttype:write`
+
+#### İstek
+
+```http
+POST {baseURL}/process-instances/{processId}/document/document-type
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Request Body
+
+```json
+{
+  "id": 22,
+  "name": "Ticari İletişim İzni",
+  "isSign": true,
+  "isApprove": true,
+  "isUpload": false,
+  "document": {
+    "base64": "",
+    "fileName": "deneme.pdf"
+  },
+  "signings": [
+    {
+      "id": 14,
+      "signer": {
+        "id": 138
+      }
+    }
+  ]
+}
+```
+
+Detaylı alan açıklamaları için [Taslaktan Döküman Ekleme](progress_doctype.md) sayfasını inceleyin.
+
+#### Başarılı Yanıt
+
+**HTTP 201 Created**
+
+```json
+{
+  "id": 7203
+}
+```
+
+#### Örnek cURL
+
+```bash
+curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/document/document-type \
+  -H "Content-Type: application/json" \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx" \
+  -d '{
+    "id": 22,
+    "signings": [{ "id": 14, "signer": { "id": 138 } }]
+  }'
+```
+
+---
+
+### 9. Döküman Bilgilerini Getir
+
+Süreçteki belirli bir dökümanın detay bilgilerini döndürür.
+
+**Scope:** `document:read`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/document/{documentId}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+{
+  "id": 7203,
+  "name": "Sözleşme.pdf",
+  "statusCode": "SIGNED",
+  "signers": [
+    {
+      "id": 1,
+      "signerName": "Ali Veli",
+      "signedAt": "2026-01-06T10:00:00"
+    }
+  ],
+  "createdAt": "2026-01-05T20:00:00",
+  "updatedAt": "2026-01-06T10:00:00"
+}
+```
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/document/7203 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 10. Döküman Dosyasını Getir (Base64)
+
+Sürece ait dökümanın en son yüklü halini Base64 formatında döndürür.
+
+**Scope:** `document:read`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/document/{documentId}/file
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+{
+  "fileName": "sozlesme.pdf",
+  "mimeType": "application/pdf",
+  "base64": "JVBERi0xLjQK...",
+  "size": 204800
+}
+```
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `fileName` | string | Dosya adı |
+| `mimeType` | string | Dosya MIME türü |
+| `base64` | string | Dosyanın Base64 içeriği |
+| `size` | number | Dosya boyutu (byte) |
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/file \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 11. Dökümanı Sil
+
+Süreçten belirli bir dökümanı kaldırır.
+
+**Scope:** `document:write`
+
+#### İstek
+
+```http
+DELETE {baseURL}/process-instances/{processId}/document/{documentId}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Silinecek dökümanın ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```
+Döküman Silindi
+```
+
+#### Örnek cURL
+
+```bash
+curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/document/7203 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+## Döküman İmzacı Yönetimi
+
+### 12. Dökümana İmzacı Ekle
+
+Belirtilen dökümana yeni bir imzacı görevi ekler.
+
+**Scope:** `document:sign`
+
+#### İstek
+
+```http
+POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+
+#### Request Body
+
+```json
+{
+  "signerId": 138,
+  "signerName": "Ali Veli",
+  "order": 1,
+  "isRequired": true
+}
+```
+
+| Alan | Tip | Zorunlu | Açıklama |
+|------|-----|---------|----------|
+| `signerId` | number | Evet | İmzacının ID'si |
+| `signerName` | string | Hayır | İmzacının adı |
+| `order` | number | Hayır | İmzalama sırası |
+| `isRequired` | boolean | Hayır | İmza zorunlu mu |
+
+#### Başarılı Yanıt
+
+**HTTP 201 Created**
+
+```json
+{
+  "id": 55,
+  "documentInstanceId": 7203,
+  "signerId": 138,
+  "signerName": "Ali Veli",
+  "order": 1,
+  "statusCode": "PENDING",
+  "createdAt": "2026-01-05T20:00:00"
+}
+```
+
+#### Örnek cURL
+
+```bash
+curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/signers \
+  -H "Content-Type: application/json" \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx" \
+  -d '{
+    "signerId": 138,
+    "order": 1,
+    "isRequired": true
+  }'
+```
+
+---
+
+### 13. Döküman İmzacısını Sil
+
+Belirtilen döküman üzerindeki imzacı görevini kaldırır.
+
+**Scope:** `document:sign`
+
+#### İstek
+
+```http
+DELETE {baseURL}/process-instances/{processId}/document/{documentId}/signer/{signerId}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+| `signerId` | number | Kaldırılacak imzacının ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```
+İmzacı Silindi
+```
+
+#### Örnek cURL
+
+```bash
+curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/signer/138 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+## Otomatik İmzalama
+
+Otomatik imzalama, belirlenen koşullar sağlandığında imzalama işleminin otomatik gerçekleştirilmesini sağlar. Bu endpoint'ler yalnızca **hesaba tanımlı IP whitelist'inden** gelen istekleri kabul eder.
+
+!!! warning
+    Bu endpoint'lere yalnızca hesabınıza tanımlı IP adreslerinden erişilebilir. Diğer IP'lerden gelen istekler `403 Forbidden` döner.
+
+### 14. Otomatik İmzalamayı Etkinleştir
+
+Belirtilen süreç için otomatik imzalamayı etkinleştirir.
+
+**Scope:** `autosign:write`
+
+#### İstek
+
+```http
+POST {baseURL}/process-instances/{processId}/autosign
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Request Body (Opsiyonel)
+
+```json
+{
+  "expiresHours": 48
+}
+```
+
+| Alan | Tip | Zorunlu | Açıklama |
+|------|-----|---------|----------|
+| `expiresHours` | number | Hayır | Geçerlilik süresi (saat). Varsayılan: 72 |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+{
+  "processId": 147,
+  "enabled": true,
+  "expiresAt": "2026-01-08T20:00:00",
+  "autoSignToken": "as_xxxxxx"
+}
+```
+
+#### Örnek cURL
+
+```bash
+curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/autosign \
+  -H "Content-Type: application/json" \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx" \
+  -d '{
+    "expiresHours": 48
+  }'
+```
+
+---
+
+### 15. Otomatik İmzalamayı Devre Dışı Bırak
+
+Belirtilen süreç için etkin olan otomatik imzalamayı iptal eder.
+
+**Scope:** `autosign:write`
+
+#### İstek
+
+```http
+DELETE {baseURL}/process-instances/{processId}/autosign
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```
+ok
+```
+
+#### Örnek cURL
+
+```bash
+curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/autosign \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
@@ -373,6 +857,15 @@ curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147 \
 }
 ```
 
+### 403 Forbidden
+
+```json
+{
+  "error": "FORBIDDEN",
+  "message": "Bu işlem için yeterli yetki yok veya IP adresi yetkisiz"
+}
+```
+
 ### 404 Not Found
 
 ```json
@@ -408,18 +901,25 @@ curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147 \
 
 ```bash
 # 1. Yeni süreç oluştur
-PROCESS_ID=$(curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
+PROCESS_ID=$(curl -s -X POST https://app.dijitalbelge.com/api/external/process-instances \
   -H "Content-Type: application/json" \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx" \
   -d '{"name":"test süreci"}' | jq -r '.id')
 
-# 2. Süreci başlat
+# 2. Dökümana imzacı ekle
+curl -X POST https://app.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/document/7203/signers \
+  -H "Content-Type: application/json" \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx" \
+  -d '{"signerId": 138, "order": 1}'
+
+# 3. Süreci başlat
 curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/start \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 
-# 3. Süreci tamamla
+# 4. Süreci tamamla
 curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/$PROCESS_ID/status/complete \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
@@ -511,3 +1011,5 @@ Daha fazla bilgi için [Kimlik Doğrulama](authentication.md) sayfasını ziyare
 - [API Referansı](reference-api.md)
 - [Kimlik Doğrulama](authentication.md)
 - [Hata Kodları](errors.md)
+- [Taslaktan Döküman Ekleme](progress_doctype.md)
+- [İmzacı Yönetimi](signers.md)
