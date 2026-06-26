@@ -8,15 +8,15 @@ Bu sayfa, Dijital Belge platformunda kullanılabilen imzalama türlerini ve bu t
 
 Her imzalama türü, kimlik doğrulama güvencesi ve kullanıcı deneyimi açısından farklı bir seviyeye karşılık gelir.
 
-| Kod | Ad | Kimlik Doğrulama Yöntemi | Güvence Seviyesi |
-|-----|----|--------------------------|-----------------|
-| `EMAIL_TIMESTAMP` | E-Posta ile Dijital Onay | E-posta onayı + zaman damgası | Düşük |
-| `SMSOTP_TIMESTAMP` | SMSOTP ile Doğrulama | SMS OTP + zaman damgası | Orta |
-| `TCKK_TIMESTAMP` | Kimlik(TCKK) ile Dijital Onay | Kimlik Kartı NFC + SMS doğrulama + Konum + zaman damgası | Yüksek |
-| `TCKK_FACE_TIMESTAMP` | TCKK ve Yüz Tanıma Dijital İmza | Kimlik Kartı NFC + Yüz tanıma + SMS doğrulama + Konum | Çok Yüksek |
-| `TCKK_ONBOARDING` | TCKK+Yüz Tanıma Videolu Dijital İmza | Kimlik Kartı NFC + Kimlik Kartı + Fotoğraf + Video + SMS doğrulama + Konum | Çok Yüksek+ |
-| `EIMZA` | Elektronik İmza | Nitelikli elektronik imza sertifikası | En Yüksek |
-| `MOBILE_IMZA` | Mobil İmza | Mobil operatör nitelikli elektronik imza (Turkcell, Vodafone, Türk Telekom) | En Yüksek |
+| Kod | Ad | Kimlik Doğrulama Yöntemi | Güvence Seviyesi | Kontör |
+|-----|----|--------------------------|-----------------|--------|
+| `EMAIL_TIMESTAMP` | E-Posta ile Dijital Onay | E-posta onayı + zaman damgası | Düşük | 1 |
+| `SMSOTP_TIMESTAMP` | SMSOTP ile Doğrulama | SMS OTP + zaman damgası | Orta | 1 |
+| `TCKK_TIMESTAMP` | Kimlik(TCKK) ile Dijital Onay | Kimlik Kartı NFC + SMS doğrulama + Konum + zaman damgası | Yüksek | 2 |
+| `TCKK_FACE_TIMESTAMP` | TCKK ve Yüz Tanıma Dijital İmza | Kimlik Kartı NFC + Yüz tanıma + SMS doğrulama + Konum | Çok Yüksek | 2 |
+| `TCKK_ONBOARDING` | TCKK+Yüz Tanıma Videolu Dijital İmza | Kimlik Kartı NFC + Kimlik Kartı + Fotoğraf + Video + SMS doğrulama + Konum | Çok Yüksek+ | 3 |
+| `EIMZA` | Elektronik İmza | Nitelikli elektronik imza sertifikası | En Yüksek | 1 |
+| `MOBILE_IMZA` | Mobil İmza | Mobil operatör nitelikli elektronik imza (Turkcell, Vodafone, Türk Telekom) | En Yüksek | 1 |
 
 ---
 
