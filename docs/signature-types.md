@@ -12,9 +12,9 @@ Her imzalama türü, kimlik doğrulama güvencesi ve kullanıcı deneyimi açıs
 |-----|----|--------------------------|-----------------|
 | `EMAIL_TIMESTAMP` | E-Posta ile Dijital Onay | E-posta onayı + zaman damgası | Düşük |
 | `SMSOTP_TIMESTAMP` | SMSOTP ile Doğrulama | SMS OTP + zaman damgası | Orta |
-| `TCKK_TIMESTAMP` | Kimlik(TCKK) ile Dijital Onay | Kimlik Kartı NFC okuma + zaman damgası | Yüksek |
-| `TCKK_FACE_TIMESTAMP` | TCKK ve Yüz Tanıma Dijital İmza | Kimlik Kartı NFC + anlık yüz biyometrisi | Çok Yüksek |
-| `TCKK_ONBOARDING` | TCKK+Yüz Tanıma Videolu Dijital İmza | Kimlik Kartı NFC + Fotoğraf + Video | Çok Yüksek+ |
+| `TCKK_TIMESTAMP` | Kimlik(TCKK) ile Dijital Onay | Kimlik Kartı NFC + SMS doğrulama + Konum + zaman damgası | Yüksek |
+| `TCKK_FACE_TIMESTAMP` | TCKK ve Yüz Tanıma Dijital İmza | Kimlik Kartı NFC + Yüz tanıma + SMS doğrulama + Konum | Çok Yüksek |
+| `TCKK_ONBOARDING` | TCKK+Yüz Tanıma Videolu Dijital İmza | Kimlik Kartı NFC + Kimlik Kartı + Fotoğraf + Video + SMS doğrulama + Konum | Çok Yüksek+ |
 | `EIMZA` | Elektronik İmza | Nitelikli elektronik imza sertifikası | En Yüksek |
 | `MOBILE_IMZA` | Mobil İmza | Mobil operatör nitelikli elektronik imza (Turkcell, Vodafone, Türk Telekom) | En Yüksek |
 
@@ -38,9 +38,11 @@ Müşteri (1. İmzacı)                    Servis Sağlayıcı (2. İmzacı)
 TCKK_ONBOARDING                         EIMZA
   │                                       │
   ├─ Kimlik Kartı NFC okuma              ├─ Nitelikli elektronik imza sertifikası
-  ├─ Selfie fotoğraf çekimi              └─ Elektronik imza
+  ├─ Kimlik Kartı (fiziksel tarama)      └─ Elektronik imza
+  ├─ Selfie fotoğraf çekimi
   ├─ Kısa video kaydı
-  └─ Biyometrik eşleşme + zaman damgası
+  ├─ SMS doğrulama
+  └─ Konum + zaman damgası
 ```
 
 **İmzacı Konfigürasyonu:**
@@ -80,7 +82,8 @@ TCKK_FACE_TIMESTAMP                     EIMZA
   │                                       │
   ├─ Kimlik Kartı NFC okuma              ├─ Nitelikli elektronik imza sertifikası
   ├─ Gerçek zamanlı yüz tanıma          └─ Elektronik imza
-  └─ Biyometrik eşleşme + zaman damgası
+  ├─ SMS doğrulama
+  └─ Konum + zaman damgası
 ```
 
 **İmzacı Konfigürasyonu:**
@@ -120,7 +123,8 @@ Müşteri (1. İmzacı)                    Kurum Yetkilisi (2. İmzacı)
 TCKK_TIMESTAMP                          EIMZA
   │                                       │
   ├─ Kimlik Kartı NFC okuma              ├─ Nitelikli elektronik imza sertifikası
-  └─ Zaman damgası                       └─ Elektronik imza
+  ├─ SMS doğrulama                       └─ Elektronik imza
+  └─ Konum + zaman damgası
 ```
 
 **İmzacı Konfigürasyonu:**
