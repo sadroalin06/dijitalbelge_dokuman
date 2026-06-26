@@ -10,13 +10,13 @@ Her imzalama türü, kimlik doğrulama güvencesi ve kullanıcı deneyimi açıs
 
 | Kod | Ad | Kimlik Doğrulama Yöntemi | Güvence Seviyesi |
 |-----|----|--------------------------|-----------------|
-| `EIMZA` | Elektronik İmza | E-posta + OTP | Orta |
 | `EMAIL_TIMESTAMP` | E-Posta ile Dijital Onay | E-posta onayı + zaman damgası | Düşük |
 | `SMSOTP_TIMESTAMP` | SMSOTP ile Doğrulama | SMS OTP + zaman damgası | Orta |
-| `MOBILE_IMZA` | Mobil İmza | Mobil operatör altyapısı | Yüksek |
 | `TCKK_TIMESTAMP` | Kimlik(TCKK) ile Dijital Onay | Kimlik Kartı NFC okuma + zaman damgası | Yüksek |
 | `TCKK_FACE_TIMESTAMP` | TCKK ve Yüz Tanıma Dijital İmza | Kimlik Kartı NFC + anlık yüz biyometrisi | Çok Yüksek |
-| `TCKK_ONBOARDING` | TCKK+Yüz Tanıma Videolu Dijital İmza | Kimlik Kartı NFC + Fotoğraf + Video | En Yüksek |
+| `TCKK_ONBOARDING` | TCKK+Yüz Tanıma Videolu Dijital İmza | Kimlik Kartı NFC + Fotoğraf + Video | Çok Yüksek+ |
+| `EIMZA` | Elektronik İmza | Nitelikli elektronik imza sertifikası | En Yüksek |
+| `MOBILE_IMZA` | Mobil İmza | Mobil operatör nitelikli elektronik imza (Turkcell, Vodafone, Türk Telekom) | En Yüksek |
 
 ---
 
@@ -37,7 +37,7 @@ Müşteri (1. İmzacı)                    Servis Sağlayıcı (2. İmzacı)
 ─────────────────────────────           ──────────────────────────────
 TCKK_ONBOARDING                         EIMZA
   │                                       │
-  ├─ Kimlik Kartı NFC okuma              ├─ E-posta / OTP doğrulama
+  ├─ Kimlik Kartı NFC okuma              ├─ Nitelikli elektronik imza sertifikası
   ├─ Selfie fotoğraf çekimi              └─ Elektronik imza
   ├─ Kısa video kaydı
   └─ Biyometrik eşleşme + zaman damgası
@@ -78,7 +78,7 @@ Müşteri (1. İmzacı)                    Kurum Yetkilisi (2. İmzacı)
 ─────────────────────────────           ──────────────────────────────
 TCKK_FACE_TIMESTAMP                     EIMZA
   │                                       │
-  ├─ Kimlik Kartı NFC okuma              ├─ E-posta / OTP doğrulama
+  ├─ Kimlik Kartı NFC okuma              ├─ Nitelikli elektronik imza sertifikası
   ├─ Gerçek zamanlı yüz tanıma          └─ Elektronik imza
   └─ Biyometrik eşleşme + zaman damgası
 ```
@@ -119,7 +119,7 @@ Müşteri (1. İmzacı)                    Kurum Yetkilisi (2. İmzacı)
 ─────────────────────────────           ──────────────────────────────
 TCKK_TIMESTAMP                          EIMZA
   │                                       │
-  ├─ Kimlik Kartı NFC okuma              ├─ E-posta / OTP doğrulama
+  ├─ Kimlik Kartı NFC okuma              ├─ Nitelikli elektronik imza sertifikası
   └─ Zaman damgası                       └─ Elektronik imza
 ```
 
@@ -148,6 +148,6 @@ TCKK_TIMESTAMP                          EIMZA
 
 | Senaryo | Müşteri Tarafı | Kurumsal Taraf | Kimlik Güvencesi | Fotoğraf | Video |
 |---------|---------------|---------------|-----------------|----------|-------|
-| Dijital Abonelik | `TCKK_ONBOARDING` | `EIMZA` | En Yüksek | Evet | Evet |
-| Yüz Tanımalı Sözleşme | `TCKK_FACE_TIMESTAMP` | `EIMZA` | Çok Yüksek | Anlık Yüz | Hayır |
+| Dijital Abonelik | `TCKK_ONBOARDING` | `EIMZA` | Çok Yüksek | Evet | Evet |
+| Yüz Tanımalı Sözleşme | `TCKK_FACE_TIMESTAMP` | `EIMZA` | Yüksek | Anlık Yüz | Hayır |
 | NFC Kimlik Doğrulama | `TCKK_TIMESTAMP` | `EIMZA` | Yüksek | Hayır | Hayır |
