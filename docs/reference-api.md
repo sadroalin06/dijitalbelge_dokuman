@@ -66,8 +66,48 @@ Kullanılabilir imzalama türleri listelenir
 
 ```json
 [
-  { "id": 1, "code": "E_SIGNATURE", "name": "Elektronik İmza" },
-  { "id": 2, "code": "EMAIL_TIMESTAMP", "name": "Email üzerinden Dijital Onay" }
+  {
+    "id": 1,
+    "name": "Eimza",
+    "code": "EIMZA",
+    "description": "Elektronik İmza"
+  },
+  {
+    "id": 5,
+    "name": "E-Posta ile Dijital Onay",
+    "code": "EMAIL_TIMESTAMP",
+    "description": "E-Posta Islem Onayı"
+  },
+  {
+    "id": 11,
+    "name": "Kimlik(TCKK) ile Dijital Onay",
+    "code": "TCKK_TIMESTAMP",
+    "description": "Kimlik(TCKK) kartı Islem Onayı"
+  },
+  {
+    "id": 13,
+    "name": "SMSOTP ile Doğrulama",
+    "code": "SMSOTP_TIMESTAMP",
+    "description": "SMS OTP ile İmza"
+  },
+  {
+    "id": 14,
+    "name": "Mobil İmza",
+    "code": "MOBILE_IMZA",
+    "description": "Mobil İmza"
+  },
+  {
+    "id": 15,
+    "name": "TCKK ve Yüz tanıma Dijital İmza",
+    "code": "TCKK_FACE_TIMESTAMP",
+    "description": "Çipli Kimlik Kartı + yüz tanıma ile İmza"
+  },
+  {
+    "id": 16,
+    "name": "TCKK+Yüz Tanıma Videolu Dijital İmza",
+    "code": "TCKK_ONBOARDING",
+    "description": "Kimlik Kartı NFC + Fotoğraf + Video ile Kimlik Doğrulama"
+  }
 ]
 ```
 
@@ -78,4 +118,5 @@ Kullanılabilir imzalama türleri listelenir
 | `id` | number | İmza tipi ID |
 | `code` | string | İmzalama türü kodu |
 | `name` | string | İmza türü adı |
+| `description` | string | İmza türü açıklaması |
 
