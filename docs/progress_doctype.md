@@ -144,3 +144,42 @@ POST /api/external/process/{processId}/document/document-type
 - `document` alanı opsiyoneldir.
 - `signings` alanı boş bırakılırsa belge imzasız kabul edilir.
 - Aynı belge türü bir süreçte birden fazla kez eklenebilir.
+
+---
+
+## Son Yüklü Belgeyi Getir (Base64)
+
+Döküman eklendikten ve imzalandıktan sonra, imzalı belgenin en son halini Base64 formatında çekmek için aşağıdaki endpoint kullanılır.
+
+**Scope:** `document:read`
+
+```http
+GET /api/external/process-instances/{processId}/document/{documentId}/file
+```
+
+**Path Parametreleri:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si (döküman eklenirken dönen `id`) |
+
+**Yanıt:**
+
+```json
+{
+  "fileName": "Abonelik belgesi_xxxxxxxx.pdf",
+  "mimeType": "application/pdf",
+  "base64": "JVBERi0xLjQK...",
+  "size": 2425408
+}
+```
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `fileName` | string | Dosya adı |
+| `mimeType` | string | Dosya MIME türü |
+| `base64` | string | Dosyanın Base64 içeriği (imzalı son versiyon) |
+| `size` | number | Dosya boyutu (byte) |
+
+> İmzalama tamamlanmadan önce çekilirse, mevcut en son dosya versiyonu döner.

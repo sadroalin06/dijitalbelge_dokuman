@@ -33,14 +33,14 @@ Abone ve işletmeci bilgileri döküman taslağındaki signing ID'lerine bağlan
 
 ### Adım 1 – Süreç Oluştur
 
-```bash
-curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
-  -H "Content-Type: application/json" \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx" \
-  -d '{
-    "name": "Abonelik Sözleşmesi - Ali Veli"
-  }'
+```http
+POST /api/external/process-instances
+```
+
+```json
+{
+  "name": "Abonelik Sözleşmesi - Ali Veli"
+}
 ```
 
 **Yanıt:**
@@ -80,42 +80,42 @@ Döküman taslağındaki `signings` sıralaması (Referans API'den öğrenilir):
 - `id: 75` → Abone (1. imzacı)
 - `id: 77` → İşletmeci (2. imzacı)
 
-```bash
-curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/document/document-type \
-  -H "Content-Type: application/json" \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx" \
-  -d '{
-    "id": 85,
-    "name": "Abonelik Sözleşmesi",
-    "description": "",
-    "isSign": true,
-    "isForm": false,
-    "isActive": true,
-    "isApprove": true,
-    "isUpload": true,
-    "document": {
-      "base64": "",
-      "fileName": "Abonelik belgesi.pdf"
-    },
-    "signings": [
-      {
-        "id": 75,
-        "signer": {
-          "fullName": "Ali Veli",
-          "email": "ali.veli@example.com",
-          "phone": "5551112233",
-          "identityNumber": "12345678901"
-        }
-      },
-      {
-        "id": 77,
-        "signer": {
-          "id": 108
-        }
+```http
+POST /api/external/process-instances/147/document/document-type
+```
+
+```json
+{
+  "id": 85,
+  "name": "Abonelik Sözleşmesi",
+  "description": "",
+  "isSign": true,
+  "isForm": false,
+  "isActive": true,
+  "isApprove": true,
+  "isUpload": true,
+  "document": {
+    "base64": "",
+    "fileName": "Abonelik belgesi.pdf"
+  },
+  "signings": [
+    {
+      "id": 75,
+      "signer": {
+        "fullName": "Ali Veli",
+        "email": "ali.veli@example.com",
+        "phone": "5551112233",
+        "identityNumber": "12345678901"
       }
-    ]
-  }'
+    },
+    {
+      "id": 77,
+      "signer": {
+        "id": 108
+      }
+    }
+  ]
+}
 ```
 
 > `signings[0].signer` → Abone bilgileri ile yeni imzacı oluşturulur.  
@@ -133,10 +133,8 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/doc
 
 ### Adım 3 – Süreci Başlat
 
-```bash
-curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/147/status/start \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx"
+```http
+PUT /api/external/process-instances/147/status/start
 ```
 
 **Yanıt:** `ok`
@@ -161,14 +159,14 @@ Bu senaryoda:
 
 ### Adım 1 – Süreç Oluştur
 
-```bash
-curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
-  -H "Content-Type: application/json" \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx" \
-  -d '{
-    "name": "Abonelik Sözleşmesi - Ali Veli (TCKK)"
-  }'
+```http
+POST /api/external/process-instances
+```
+
+```json
+{
+  "name": "Abonelik Sözleşmesi - Ali Veli (TCKK)"
+}
 ```
 
 **Yanıt:**
@@ -217,50 +215,50 @@ Bu metin `promptText` alanına dinamik olarak üretilerek gönderilmelidir.
 
 Abone signing'i (`id: 75`) için `signatureType`, `promptText`, `videoMaxDurationSeconds` ve kimlik bilgileri doğrudan `signings` içinde verilir. İşletmeci (`id: 77`) ise kayıtlı imzacı ID'si ile bağlanır.
 
-```bash
-curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/document/document-type \
-  -H "Content-Type: application/json" \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx" \
-  -d '{
-    "id": 85,
-    "name": "Abonelik Sözleşmesi",
-    "description": "",
-    "isSign": true,
-    "isForm": false,
-    "isActive": true,
-    "isApprove": true,
-    "isUpload": true,
-    "document": {
-      "base64": "",
-      "fileName": "Abonelik belgesi.pdf"
-    },
-    "signings": [
-      {
-        "id": 75,
-        "signatureType": {
-          "code": "TCKK_ONBOARDING"
-        },
-        "promptText": "Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum.",
-        "videoMaxDurationSeconds": 60,
-        "signer": {
-          "fullName": "Ali Veli",
-          "identityNumber": "12345678901",
-          "birthDate": "1990-05-15",
-          "expiredDate": "2030-01-01",
-          "tcSerial": "A1B2C3D4",
-          "phone": "+905551112233",
-          "email": "ali.veli@example.com"
-        }
+```http
+POST /api/external/process-instances/148/document/document-type
+```
+
+```json
+{
+  "id": 85,
+  "name": "Abonelik Sözleşmesi",
+  "description": "",
+  "isSign": true,
+  "isForm": false,
+  "isActive": true,
+  "isApprove": true,
+  "isUpload": true,
+  "document": {
+    "base64": "",
+    "fileName": "Abonelik belgesi.pdf"
+  },
+  "signings": [
+    {
+      "id": 75,
+      "signatureType": {
+        "code": "TCKK_ONBOARDING"
       },
-      {
-        "id": 77,
-        "signer": {
-          "id": 108
-        }
+      "promptText": "Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum.",
+      "videoMaxDurationSeconds": 60,
+      "signer": {
+        "fullName": "Ali Veli",
+        "identityNumber": "12345678901",
+        "birthDate": "1990-05-15",
+        "expiredDate": "2030-01-01",
+        "tcSerial": "A1B2C3D4",
+        "phone": "+905551112233",
+        "email": "ali.veli@example.com"
       }
-    ]
-  }'
+    },
+    {
+      "id": 77,
+      "signer": {
+        "id": 108
+      }
+    }
+  ]
+}
 ```
 
 | Alan | Açıklama |
@@ -334,8 +332,6 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
       "accessToken": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
       "visibleSignature": {
         "id": 7554,
-        "signingTaskId": null,
-        "signinfo": null,
         "data": "Ali Veli",
         "image": false,
         "originX": 384,
@@ -346,13 +342,9 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
         "fontSize": 14,
         "textColor": "#000000",
         "backgroundColor": "#ffffff",
-        "alignment": "Center",
-        "signatureTypeEnum": null,
-        "signerCertBase64": null
+        "alignment": "Center"
       },
       "signatureFileId": null,
-      "signatureFileName": null,
-      "signatureFileType": null,
       "promptText": null,
       "videoMaxDurationSeconds": null,
       "identityNumber": "1XXXXXXXXXX"
@@ -379,8 +371,6 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
       "accessToken": "yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy",
       "visibleSignature": {
         "id": 7555,
-        "signingTaskId": null,
-        "signinfo": null,
         "data": "İşletmeci Yetkili",
         "image": false,
         "originX": 35,
@@ -391,13 +381,9 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
         "fontSize": 14,
         "textColor": "#000000",
         "backgroundColor": "#ffffff",
-        "alignment": "Center",
-        "signatureTypeEnum": null,
-        "signerCertBase64": null
+        "alignment": "Center"
       },
       "signatureFileId": null,
-      "signatureFileName": null,
-      "signatureFileType": null,
       "promptText": null,
       "videoMaxDurationSeconds": null,
       "identityNumber": "1XXXXXXXXXX"
@@ -413,16 +399,58 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
 
 ### Adım 3 – Süreci Başlat
 
-```bash
-curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/148/status/start \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx"
+```http
+PUT /api/external/process-instances/148/status/start
 ```
 
 **Yanıt:** `ok`
 
 !!! success "Senaryo B Tamamlandı"
     Süreç başlatıldı. Abone, mobil uygulama üzerinden `accessToken` ile sürece girer; TC kimlik kartını okutarak ve BTK mevzuatına uygun metni yüksek sesle okuyarak video kaydı yapar. Doğrulama tamamlandıktan sonra İşletmeci e-imzasıyla imzalar.
+
+---
+
+## İmza Sonrası – İmzalı Belgeyi İndir
+
+Her iki senaryoda da süreç tamamlandıktan sonra imzalı belgenin son versiyonu Base64 formatında çekilebilir.
+
+**Scope:** `document:read`
+
+```http
+GET /api/external/process-instances/{processId}/document/{documentId}/file
+```
+
+Senaryo A için örnek (`processId: 147`, `documentId: 7203`):
+
+```http
+GET /api/external/process-instances/147/document/7203/file
+```
+
+Senaryo B için örnek (`processId: 148`, `documentId: 7355`):
+
+```http
+GET /api/external/process-instances/148/document/7355/file
+```
+
+**Yanıt:**
+
+```json
+{
+  "fileName": "Abonelik belgesi_xxxxxxxx.pdf",
+  "mimeType": "application/pdf",
+  "base64": "JVBERi0xLjQK...",
+  "size": 2425408
+}
+```
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `fileName` | string | Dosya adı |
+| `mimeType` | string | Dosya MIME türü |
+| `base64` | string | İmzalı belgenin Base64 içeriği (en son versiyon) |
+| `size` | number | Dosya boyutu (byte) |
+
+> `documentId`, döküman eklenirken dönen yanıttaki `id` alanıdır (Senaryo A: `7203`, Senaryo B: `7355`).
 
 ---
 
@@ -435,7 +463,7 @@ curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/148/stat
 | **İmzalama sırası** | Abone → İşletmeci | Abone → İşletmeci |
 | **Gerekli abone bilgileri** | fullName, email, phone, identityNumber | + birthDate, expiredDate, tcSerial |
 | **promptText / video** | Gerekmez | BTK yasal metni zorunlu |
-| **Döküman ekleme adımı** | Taslaktan tek seferde | Taslak + ayrıca `signers` endpoint'i |
+| **Döküman ekleme adımı** | Taslaktan tek seferde | Taslaktan tek seferde (TCKK alanları signings içinde) |
 | **accessToken kullanımı** | Mobil uygulamaya girilir | Mobil uygulamaya girilir |
 
 ---
