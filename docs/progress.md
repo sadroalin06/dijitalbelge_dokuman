@@ -681,6 +681,20 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 
 > ℹ️ `signer` nesnesi, `TCKK_ONBOARDING` gibi kimlik doğrulama gerektiren imza türlerinde kullanılır. Standart imzalama akışlarında bu alan zorunlu değildir.
 
+!!! warning "Önemli: `order` (İmzalama Sırası)"
+    `order` alanı imzacıların sırasını belirler. **İmzalama ekranında yalnızca sırası gelen imzacı görünür.**
+
+    - `order: 1` olan imzacı ilk sırada olduğu için süreci açtığında kendisini imzalayacak kişi olarak görür.
+    - `order: 2` olan imzacı, 1. sıradaki imzacı imzasını tamamlayana kadar imzalama ekranında **görünmez**.
+
+    **Abonelik akışı örneği:**
+    ```
+    Abone     → order: 1  (mobil uygulamada süreci açtığında kendini görür)
+    İşletmeci → order: 2  (abone imzaladıktan sonra sırası gelir)
+    ```
+
+    `order` girilmezse imzacı imzalama ekranında **hiç görünmez**.
+
 #### Başarılı Yanıt
 
 **HTTP 201 Created**

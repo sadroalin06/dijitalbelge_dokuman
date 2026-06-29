@@ -31,7 +31,6 @@ nav:
   - Webhook: webhook.md
   - Hatalar: errors.md
   - Örnekler:
-      - Curl: examples/curl.md
       - Abonelik Sözleşmesi İmzalama: examples/abonelik-sozlesmesi.md
 extra_css:
   - assets/extra.css

@@ -93,12 +93,30 @@ POST /api/external/process/{processId}/document/document-type
 | Alan | Açıklama |
 |----|---------|
 | id | Taslaktadaki İmzacı sırası |
-| signer | İmzacı  bağlama|
+| stepOrder | İmzalama ekranındaki görünme sırası |
+| signer | İmzacı bağlama |
 | signer->id | Tanımlı İmzacı id |
 | signer->fullName | Yeni İmzacı İsim ve soyismi |
 | signer->email | Yeni İmzacı email |
 | signer->phone | Yeni İmzacı telefon |
 | signer->identityNumber | Yeni İmzacı TC kimlik numarası |
+
+!!! warning "Önemli: `stepOrder` (İmzalama Sırası)"
+    `stepOrder` imzacıların imzalama ekranında hangi sırayla görüneceğini belirler. **Sırası gelmeyen imzacı imzalama ekranında görünmez.**
+
+    - `stepOrder: 1` → İlk sırada; süreç başladığında imzalayacak kişiyi görür.
+    - `stepOrder: 2` → 1. imzacı tamamlayana kadar imzalama ekranına **erişemez**.
+
+    **Abonelik akışı örneği:**
+    ```json
+    "signings": [
+      { "id": 75, "stepOrder": 1, "signer": { ... } },
+      { "id": 77, "stepOrder": 2, "signer": { "id": 108 } }
+    ]
+    ```
+    Abone (`stepOrder: 1`) mobil uygulamada süreci açtığında kendisini görür. İşletmeci (`stepOrder: 2`) abone imzaladıktan sonra sıraya girer.
+
+    `stepOrder` girilmezse imzacı imzalama ekranında **hiç görünmez**.
 
 ```json
 "signer": {
