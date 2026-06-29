@@ -14,7 +14,7 @@ Bu örnek, arayüzden yüklenen bir **Abonelik Sözleşmesi** taslağının API 
 ## Ön Koşullar
 
 - Abonelik Sözleşmesi döküman taslağı arayüzden sisteme yüklenmiş olmalıdır.
-- Taslak ID'si ve imzalama sırası (signing ID'leri) [Referans API](../reference-api.md) üzerinden öğrenilmiş olmalıdır.
+- Taslak ID'si ve imzalama sırası (`signing` ID'leri) [Referans API](../reference-api.md) üzerinden öğrenilmiş olmalıdır.
 - İşletmeci, sistemde tanımlı bir imzacı olmalıdır (`signerId`).
 
 ---
@@ -27,7 +27,7 @@ Süreç Oluştur → Taslaktan Döküman Ekle → Süreci Başlat
 
 İmzalama sırası: **Abone (1. sıra) → İşletmeci (2. sıra)**
 
-Abone ve işletmeci bilgileri döküman taslağında tanımlı signing ID'lerine bağlanır.
+Abone ve işletmeci bilgileri döküman taslağındaki signing ID'lerine bağlanır.
 
 ---
 
@@ -48,10 +48,26 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
 ```json
 {
   "id": 147,
+  "accountId": 153,
+  "createdByUserId": null,
+  "name": "Abonelik Sözleşmesi - Ali Veli",
   "statusCode": "NEW",
-  "accessToken": "kQQQioa"
+  "processType": "BELGE_IMZALAMA",
+  "documents": [],
+  "signers": [],
+  "createdAt": "2026-06-29T16:38:59.134467",
+  "updatedAt": "2026-06-29T16:38:59.134469",
+  "hasQrCode": false,
+  "responsibleBy": null,
+  "accessToken": "kQQQioa",
+  "tokenExpiry": null,
+  "referenceCode": null,
+  "formFields": [],
+  "formDesigns": []
 }
 ```
+
+> **`accessToken`** — Kullanıcının **mobil uygulamaya** gireceği süreç token'ıdır. Bu değer, abonenin sürece mobil uygulama üzerinden erişmesini sağlar.
 
 `id` değerini (`147`) sonraki adımlarda kullanın.
 
@@ -59,9 +75,10 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
 
 ### Adım 2 – Taslaktan Döküman Ekle
 
-Döküman taslağındaki `signings` sıralaması:
-- `id: 1` → Abone (1. imzacı)
-- `id: 2` → İşletmeci (2. imzacı)
+Döküman taslağındaki `signings` sıralaması (Referans API'den öğrenilir):
+
+- `id: 75` → Abone (1. imzacı)
+- `id: 77` → İşletmeci (2. imzacı)
 
 ```bash
 curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/document/document-type \
@@ -69,14 +86,21 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/doc
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx" \
   -d '{
-    "id": 22,
+    "id": 85,
     "name": "Abonelik Sözleşmesi",
+    "description": "",
     "isSign": true,
-    "isApprove": false,
-    "isUpload": false,
+    "isForm": false,
+    "isActive": true,
+    "isApprove": true,
+    "isUpload": true,
+    "document": {
+      "base64": "",
+      "fileName": "Abonelik belgesi.pdf"
+    },
     "signings": [
       {
-        "id": 1,
+        "id": 75,
         "signer": {
           "fullName": "Ali Veli",
           "email": "ali.veli@example.com",
@@ -85,9 +109,9 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/doc
         }
       },
       {
-        "id": 2,
+        "id": 77,
         "signer": {
-          "id": 138
+          "id": 108
         }
       }
     ]
@@ -95,7 +119,7 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/doc
 ```
 
 > `signings[0].signer` → Abone bilgileri ile yeni imzacı oluşturulur.  
-> `signings[1].signer.id` → Sistemde kayıtlı İşletmeci imzacısı bağlanır.
+> `signings[1].signer.id` → Sistemde kayıtlı İşletmeci imzacısı (`id: 108`) bağlanır.
 
 **Yanıt:**
 
@@ -130,7 +154,7 @@ Süreç Oluştur → Taslaktan Döküman Ekle → Dökümana İmzacı Ekle (TCKK
 
 Bu senaryoda:
 
-- **Abone**: Yapay Zeka kimlik doğrulama (`TCKK_ONBOARDING`) ile imzalar. TC kimlik kartı bilgileri ve video yönergesi girilir.
+- **Abone**: Yapay Zeka kimlik doğrulama (`TCKK_ONBOARDING`) ile imzalar. TC kimlik kartı bilgileri ve BTK mevzuatına uygun yasal metin girilir.
 - **İşletmeci**: E-İmza ile imzalar (2. sıra).
 
 ---
@@ -152,16 +176,32 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
 ```json
 {
   "id": 148,
+  "accountId": 153,
+  "createdByUserId": null,
+  "name": "Abonelik Sözleşmesi - Ali Veli (TCKK)",
   "statusCode": "NEW",
-  "accessToken": "mPPPjob"
+  "processType": "BELGE_IMZALAMA",
+  "documents": [],
+  "signers": [],
+  "createdAt": "2026-06-29T16:38:59.134467",
+  "updatedAt": "2026-06-29T16:38:59.134469",
+  "hasQrCode": false,
+  "responsibleBy": null,
+  "accessToken": "mPPPjob",
+  "tokenExpiry": null,
+  "referenceCode": null,
+  "formFields": [],
+  "formDesigns": []
 }
 ```
+
+> **`accessToken`** — Kullanıcının **mobil uygulamaya** gireceği süreç token'ıdır. Bu değer, abonenin sürece mobil uygulama üzerinden erişmesini sağlar.
 
 ---
 
 ### Adım 2 – Taslaktan Döküman Ekle
 
-Döküman taslağında yalnızca **İşletmeci** (2. sıra) tanımlı imzacı olarak bağlanır. Abone imzacısı bir sonraki adımda ayrıca eklenir.
+Döküman taslağına yalnızca **İşletmeci** (`id: 77`) bağlanır. Abone imzacısı TCKK akışı ile bir sonraki adımda ayrıca eklenir.
 
 ```bash
 curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/document/document-type \
@@ -169,16 +209,23 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx" \
   -d '{
-    "id": 22,
+    "id": 85,
     "name": "Abonelik Sözleşmesi",
+    "description": "",
     "isSign": true,
-    "isApprove": false,
-    "isUpload": false,
+    "isForm": false,
+    "isActive": true,
+    "isApprove": true,
+    "isUpload": true,
+    "document": {
+      "base64": "",
+      "fileName": "Abonelik belgesi.pdf"
+    },
     "signings": [
       {
-        "id": 2,
+        "id": 77,
         "signer": {
-          "id": 138
+          "id": 108
         }
       }
     ]
@@ -197,7 +244,21 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
 
 ### Adım 3 – Aboneyi TCKK İmzacısı Olarak Ekle
 
-Abone, TCKK Onboarding akışı ile doğrulanacaktır. TC kimlik kartı bilgileri, okunacak metin (`promptText`) ve video süresi bu adımda belirtilir.
+Abone, TCKK Onboarding akışı ile doğrulanacaktır. TC kimlik kartı bilgileri ve BTK mevzuatına uygun `promptText` bu adımda girilir.
+
+#### BTK Mevzuatı – Zorunlu Yasal Metin
+
+Bilgi Teknolojileri ve İletişim Kurumu (BTK) mevzuatı gereği, görüntülü kimlik doğrulama sırasında abonenin yüksek sesle okuması gereken standart metin şu formattadır:
+
+> *"Ben **\<Ad Soyad\>** olarak **\<Hizmet Numarası\>** numaralı hizmetin **\<İşlem Türü\>** işlemi için kimliğimin doğrulanmasını **\<GG.AA.YYYY\> \<SS.DD\>** itibarıyla onaylıyorum."*
+
+**Örnek:**
+
+> *"Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum."*
+
+Bu metin `promptText` alanına dinamik olarak üretilerek gönderilmelidir.
+
+---
 
 ```bash
 curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/document/7204/signers \
@@ -210,7 +271,7 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
     "signatureType": {
       "code": "TCKK_ONBOARDING"
     },
-    "promptText": "Lütfen adınızı ve soyadınızı okuyun",
+    "promptText": "Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum.",
     "videoMaxDurationSeconds": 60,
     "signer": {
       "fullName": "Ali Veli",
@@ -228,8 +289,8 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
 |------|-------|----------|
 | `order` | `1` | Abone ilk imzalar |
 | `signatureType.code` | `TCKK_ONBOARDING` | Yapay Zeka kimlik doğrulama akışı |
-| `promptText` | `"Lütfen adınızı ve soyadınızı okuyun"` | Aboneye video sırasında gösterilecek metin |
-| `videoMaxDurationSeconds` | `60` | Video kaydı için maksimum süre |
+| `promptText` | BTK yasal metni | Aboneye video sırasında gösterilecek, yüksek sesle okunacak metin |
+| `videoMaxDurationSeconds` | `60` | Video kaydı için maksimum süre (saniye) |
 | `signer.birthDate` | `"1990-05-15"` | Doğum tarihi (kimlik doğrulama için) |
 | `signer.expiredDate` | `"2030-01-01"` | Kimlik kartı son geçerlilik tarihi |
 | `signer.tcSerial` | `"A1B2C3D4"` | TC kimlik kartı seri numarası |
@@ -245,7 +306,7 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
   "signatureType": {
     "code": "TCKK_ONBOARDING"
   },
-  "promptText": "Lütfen adınızı ve soyadınızı okuyun",
+  "promptText": "Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum.",
   "videoMaxDurationSeconds": 60,
   "signer": {
     "fullName": "Ali Veli",
@@ -256,7 +317,7 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
     "phone": "+905551112233",
     "email": "ali.veli@example.com"
   },
-  "createdAt": "2026-01-05T20:00:00"
+  "createdAt": "2026-06-29T20:00:00"
 }
 ```
 
@@ -273,7 +334,7 @@ curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/148/stat
 **Yanıt:** `ok`
 
 !!! success "Senaryo B Tamamlandı"
-    Süreç başlatıldı. Abone, yapay zeka kimlik doğrulama akışı ile TC kimlik kartını okutarak ve video kaydı yaparak sözleşmeyi imzalar. Ardından İşletmeci e-imzasıyla imzalar.
+    Süreç başlatıldı. Abone, mobil uygulama üzerinden `accessToken` ile sürece girer; TC kimlik kartını okutarak ve BTK mevzuatına uygun metni yüksek sesle okuyarak video kaydı yapar. Doğrulama tamamlandıktan sonra İşletmeci e-imzasıyla imzalar.
 
 ---
 
@@ -285,8 +346,9 @@ curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/148/stat
 | **İşletmeci imza türü** | E-İmza | E-İmza |
 | **İmzalama sırası** | Abone → İşletmeci | Abone → İşletmeci |
 | **Gerekli abone bilgileri** | fullName, email, phone, identityNumber | + birthDate, expiredDate, tcSerial |
-| **promptText / video** | Gerekmez | Gerekir |
+| **promptText / video** | Gerekmez | BTK yasal metni zorunlu |
 | **Döküman ekleme adımı** | Taslaktan tek seferde | Taslak + ayrıca `signers` endpoint'i |
+| **accessToken kullanımı** | Mobil uygulamaya girilir | Mobil uygulamaya girilir |
 
 ---
 
