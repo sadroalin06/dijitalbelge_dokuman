@@ -642,7 +642,21 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
   "signerId": 138,
   "signerName": "Ali Veli",
   "order": 1,
-  "isRequired": true
+  "isRequired": true,
+  "signatureType": {
+    "code": "TCKK_ONBOARDING"
+  },
+  "promptText": "Lütfen adınızı ve soyadınızı okuyun",
+  "videoMaxDurationSeconds": 60,
+  "signer": {
+    "fullName": "Ali Veli",
+    "identityNumber": "12345678901",
+    "birthDate": "1990-05-15",
+    "expiredDate": "2030-01-01",
+    "tcSerial": "A1B2C3D4",
+    "phone": "+905551112233",
+    "email": "ali.veli@example.com"
+  }
 }
 ```
 
@@ -652,6 +666,20 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 | `signerName` | string | Hayır | İmzacının adı |
 | `order` | number | Hayır | İmzalama sırası |
 | `isRequired` | boolean | Hayır | İmza zorunlu mu |
+| `signatureType` | object | Hayır | İmza türü bilgisi |
+| `signatureType.code` | string | Hayır | İmza türü kodu (örn: `TCKK_ONBOARDING`) |
+| `promptText` | string | Hayır | Video imzalama için imzacıya gösterilecek yönerge metni |
+| `videoMaxDurationSeconds` | number | Hayır | Video imzalama için maksimum süre (saniye) |
+| `signer` | object | Hayır | İmzacı kimlik bilgileri (TCKK doğrulama akışı için) |
+| `signer.fullName` | string | Hayır | İmzacının ad soyadı |
+| `signer.identityNumber` | string | Hayır | T.C. Kimlik Numarası (11 haneli) |
+| `signer.birthDate` | string | Hayır | Doğum tarihi (`YYYY-MM-DD`) |
+| `signer.expiredDate` | string | Hayır | Kimlik belgesinin son geçerlilik tarihi (`YYYY-MM-DD`) |
+| `signer.tcSerial` | string | Hayır | TC kimlik kartı seri numarası |
+| `signer.phone` | string | Hayır | Telefon numarası |
+| `signer.email` | string | Hayır | E-posta adresi |
+
+> ℹ️ `signer` nesnesi, `TCKK_ONBOARDING` gibi kimlik doğrulama gerektiren imza türlerinde kullanılır. Standart imzalama akışlarında bu alan zorunlu değildir.
 
 #### Başarılı Yanıt
 
@@ -659,12 +687,26 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 
 ```json
 {
-  "id": 55,
+  "id": 5,
   "documentInstanceId": 7203,
   "signerId": 138,
   "signerName": "Ali Veli",
   "order": 1,
   "statusCode": "PENDING",
+  "signatureType": {
+    "code": "TCKK_ONBOARDING"
+  },
+  "promptText": "Lütfen adınızı ve soyadınızı okuyun",
+  "videoMaxDurationSeconds": 60,
+  "signer": {
+    "fullName": "Ali Veli",
+    "identityNumber": "12345678901",
+    "birthDate": "1990-05-15",
+    "expiredDate": "2030-01-01",
+    "tcSerial": "A1B2C3D4",
+    "phone": "+905551112233",
+    "email": "ali.veli@example.com"
+  },
   "createdAt": "2026-01-05T20:00:00"
 }
 ```
@@ -679,7 +721,19 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/doc
   -d '{
     "signerId": 138,
     "order": 1,
-    "isRequired": true
+    "isRequired": true,
+    "signatureType": { "code": "TCKK_ONBOARDING" },
+    "promptText": "Lütfen adınızı ve soyadınızı okuyun",
+    "videoMaxDurationSeconds": 60,
+    "signer": {
+      "fullName": "Ali Veli",
+      "identityNumber": "12345678901",
+      "birthDate": "1990-05-15",
+      "expiredDate": "2030-01-01",
+      "tcSerial": "A1B2C3D4",
+      "phone": "+905551112233",
+      "email": "ali.veli@example.com"
+    }
   }'
 ```
 
