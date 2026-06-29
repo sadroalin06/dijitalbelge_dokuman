@@ -174,6 +174,32 @@ curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/a
 
 ---
 
+## Otomatik İmzalamada Sıralama (stepOrder)
+
+Otomatik imzalama, imzacıların `stepOrder` değerini dikkate alarak çalışır. Her döngüde yalnızca **sırası gelen** imzacılar kuyruğa alınır.
+
+### Davranış Kuralları
+
+| `stepOrder` değeri | Davranış |
+|--------------------|----------|
+| `null` veya `0` | Sıralama kontrolü yapılmaz, her zaman kuyruğa eklenir |
+| `N` (N > 0) | Aynı belgedeki imzalanmamış görevlerin en düşük `stepOrder`'ı N ise kuyruğa eklenir; değilse atlanır |
+
+### Örnek
+
+| Adım | İmzacı | Durum | Sonuç |
+|------|--------|-------|-------|
+| 1 | A | İmzalamadı | Kuyruğa eklenir |
+| 1 | B | İmzalamadı | Kuyruğa eklenir |
+| 2 | C (oto-imza aktif) | İmzalamadı | **Atlanır** — adım 1 henüz bitmedi |
+
+Adım 1'deki tüm imzacılar (A ve B) imzasını tamamladığında, bir sonraki döngüde C kuyruğa alınır ve otomatik imzalama gerçekleşir.
+
+!!! warning "Önemli"
+    Otomatik imzalama etkinleştirilmiş bir imzacının `stepOrder`'ı önceki adımdaki tüm imzacılar tamamlanmadan işlem **yapılmaz**. Bu davranış kasıtlıdır; sıra bekleyen imzacılar için sistemi tekrar tetiklemenize gerek yoktur, adım tamamlandığında otomatik olarak devreye girer.
+
+---
+
 ## Tam Entegrasyon Akışı
 
 ```bash
