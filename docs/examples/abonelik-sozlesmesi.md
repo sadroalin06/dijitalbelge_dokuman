@@ -149,12 +149,12 @@ curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/147/stat
 ## Senaryo B: Abone Yapay Zeka ile Kimlik Doğrulamayla İmzalar
 
 ```
-Süreç Oluştur → Taslaktan Döküman Ekle → Dökümana İmzacı Ekle (TCKK) → Süreci Başlat
+Süreç Oluştur → Taslaktan Döküman Ekle (TCKK bilgileriyle) → Süreci Başlat
 ```
 
 Bu senaryoda:
 
-- **Abone**: Yapay Zeka kimlik doğrulama (`TCKK_ONBOARDING`) ile imzalar. TC kimlik kartı bilgileri ve BTK mevzuatına uygun yasal metin girilir.
+- **Abone**: Yapay Zeka kimlik doğrulama (`TCKK_ONBOARDING`) ile imzalar. TC kimlik kartı bilgileri ve BTK mevzuatına uygun yasal metin, döküman eklenirken `signings` içinde belirtilir.
 - **İşletmeci**: E-İmza ile imzalar (2. sıra).
 
 ---
@@ -199,9 +199,23 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances \
 
 ---
 
-### Adım 2 – Taslaktan Döküman Ekle
+### Adım 2 – Taslaktan Döküman Ekle (TCKK Bilgileriyle)
 
-Döküman taslağına yalnızca **İşletmeci** (`id: 77`) bağlanır. Abone imzacısı TCKK akışı ile bir sonraki adımda ayrıca eklenir.
+#### BTK Mevzuatı – Zorunlu Yasal Metin
+
+BTK mevzuatı gereği, görüntülü kimlik doğrulama sırasında abonenin yüksek sesle okuması gereken standart metin şu formattadır:
+
+> *"Ben **\<Ad Soyad\>** olarak **\<Hizmet Numarası\>** numaralı hizmetin **\<İşlem Türü\>** işlemi için kimliğimin doğrulanmasını **\<GG.AA.YYYY\> \<SS.DD\>** itibarıyla onaylıyorum."*
+
+**Örnek:**
+
+> *"Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum."*
+
+Bu metin `promptText` alanına dinamik olarak üretilerek gönderilmelidir.
+
+---
+
+Abone signing'i (`id: 75`) için `signatureType`, `promptText`, `videoMaxDurationSeconds` ve kimlik bilgileri doğrudan `signings` içinde verilir. İşletmeci (`id: 77`) ise kayıtlı imzacı ID'si ile bağlanır.
 
 ```bash
 curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/document/document-type \
@@ -223,6 +237,23 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
     },
     "signings": [
       {
+        "id": 75,
+        "signatureType": {
+          "code": "TCKK_ONBOARDING"
+        },
+        "promptText": "Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum.",
+        "videoMaxDurationSeconds": 60,
+        "signer": {
+          "fullName": "Ali Veli",
+          "identityNumber": "12345678901",
+          "birthDate": "1990-05-15",
+          "expiredDate": "2030-01-01",
+          "tcSerial": "A1B2C3D4",
+          "phone": "+905551112233",
+          "email": "ali.veli@example.com"
+        }
+      },
+      {
         "id": 77,
         "signer": {
           "id": 108
@@ -231,6 +262,17 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
     ]
   }'
 ```
+
+| Alan | Açıklama |
+|------|----------|
+| `signings[0].id` | Taslaktaki Abone imzalama sırası ID'si |
+| `signings[0].signatureType.code` | `TCKK_ONBOARDING` — Yapay Zeka kimlik doğrulama akışı |
+| `signings[0].promptText` | BTK yasal metni — abone video sırasında yüksek sesle okur |
+| `signings[0].videoMaxDurationSeconds` | Video kaydı için maksimum süre (saniye) |
+| `signings[0].signer.birthDate` | Doğum tarihi (kimlik doğrulama için) |
+| `signings[0].signer.expiredDate` | Kimlik kartı son geçerlilik tarihi |
+| `signings[0].signer.tcSerial` | TC kimlik kartı seri numarası |
+| `signings[1].signer.id` | Sistemde kayıtlı İşletmeci imzacısı (`id: 108`) |
 
 **Yanıt:**
 
@@ -242,88 +284,7 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/doc
 
 ---
 
-### Adım 3 – Aboneyi TCKK İmzacısı Olarak Ekle
-
-Abone, TCKK Onboarding akışı ile doğrulanacaktır. TC kimlik kartı bilgileri ve BTK mevzuatına uygun `promptText` bu adımda girilir.
-
-#### BTK Mevzuatı – Zorunlu Yasal Metin
-
-Bilgi Teknolojileri ve İletişim Kurumu (BTK) mevzuatı gereği, görüntülü kimlik doğrulama sırasında abonenin yüksek sesle okuması gereken standart metin şu formattadır:
-
-> *"Ben **\<Ad Soyad\>** olarak **\<Hizmet Numarası\>** numaralı hizmetin **\<İşlem Türü\>** işlemi için kimliğimin doğrulanmasını **\<GG.AA.YYYY\> \<SS.DD\>** itibarıyla onaylıyorum."*
-
-**Örnek:**
-
-> *"Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum."*
-
-Bu metin `promptText` alanına dinamik olarak üretilerek gönderilmelidir.
-
----
-
-```bash
-curl -X POST https://app.dijitalbelge.com/api/external/process-instances/148/document/7204/signers \
-  -H "Content-Type: application/json" \
-  -H "X-Client-Id: app_xxxxx" \
-  -H "X-Client-Secret: secret_xxxxx" \
-  -d '{
-    "order": 1,
-    "isRequired": true,
-    "signatureType": {
-      "code": "TCKK_ONBOARDING"
-    },
-    "promptText": "Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum.",
-    "videoMaxDurationSeconds": 60,
-    "signer": {
-      "fullName": "Ali Veli",
-      "identityNumber": "12345678901",
-      "birthDate": "1990-05-15",
-      "expiredDate": "2030-01-01",
-      "tcSerial": "A1B2C3D4",
-      "phone": "+905551112233",
-      "email": "ali.veli@example.com"
-    }
-  }'
-```
-
-| Alan | Değer | Açıklama |
-|------|-------|----------|
-| `order` | `1` | Abone ilk imzalar |
-| `signatureType.code` | `TCKK_ONBOARDING` | Yapay Zeka kimlik doğrulama akışı |
-| `promptText` | BTK yasal metni | Aboneye video sırasında gösterilecek, yüksek sesle okunacak metin |
-| `videoMaxDurationSeconds` | `60` | Video kaydı için maksimum süre (saniye) |
-| `signer.birthDate` | `"1990-05-15"` | Doğum tarihi (kimlik doğrulama için) |
-| `signer.expiredDate` | `"2030-01-01"` | Kimlik kartı son geçerlilik tarihi |
-| `signer.tcSerial` | `"A1B2C3D4"` | TC kimlik kartı seri numarası |
-
-**Yanıt:**
-
-```json
-{
-  "id": 5,
-  "documentInstanceId": 7204,
-  "order": 1,
-  "statusCode": "PENDING",
-  "signatureType": {
-    "code": "TCKK_ONBOARDING"
-  },
-  "promptText": "Ben Ali Veli olarak 0532 XXX XX XX numaralı hizmetin Abonelik Başvurusu işlemi için kimliğimin doğrulanmasını 29.06.2026 12:55 itibarıyla onaylıyorum.",
-  "videoMaxDurationSeconds": 60,
-  "signer": {
-    "fullName": "Ali Veli",
-    "identityNumber": "12345678901",
-    "birthDate": "1990-05-15",
-    "expiredDate": "2030-01-01",
-    "tcSerial": "A1B2C3D4",
-    "phone": "+905551112233",
-    "email": "ali.veli@example.com"
-  },
-  "createdAt": "2026-06-29T20:00:00"
-}
-```
-
----
-
-### Adım 4 – Süreci Başlat
+### Adım 3 – Süreci Başlat
 
 ```bash
 curl -X PUT https://app.dijitalbelge.com/api/external/process-instances/148/status/start \
