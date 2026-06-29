@@ -2,12 +2,13 @@
 
 Bu örnek, arayüzden yüklenen bir **Abonelik Sözleşmesi** taslağının API aracılığıyla imzalatılmasını adım adım açıklar.
 
-İki farklı senaryo ele alınmaktadır:
+Üç farklı senaryo ele alınmaktadır:
 
-| Senaryo | Abone İmza Yöntemi | İşletmeci |
-|---------|-------------------|-----------|
+| Senaryo | Abone | İşletmeci |
+|---------|-------|-----------|
 | [**Senaryo A**](#senaryo-a-her-iki-taraf-e-imza-ile-imzalar) | E-İmza | E-İmza |
 | [**Senaryo B**](#senaryo-b-abone-yapay-zeka-ile-kimlik-dogrulamayla-imzalar) | Yapay Zeka Kimlik Doğrulama (TCKK) | E-İmza |
+| [**Senaryo C**](#senaryo-c-e-devlet-ile-kimlik-dogrulama-isletmeci-eimza) | e-Devlet kimlik doğrulama (dışarıda gerçekleşir) | PDF yükle + E-İmza |
 
 ---
 
@@ -410,9 +411,138 @@ PUT /api/external/process-instances/148/status/start
 
 ---
 
+## Senaryo C: e-Devlet ile Kimlik Doğrulama, İşletmeci E-İmza ile İmzalar
+
+```
+Süreç Oluştur → Tekil Döküman Ekle → İmzacı Ekle (İşletmeci) → Süreci Başlat
+```
+
+Bu senaryoda BTK mevzuatı gereği abonenin kimlik doğrulaması **e-Devlet** üzerinden gerçekleştirilir. Süreç tamamen işletmeci tarafından yönetilir:
+
+- **Abone**: e-Devlet üzerinden kimliğini doğrular (bu adım DijitalBelge dışında gerçekleşir).
+- **İşletmeci**: e-Devlet'ten aldığı abone bilgilerini içeren PDF'i sisteme yükler ve e-İmza ile imzalar.
+
+---
+
+### Adım 1 – Süreç Oluştur
+
+```http
+POST /api/external/process-instances
+```
+
+```json
+{
+  "name": "Abonelik Sözleşmesi - Ali Veli (e-Devlet)"
+}
+```
+
+**Yanıt:**
+
+```json
+{
+  "id": 149,
+  "accountId": 153,
+  "createdByUserId": null,
+  "name": "Abonelik Sözleşmesi - Ali Veli (e-Devlet)",
+  "statusCode": "NEW",
+  "processType": "BELGE_IMZALAMA",
+  "documents": [],
+  "signers": [],
+  "createdAt": "2026-06-29T16:38:59.134467",
+  "updatedAt": "2026-06-29T16:38:59.134469",
+  "hasQrCode": false,
+  "responsibleBy": null,
+  "accessToken": "nRRRkpc",
+  "tokenExpiry": null,
+  "referenceCode": null,
+  "formFields": [],
+  "formDesigns": []
+}
+```
+
+---
+
+### Adım 2 – e-Devlet PDF'ini Sürece Yükle
+
+İşletmeci, e-Devlet'ten alınan abone kimlik doğrulama bilgilerini içeren PDF'i Base64 formatında sürece ekler.
+
+```http
+POST /api/external/process-instances/149/document/single
+```
+
+```json
+{
+  "name": "Abonelik Sözleşmesi",
+  "base64": "JVBERi0xLjQK...",
+  "fileName": "Abonelik belgesi.pdf"
+}
+```
+
+**Yanıt:**
+
+```json
+{
+  "id": 7356,
+  "name": "Abonelik Sözleşmesi",
+  "statusCode": "PENDING",
+  "createdAt": "2026-06-29T20:00:00"
+}
+```
+
+---
+
+### Adım 3 – İşletmeciye İmzacı Olarak Ekle
+
+e-Devlet kimlik doğrulaması dışarıda tamamlandığından yalnızca işletmeci imzacı olarak eklenir.
+
+```http
+POST /api/external/process-instances/149/document/7356/signers
+```
+
+```json
+{
+  "order": 1,
+  "isRequired": true,
+  "signer": {
+    "id": 108
+  }
+}
+```
+
+**Yanıt:**
+
+```json
+{
+  "id": 1167,
+  "documentInstanceId": 7356,
+  "fullName": "İşletmeci Yetkili",
+  "signerId": 108,
+  "email": "isletmeci@example.com",
+  "stepOrder": 1,
+  "statusCode": "PENDING",
+  "signatureTypeCode": "EIMZA",
+  "createdAt": "2026-06-29T20:00:00"
+}
+```
+
+---
+
+### Adım 4 – Süreci Başlat
+
+```http
+PUT /api/external/process-instances/149/status/start
+```
+
+**Yanıt:** `ok`
+
+!!! success "Senaryo C Tamamlandı"
+    Süreç başlatıldı. Abonenin kimlik doğrulaması e-Devlet üzerinden gerçekleştirilmiş olup PDF'e işlenmiştir. İşletmeci e-İmzasıyla belgeyi imzalayarak süreci tamamlar.
+
+---
+
 ## İmza Sonrası – İmzalı Belgeyi İndir
 
-Her iki senaryoda da süreç tamamlandıktan sonra imzalı belgenin son versiyonu Base64 formatında çekilebilir.
+Her üç senaryoda da süreç tamamlandıktan sonra imzalı belgenin son versiyonu Base64 formatında çekilebilir.
 
 **Scope:** `document:read`
 
@@ -430,6 +560,12 @@ Senaryo B için örnek (`processId: 148`, `documentId: 7355`):
 
 ```http
 GET /api/external/process-instances/148/document/7355/file
+```
+
+Senaryo C için örnek (`processId: 149`, `documentId: 7356`):
+
+```http
+GET /api/external/process-instances/149/document/7356/file
 ```
 
 **Yanıt:**
@@ -456,15 +592,15 @@ GET /api/external/process-instances/148/document/7355/file
 
 ## Senaryo Karşılaştırması
 
-| | Senaryo A | Senaryo B |
-|--|-----------|-----------|
-| **Abone imza türü** | E-İmza | TCKK Onboarding (Yapay Zeka) |
-| **İşletmeci imza türü** | E-İmza | E-İmza |
-| **İmzalama sırası** | Abone → İşletmeci | Abone → İşletmeci |
-| **Gerekli abone bilgileri** | fullName, email, phone, identityNumber | + birthDate, expiredDate, tcSerial |
-| **promptText / video** | Gerekmez | BTK yasal metni zorunlu |
-| **Döküman ekleme adımı** | Taslaktan tek seferde | Taslaktan tek seferde (TCKK alanları signings içinde) |
-| **accessToken kullanımı** | Mobil uygulamaya girilir | Mobil uygulamaya girilir |
+| | Senaryo A | Senaryo B | Senaryo C |
+|--|-----------|-----------|-----------|
+| **Abone kimlik doğrulama** | E-İmza | TCKK (Yapay Zeka) | e-Devlet (dışarıda) |
+| **İşletmeci imza türü** | E-İmza | E-İmza | E-İmza |
+| **İmzalama sırası** | Abone → İşletmeci | Abone → İşletmeci | Yalnızca İşletmeci |
+| **Döküman kaynağı** | Taslak | Taslak | İşletmeci tarafından yüklenir |
+| **Gerekli abone bilgileri** | fullName, email, phone, identityNumber | + birthDate, expiredDate, tcSerial | Gerekmez (e-Devlet PDF'inde) |
+| **promptText / video** | Gerekmez | BTK yasal metni zorunlu | Gerekmez |
+| **accessToken kullanımı** | Abone mobil uygulamaya girer | Abone mobil uygulamaya girer | Gerekmez |
 
 ---
 
