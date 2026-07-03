@@ -48,10 +48,13 @@ Her oluşturulan sürecin **otomatik olarak benzersiz bir QR kodu** oluşturulur
 | `POST` | `/process-instances/{processId}/document/single` | `document:write` | Sürece tekil döküman ekle |
 | `POST` | `/process-instances/{processId}/document/document-type` | `process:documenttype:write` | Taslaktan döküman ekle |
 | `GET` | `/process-instances/{processId}/document/{documentId}` | `document:read` | Döküman bilgilerini getir |
-| `GET` | `/process-instances/{processId}/document/{documentId}/file` | `document:read` | Döküman dosyasını getir (Base64) |
+| `GET` | `/process-instances/{processId}/document/{documentId}/file` | `document:read` | Döküman dosyasını getir (Base64, en son yüklenen hali) |
+| `GET` | `/process-instances/{processId}/document/{documentId}/files` | `document:read` | Dökümana bağlı kanıt (EVIDENCE) ve ek (ATTACHMENT) dosyalarının listesini getir |
+| `GET` | `/process-instances/{processId}/document/{documentId}/file/{storedFileId}` | `document:read` | Belirli bir dosyayı (ORIGINAL/SIGNED/EVIDENCE/ATTACHMENT) `storedFileId` ile indir (Base64) |
 | `DELETE` | `/process-instances/{processId}/document/{documentId}` | `document:write` | Dökümanı sil |
 | `POST` | `/process-instances/{processId}/document/{documentId}/signers` | `document:sign` | Dökümana imzacı ekle |
 | `DELETE` | `/process-instances/{processId}/document/{documentId}/signer/{signerId}` | `document:sign` | Döküman imzacısını sil |
+| `GET` | `/process-instances/{processId}/document/{documentId}/tasks/{taskId}/signature/file` | `document:read` | İmzacının imza kanıt dosyasını (.p7s/JAdES) indir (Base64) |
 | `POST` | `/process-instances/{processId}/autosign` | `autosign:write` | Bulut imzalamayı etkinleştir → [detay](autosign.md) |
 | `DELETE` | `/process-instances/{processId}/autosign` | `autosign:write` | Bulut imzalamayı devre dışı bırak → [detay](autosign.md) |
 
@@ -553,19 +556,37 @@ GET {baseURL}/process-instances/{processId}/document/{documentId}/file
 
 ```json
 {
+  "accountId": 202,
+  "processId": 147,
+  "documentId": 7203,
   "fileName": "sozlesme.pdf",
-  "mimeType": "application/pdf",
-  "base64": "JVBERi0xLjQK...",
-  "size": 204800
+  "content": "JVBERi0xLjQK...",
+  "contentType": "application/pdf",
+  "signtaskId": 0,
+  "filekey": "documents/202/7203/sozlesme.pdf",
+  "evidenceJadesBytes": null,
+  "evidenceJadesFileName": null,
+  "attachments": null,
+  "taskIds": null
 }
 ```
 
 | Alan | Tip | Açıklama |
 |------|-----|----------|
+| `accountId` | number | Hesap ID'si |
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
 | `fileName` | string | Dosya adı |
-| `mimeType` | string | Dosya MIME türü |
-| `base64` | string | Dosyanın Base64 içeriği |
-| `size` | number | Dosya boyutu (byte) |
+| `content` | string | Dosyanın Base64 içeriği (`byte[]` alanı Jackson tarafından otomatik Base64'e çevrilir) |
+| `contentType` | string | Dosya MIME türü |
+| `signtaskId` | number | Bu endpoint için kullanılmaz (her zaman `0`) |
+| `filekey` | string | Dosyanın depolama sistemindeki anahtarı (bilgi amaçlı, entegrasyonlarda kullanılmamalı) |
+| `evidenceJadesBytes` | string \| null | Bu endpoint için kullanılmaz (`null`) |
+| `evidenceJadesFileName` | string \| null | Bu endpoint için kullanılmaz (`null`) |
+| `attachments` | array \| null | Bu endpoint için kullanılmaz (`null`) |
+| `taskIds` | array \| null | Bu endpoint için kullanılmaz (`null`) |
+
+> ℹ️ Bu yanıt şeması aynı şekilde **"Belirli Bir Dosyayı İndir (storedFileId ile)"** ve **"İmza Dosyasını İndir"** uç noktaları için de geçerlidir.
 
 #### Örnek cURL
 
@@ -577,7 +598,134 @@ curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/docu
 
 ---
 
-### 11. Dökümanı Sil
+### 11. Döküman Dosyalarını Listele (Kanıt ve Ekler)
+
+Dökümana bağlı **EVIDENCE** (kanıt) ve **ATTACHMENT** (ek) dosyalarının metadata listesini döndürür. Ana döküman dosyası (ORIGINAL/SIGNED) bu listeye dahil değildir — onun için **"Döküman Dosyasını Getir (Base64)"** kullanılır.
+
+**Scope:** `document:read`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/document/{documentId}/files
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+[
+  {
+    "id": 501,
+    "fileType": "EVIDENCE",
+    "storedFileId": 9001,
+    "fileName": "video_kaniti.mp4",
+    "filePath": "/external/process-instances/147/document/7203/file/9001",
+    "contentType": "video/mp4",
+    "size": 1048576,
+    "linkedAt": "2026-01-06T10:00:05",
+    "isCurrentVersion": null,
+    "isOldsign": null,
+    "archivedDocumentId": null
+  },
+  {
+    "id": 502,
+    "fileType": "ATTACHMENT",
+    "storedFileId": 9002,
+    "fileName": "ek_belge.pdf",
+    "filePath": "/external/process-instances/147/document/7203/file/9002",
+    "contentType": "application/pdf",
+    "size": 204800,
+    "linkedAt": "2026-01-06T10:00:10",
+    "isCurrentVersion": null,
+    "isOldsign": null,
+    "archivedDocumentId": null
+  }
+]
+```
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `id` | number | Dosya bağlantı kaydının ID'si |
+| `fileType` | string | Dosya türü: `EVIDENCE` (imzalama sırasında oluşan kanıt, örn. video) veya `ATTACHMENT` (dökümanla birlikte CAdES ile imzalanan ek) |
+| `storedFileId` | number | Dosyayı indirmek için **"Belirli Bir Dosyayı İndir (storedFileId ile)"** uç noktasında kullanılacak ID |
+| `fileName` | string | Dosya adı |
+| `filePath` | string | Dosyayı indirmek için kullanılacak API path'i |
+| `contentType` | string | Dosya MIME türü |
+| `size` | number | Dosya boyutu (byte) |
+| `linkedAt` | string | Dosyanın dökümana bağlandığı tarih (ISO 8601) |
+| `isCurrentVersion`, `isOldsign`, `archivedDocumentId` | - | Bu endpoint için kullanılmaz (her zaman `null`) |
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/files \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 12. Belirli Bir Dosyayı İndir (storedFileId ile)
+
+Yukarıdaki listeden dönen `storedFileId` ile ilgili dosyayı (`ORIGINAL`, `SIGNED`, `EVIDENCE` ya da `ATTACHMENT` türlerinden herhangi biri) Base64 formatında indirir. Yanıt şeması **"Döküman Dosyasını Getir (Base64)"** ile aynıdır.
+
+**Scope:** `document:read`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/document/{documentId}/file/{storedFileId}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+| `storedFileId` | number | İndirilecek dosyanın ID'si (döküman listesinden veya `/files` uç noktasından alınır) |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+{
+  "accountId": 202,
+  "processId": 147,
+  "documentId": 7203,
+  "fileName": "video_kaniti.mp4",
+  "content": "AAAAIGZ0eXBpc29t...",
+  "contentType": "video/mp4",
+  "signtaskId": 0,
+  "filekey": "documents/202/7203/evidence/video_kaniti.mp4",
+  "evidenceJadesBytes": null,
+  "evidenceJadesFileName": null,
+  "attachments": null,
+  "taskIds": null
+}
+```
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/file/9001 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 13. Dökümanı Sil
 
 Süreçten belirli bir dökümanı kaldırır.
 
@@ -616,7 +764,7 @@ curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/d
 
 ## Döküman İmzacı Yönetimi
 
-### 12. Dökümana İmzacı Ekle
+### 14. Dökümana İmzacı Ekle
 
 Belirtilen dökümana yeni bir imzacı görevi ekler.
 
@@ -753,7 +901,7 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/doc
 
 ---
 
-### 13. Döküman İmzacısını Sil
+### 15. Döküman İmzacısını Sil
 
 Belirtilen döküman üzerindeki imzacı görevini kaldırır.
 
@@ -785,6 +933,66 @@ DELETE {baseURL}/process-instances/{processId}/document/{documentId}/signer/{sig
 
 ```bash
 curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/signer/138 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 16. İmza Dosyasını İndir
+
+İmzacının görevi tamamlarken oluşturduğu imza kanıt dosyasını (`.p7s` / JAdES) Base64 formatında indirir. `taskId`, **"Dökümana İmzacı Ekle"** yanıtındaki `id` alanıyla aynıdır. Yanıt şeması **"Döküman Dosyasını Getir (Base64)"** ile aynıdır; ancak `documentId` bu uç nokta için her zaman `0` döner.
+
+**Scope:** `document:read`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/document/{documentId}/tasks/{taskId}/signature/file
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+| `taskId` | number | İmzalama görevinin (imzacının) ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```json
+{
+  "accountId": 202,
+  "processId": 147,
+  "documentId": 0,
+  "fileName": "imza_kaniti.p7s",
+  "content": "MIIGCwYJKoZIhvcNAQcC...",
+  "contentType": "application/pkcs7-signature",
+  "signtaskId": 0,
+  "filekey": "signatures/202/7203/5/imza_kaniti.p7s",
+  "evidenceJadesBytes": null,
+  "evidenceJadesFileName": null,
+  "attachments": null,
+  "taskIds": null
+}
+```
+
+#### Hata Durumları
+
+| Durum | Açıklama |
+|-------|----------|
+| 404 | İmzalama görevi bulunamadı |
+| 404 | Görev bu sürece ait değil |
+| 404 | Yetki hatası (hesap uyuşmazlığı) |
+| 404 | Bu göreve ait imza dosyası bulunamadı (imzacı henüz imzalamamış) |
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/tasks/5/signature/file \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
