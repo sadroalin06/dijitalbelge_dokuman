@@ -13,6 +13,24 @@ Dijital Belge Sistemi'nde belge işleme süreçlerini yönetmek için kullanıla
 
 Süreçler **API aracılığıyla oluşturulabilir, yönetilebilir, başlatılabilir, tamamlanabilir veya iptal edilebilir**.
 
+---
+
+## Süreç Tipleri (processType)
+
+Bir sürecin nasıl işleyeceğini `processType` alanı belirler. Süreç oluşturulurken bu alan gönderilmezse **varsayılan olarak `BELGE_IMZALAMA` kullanılır**.
+
+| Değer | Açıklama |
+|-------|----------|
+| `BELGE_IMZALAMA` | **(Varsayılan)** Belge üzerinde PDF imzalama işlemi yapılır. İmzacılar, dökümanı `DocumentSigningTask` üzerinden PDF olarak imzalar. |
+| `DIJITAL_ONAY` | Metin tabanlı dijital onay işlemi yapılır. Onaylayan kişi metni onaylar; onay dosyası oluşturularak metne bağlanır. |
+| `DOSYA_IMZALAMA` | Herhangi bir dosya türü (PDF, DOCX, XML vb.) CAdES ayrık imzayla imzalanır. Sürece eklenen tüm belgeler, tüm imzacılar tarafından imzalanır. Her imza `.p7s` formatında ayrık olarak saklanır. |
+| `DIJITAL_KIMLIK_DOGRULAMA` | Belge imzalanmaz; bir kişinin kimliği TCKK NFC çip okuma + yüz/video doğrulama ile teyit edilir. İmzacı gizli bir "signing control" belgesine bağlanır, gerçek bir dosya üretilmez. |
+
+!!! info "Varsayılan Değer"
+    `processType` alanı **"Yeni Süreç Oluştur"** isteğinde gönderilmezse süreç otomatik olarak `BELGE_IMZALAMA` tipinde oluşturulur.
+
+---
+
 ## Özet
 
 | Özellik | Değer |
@@ -80,13 +98,15 @@ POST {baseURL}/process-instances
 
 ```json
 {
-  "name": "test süreci"
+  "name": "test süreci",
+  "processType": "BELGE_IMZALAMA"
 }
 ```
 
 | Alan | Tip | Zorunlu | Açıklama |
 |------|-----|---------|----------|
 | `name` | string | Hayır | Sürecin adı |
+| `processType` | string | Hayır | Süreç tipi. **Gönderilmezse varsayılan olarak `BELGE_IMZALAMA` kullanılır.** Olası değerler için [Süreç Tipleri](#süreç-tipleri-processtype) bölümüne bakın. |
 
 #### Başarılı Yanıt
 
@@ -99,6 +119,7 @@ POST {baseURL}/process-instances
   "createdByUserId": null,
   "name": "Test Süreci",
   "statusCode": "NEW",
+  "processType": "BELGE_IMZALAMA",
   "signers": [],
   "documents": [],
   "createdAt": "2026-01-05T19:59:29.5282888",
@@ -117,6 +138,7 @@ POST {baseURL}/process-instances
 | `createdByUserId` | number | Süreci oluşturan kullanıcı ID'si |
 | `name` | string | Sürecin adı |
 | `statusCode` | string | Sürecin durum kodu (`NEW`, `STARTED`, `IN_PROGRESS`, `COMPLETED`, `ARCHIVED`, `CANCELED`, `DELETED`) |
+| `processType` | string | Süreç tipi (bkz. [Süreç Tipleri](#süreç-tipleri-processtype)). Belirtilmemişse `BELGE_IMZALAMA` |
 | `signers` | array | İmzalayıcılar listesi |
 | `documents` | array | Belgeler listesi |
 | `createdAt` | string | Oluşturulma tarihi (ISO 8601) |
