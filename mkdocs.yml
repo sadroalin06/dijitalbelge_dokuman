@@ -32,6 +32,7 @@ nav:
   - Hatalar: errors.md
   - Örnekler:
       - Abonelik Sözleşmesi İmzalama: examples/abonelik-sozlesmesi.md
+      - Karşılıklı Elektronik Sözleşme İmzalama: examples/karsilikli-sozlesme-imzalama.md
 extra_css:
   - assets/extra.css
 
