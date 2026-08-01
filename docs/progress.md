@@ -124,7 +124,6 @@ POST {baseURL}/process-instances
   "documents": [],
   "createdAt": "2026-01-05T19:59:29.5282888",
   "updatedAt": "2026-01-05T19:59:29.5282888",
-  "hasQrCode": false,
   "responsibleBy": null,
   "accessToken": "kQQQioa",
   "tokenExpiry": null
@@ -143,7 +142,6 @@ POST {baseURL}/process-instances
 | `documents` | array | Belgeler listesi |
 | `createdAt` | string | Oluşturulma tarihi (ISO 8601) |
 | `updatedAt` | string | Son güncellenme tarihi (ISO 8601) |
-| `hasQrCode` | boolean | QR kod bulunup bulunmadığı |
 | `responsibleBy` | string | Sorumlu kişi |
 | `accessToken` | string | Erişim token'ı |
 | `tokenExpiry` | string | Token geçerlilik süresi |
@@ -208,7 +206,6 @@ GET {baseURL}/process-instances/{processId}
   ],
   "createdAt": "2026-01-05T19:59:29.5282888",
   "updatedAt": "2026-01-05T19:59:29.5282888",
-  "hasQrCode": false,
   "responsibleBy": null,
   "accessToken": "kQQQioa",
   "tokenExpiry": null
