@@ -370,7 +370,7 @@ curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147 \
 
 ### 7. Sürece Tekil Döküman Ekle
 
-Sürece Base64 formatında bir döküman ekler.
+Sürece Base64 formatında bir döküman ekler. İsteğe bağlı `signings` ve `adds` alanları doldurulursa, herhangi bir **Döküman Taslağı (DocumentType)**'na referans vermeden, bu belgeye özel **tek kullanımlık** imzacı ve alan (metin/QR) yapısı tanımlanır — kalıcı bir DocumentType kaydı oluşturulmaz. Bu alanlar boş/`null` bırakılırsa mevcut davranış (imzacı/alan ataması yapılmaz) aynen devam eder.
 
 **Scope:** `document:write`
 
@@ -392,7 +392,30 @@ POST {baseURL}/process-instances/{processId}/document/single
 {
   "name": "Sözleşme.pdf",
   "base64": "JVBERi0xLjQK...",
-  "fileName": "sozlesme.pdf"
+  "fileName": "sozlesme.pdf",
+  "signings": [
+    {
+      "signer": { "id": 138 },
+      "stepOrder": 1
+    },
+    {
+      "signer": {
+        "fullName": "Ali Veli",
+        "email": "ali.veli@example.com",
+        "phone": "+905551112233",
+        "identityNumber": "12345678901"
+      },
+      "stepOrder": 2,
+      "signatureType": { "id": 3 }
+    }
+  ],
+  "adds": [
+    {
+      "addType": "QR",
+      "docqr": false,
+      "visibleSignature": { "pageNumber": 1, "originX": 400, "originY": 50, "width": 80, "height": 80 }
+    }
+  ]
 }
 ```
 
@@ -401,6 +424,47 @@ POST {baseURL}/process-instances/{processId}/document/single
 | `name` | string | Evet | Döküman adı |
 | `base64` | string | Evet | PDF dosyasının Base64 içeriği |
 | `fileName` | string | Evet | Dosya adı |
+| `signings` | array | Hayır | Bu belgeye özel, tek kullanımlık imzacı tanımları. Bkz. [signings alanı](#signings-tek-kullanımlık-imzacı-tanımı) |
+| `adds` | array | Hayır | Bu belgeye özel, tek kullanımlık metin/QR alan tanımları. Bkz. [adds alanı](#adds-tek-kullanımlık-metinqr-alan-tanımı) |
+
+##### `signings` (Tek Kullanımlık İmzacı Tanımı)
+
+Her eleman, belgeye bir imza görevi ekler.
+
+| Alan | Tip | Zorunlu | Açıklama |
+|------|-----|---------|----------|
+| `signer` | object | **Evet** | İmzacı bilgisi (aşağıya bakın) |
+| `stepOrder` | number | Hayır | İmzalama ekranında görünme sırası. **Belirtilmezse, `signings` dizisindeki sırasına göre otomatik olarak 1'den başlayarak atanır** (yani boş bırakmak imzacıyı görünmez yapmaz — bu davranış [Taslaktan Döküman Ekleme](progress_doctype.md)'deki `signings.stepOrder` kuralından farklıdır) |
+| `signatureType` | object | Hayır | `{ "id": <SignatureType ID> }`. Belirtilmezse varsayılan olarak **EIMZA** kullanılır |
+| `visibleSignature` | object | Hayır | İmza/metin görünürlük konumu (`pageNumber`, `originX`, `originY`, `width`, `height`, `fontSize`, `textColor`, `backgroundColor`, `alignment` vb.) |
+| `promptText` | string | Hayır | Yalnızca `signatureType` `TCKK_ONBOARDING` ise kullanılır — imzacıya gösterilecek yönerge metni |
+| `videoMaxDurationSeconds` | number | Hayır | Yalnızca `signatureType` `TCKK_ONBOARDING` ise kullanılır. Belirtilmezse varsayılan **30** |
+
+**`signer` nesnesi — imzacı çözümleme kuralları:**
+
+| Alan | Açıklama |
+|------|----------|
+| `id` | Doluysa hesaba kayıtlı **mevcut bir imzacı** referans alınır; diğer alanlar yok sayılır |
+| `userId` | `id` boşken doluysa, sistem kullanıcısı ile ilişkili **dahili imzacı** oluşturulur; ad/e-posta/telefon/TC bilgisi bu kullanıcıdan alınır (aşağıdaki alanlar yok sayılır) |
+| `fullName`, `email`, `phone`, `identityNumber` | `id` ve `userId` boşsa, bu alanlarla **yeni harici imzacı** oluşturulur |
+| `partyTypeId` | Hayır — belirtilmezse varsayılan `1` kullanılır |
+
+!!! warning "signer zorunludur"
+    Her `signings` elemanında `signer` alanı gönderilmelidir; boş geçilirse istek `400 Bad Request` ile reddedilir.
+
+##### `adds` (Tek Kullanımlık Metin/QR Alan Tanımı)
+
+Her eleman, belgeye bir metin veya QR alanı ekler (döküman taslağındaki `DocumentTypeAdd` yapısının tek kullanımlık karşılığıdır).
+
+| Alan | Tip | Zorunlu | Açıklama |
+|------|-----|---------|----------|
+| `addType` | string | Hayır | `TEXT` veya `QR` |
+| `content` | string | Hayır | Sabit içerik. `addType: "QR"` iken boş bırakılırsa, otomatik olarak sürecin imzalama linkine (`/sign/{token}`) yönlenen bir QR üretilir |
+| `fieldName` | string | Hayır | Alanı dinamik bir form değeriyle eşlemek için kullanılan anahtar |
+| `docqr` | boolean | Hayır | Bu alanın belge doğrulama QR'ı olarak işaretlenip işaretlenmeyeceği |
+| `visibleSignature` | object | Hayır | Alanın belge üzerindeki konumu (`pageNumber`, `originX`, `originY`, `width`, `height` vb.) |
+
+> ℹ️ `storeadd` alanı bu endpoint için desteklenmez; gönderilse dahi her zaman `false` olarak işlenir.
 
 #### Başarılı Yanıt
 
