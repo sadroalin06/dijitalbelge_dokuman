@@ -23,7 +23,7 @@ nav:
   - Bulut İmzalama (Autosign): autosign.md
   - Referans API: reference-api.md
   - İmzacı API: signers.md
-  - Dosya İmzalama:
+  - Belge İmzalama:
       - Süreç API: progress.md
       - Döküman API: documents.md
   - Taslaktan Süreç API: progress_doctype.md
