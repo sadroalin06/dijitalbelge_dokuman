@@ -27,6 +27,7 @@ nav:
       - Süreç API: progress.md
       - Döküman API: documents.md
       - Taslaktan Süreç API: progress_doctype.md
+      - İmza Formatları ve Doğrulama: signature-verification.md
   - Login İşlemleri:
       - E-İmza Login API: esign.md
       - Mobil İmza Login API: mobilsign.md
