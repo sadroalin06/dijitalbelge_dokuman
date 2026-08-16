@@ -5,6 +5,27 @@ her formatın ne olduğunu, ne zaman üretildiğini ve nasıl doğrulanacağın�
 
 ---
 
+!!! info "İmzalama Sistemi Hakkında"
+    Üretilen çıktının ne olacağı (imzalı PDF, container, onay dosyası, yalnızca kimlik kanıtı vb.)
+    iki şeye göre belirlenir: sürecin **süreç tipi** (`processType`) ve süreçteki imzacılara
+    atanan **imzalama türü** (`signatureType`).
+
+    | Süreç Tipi | Ne yapar | Kullanılabilen imzalama türleri | Sonuç |
+    |---|---|---|---|
+    | **BELGE_IMZALAMA** *(varsayılan)* | Tek bir PDF, imzacılar tarafından sırayla imzalanır | Tümü (`EIMZA`, `MOBILE_IMZA`, `TCKK_*`, `SMSOTP_TIMESTAMP`, `EMAIL_TIMESTAMP`) | aşağıya bakın |
+    | **DIJITAL_ONAY** | Bir işlem/metin kullanıcıya onaylatılır — belge imzalanmaz, metin onaylanır | OTP/e-posta/TCKK tabanlı onay yöntemleri | Onay dosyası üretilir ve onaylanan metne bağlanır |
+    | **DOSYA_IMZALAMA** | Birden fazla dosya **tek bir container** altında toplanıp tek imza ile imzalanır | Yalnızca `EIMZA`, `MOBILE_IMZA` (PKI tabanlı) | ETSI TS 102 918 uyumlu `.asice` container |
+    | **DIJITAL_KIMLIK_DOGRULAMA** | Süreçte imzalama/onaylama yapılmaz — yalnızca imzacı bilgisi (TCKK NFC + yüz/video) doğrulanır | TCKK tabanlı kimlik doğrulama akışları (`TCKK_ONBOARDING` vb.) | Doğrulama kanıtı (evidence) üretilir; gerçek bir imza/onay dosyası oluşmaz |
+
+    Detaylı `processType` alan açıklamaları için bkz. [Süreç API – Süreç Tipleri](progress.md#süreç-tipleri-processtype).
+
+    **BELGE_IMZALAMA içinde**, imzacıya atanan `signatureType`'a göre PDF iki farklı şekilde işlenir:
+
+    - **PKI tabanlı (`EIMZA`, `MOBILE_IMZA`):** PDF doğrudan **PAdES** formatında imzalanır — imza PDF'in içine gömülür, **zaman damgalı** ve **arşiv (LTV) özellikli**dir. Ayrı bir kanıt dosyası oluşmaz; PDF'in kendisi zaten imzalı halidir.
+    - **Kimlik/OTP tabanlı (`TCKK_TIMESTAMP`, `TCKK_FACE_TIMESTAMP`, `TCKK_ONBOARDING`, `SMSOTP_TIMESTAMP`, `EMAIL_TIMESTAMP`):** Bu yöntemler nitelikli elektronik imza sertifikası kullanmaz. PDF yalnızca **zaman damgası** ile mühürlenir; kimlik doğrulama sürecinin kanıtı ise ayrı bir **JAdES** dosyası olarak (`EVIDENCE` tipinde) saklanır.
+
+---
+
 ## Formatlar
 
 | Format | Uzantı | Ne zaman üretilir | Açıklama |

@@ -7,18 +7,6 @@ göre belge imzalama işlemlerini gerçekleştirebilir, imza süreçlerinizi
 
 ---
 
-### 🚀 Hızlı Başlangıç: Postman Koleksiyonu
-
-Entegrasyon sürecinizi hızlandırmak, tüm istek yapılarını ve parametreleri kendi yerel ortamınızda test etmek için hazırladığımız **Postman Koleksiyonunu** doğrudan bilgisayarınıza indirebilirsiniz:
-
-[📥 Dijital Belge Public API Postman Koleksiyonunu İndir (JSON)](/assets/Dijital%20Belge%20Public%20API.postman_collection.json)
-
-**Nasıl Kullanılır?**
-1. Yukarıdaki bağlantıya tıklayarak `.json` dosyasını bilgisayarınıza indirin.
-2. Postman uygulamasını açın ve sol üst köşede bulunan **"Import"** butonuna tıklayın.
-3. İndirdiğiniz dosyayı seçerek içeri aktarın. `03 - Süreç Yönetimi (Process API)` dahil tüm klasör yapısı hazır olarak gelecektir.
-4. İstekleri tetiklemeden önce `X-Client-Id` ve `X-Client-Secret` bilgilerinizi Header alanlarına eklemeyi unutmayın.
-
 İmzalama işlemi öncesinde veya sırasında gerekli olan tüm ek belgelerin
 toplanması, doğrulanması ve sürece dahil edilmesi de DijitalBelge tarafından
 desteklenmektedir. Böylece sadece imza anını değil,
