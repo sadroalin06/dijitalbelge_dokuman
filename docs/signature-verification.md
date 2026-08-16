@@ -22,6 +22,15 @@ imzalanır. Tek bir container'da birden fazla imzacının imzası birleştirilme
 olmayan yöntemler bu süreç tipinde reddedilir, çünkü ASiC-E manifest imzası gerçek bir
 sertifika + ham imza gerektirir.
 
+!!! info "ASiC-E = Container Bazlı İmzalama"
+    DOSYA_IMZALAMA sürecinde tekil dosyalar ayrı ayrı değil, **tek bir container altında
+    toplanıp** birlikte imzalanır. Üretilen `.asice` dosyası aslında bir **ZIP arşividir**
+    — uzantısını `.zip` olarak değiştirdiğinizde içeriğini (orijinal dosyalar,
+    `process-metadata.json`, `ASiCManifest.xml`, `META-INF/signature001.p7s`) doğrudan
+    görüntüleyebilirsiniz. Bütünlüğünü ve imzasını doğrulamak için ise dosyayı değiştirmeden
+    Dijital Belge'nin doğrulama uç noktalarını (bkz. [Doğrulama Endpoint'leri](#doğrulama-endpointleri))
+    kullanmanız gerekir.
+
 ---
 
 ## Doğrulama Endpoint'leri
@@ -29,11 +38,72 @@ sertifika + ham imza gerektirir.
 | Endpoint | Yetki | Kapsam |
 |---|---|---|
 | `POST /files/verify` | Yok (herkese açık) | Herhangi bir yüklenen dosyayı (PDF/`.asice`) tür otomatik algılayarak doğrular |
-| `GET /files/document/{token}/signature/verify` | İmzalama linki token'ı | İmzacının kendi imza dosyasını doğrular |
-| `POST /documentstools/sign/validateasice` | JWT (dashboard) | Manuel `.asice` yükleyip doğrulama aracı; `includeContent=true` ile dosya içeriklerini de döner |
 | `GET /external/process-instances/{processId}/document/{documentId}/tasks/{taskId}/signature/verify` | API-key, `document:read` | Task bazlı doğrulama |
 | `GET /external/process-instances/{processId}/signers/{signerId}/signature/verify` | API-key, `document:read` | İmzacı bazlı doğrulama (documentId/taskId bilmeye gerek yok) |
 
 Tüm doğrulama uç noktaları aynı yanıt şemasını (`DocumentVerificationResultDto`) kullanır —
 `detectedType` (`PDF`/`ASICE`), `valid`, `message`, ve türe göre `pdfSignatures[]` ya da
 `asice{ signatures[], files[], allFilesMatch }`.
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `detectedType` | string | Algılanan dosya türü: `PDF` veya `ASICE` |
+| `valid` | boolean | İmza(lar) geçerli mi |
+| `message` | string | Doğrulama sonucunu özetleyen mesaj |
+| `pdfSignatures` | array | `detectedType: PDF` iken doldurulur — PDF içindeki imza(lar)ın listesi |
+| `asice` | object | `detectedType: ASICE` iken doldurulur — `signatures[]`, `files[]`, `allFilesMatch` alanlarını içerir |
+
+### Task Bazlı Doğrulama
+
+Belirli bir imzalama görevinin (task) imza dosyasını doğrular. `taskId`, dökümana imzacı eklerken dönen `id` alanıyla aynıdır.
+
+**Scope:** `document:read`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/document/{documentId}/tasks/{taskId}/signature/verify
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `documentId` | number | Dökümanın ID'si |
+| `taskId` | number | İmzalama görevinin (imzacının) ID'si |
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/tasks/5/signature/verify \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+### İmzacı Bazlı Doğrulama
+
+Task veya döküman ID'sini bilmeye gerek kalmadan, doğrudan imzacı ID'si üzerinden imza doğrulaması yapar.
+
+**Scope:** `document:read`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/signers/{signerId}/signature/verify
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `signerId` | number | İmzacının ID'si |
+
+#### Örnek cURL
+
+```bash
+curl -X GET https://app.dijitalbelge.com/api/external/process-instances/147/signers/138/signature/verify \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
