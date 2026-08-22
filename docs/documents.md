@@ -543,6 +543,13 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
   },
   "promptText": "Lütfen adınızı ve soyadınızı okuyun",
   "videoMaxDurationSeconds": 60,
+  "visibleSignature": {
+    "pageNumber": 1,
+    "originX": 35,
+    "originY": 416,
+    "width": 200,
+    "height": 75
+  },
   "signer": {
     "fullName": "Ali Veli",
     "identityNumber": "12345678901",
@@ -565,6 +572,7 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 | `signatureType.code` | string | Hayır | İmza türü kodu (örn: `TCKK_ONBOARDING`) |
 | `promptText` | string | Hayır | Video imzalama için imzacıya gösterilecek yönerge metni |
 | `videoMaxDurationSeconds` | number | Hayır | Video imzalama için maksimum süre (saniye) |
+| `visibleSignature` | object | Hayır | İmzanın belge üzerindeki konumu (`pageNumber`, `originX`, `originY`, `width`, `height`, `fontSize`, `textColor`, `backgroundColor`, `alignment` vb.) |
 | `signer` | object | Hayır | İmzacı kimlik bilgileri (TCKK doğrulama akışı için) |
 | `signer.fullName` | string | Hayır | İmzacının ad soyadı |
 | `signer.identityNumber` | string | Hayır | T.C. Kimlik Numarası (11 haneli) |
@@ -575,6 +583,9 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 | `signer.email` | string | Hayır | E-posta adresi |
 
 > ℹ️ `signer` nesnesi, `TCKK_ONBOARDING` gibi kimlik doğrulama gerektiren imza türlerinde kullanılır. Standart imzalama akışlarında bu alan zorunlu değildir.
+
+!!! warning "Önemli: `visibleSignature` (İmza Konumu)"
+    Bu endpoint ile eklenen imzacı, döküman taslağındaki önceden tanımlı bir `signings` sırasına bağlı **değildir** — bu yüzden imzanın PDF üzerinde nereye basılacağı taslak tarafından otomatik belirlenmez. Yeni eklenen imzacı için **`visibleSignature` belirtilmezse imza, belge üzerinde görünür bir konuma yerleştirilmez.** Bu nedenle bu endpoint ile imzacı eklerken `visibleSignature` (`pageNumber`, `originX`, `originY`, `width`, `height`) alanının gönderilmesi önerilir.
 
 !!! warning "Önemli: `order` (İmzalama Sırası)"
     `order` alanı imzacıların sırasını belirler. **İmzalama ekranında yalnızca sırası gelen imzacı görünür.**
@@ -607,6 +618,14 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
   },
   "promptText": "Lütfen adınızı ve soyadınızı okuyun",
   "videoMaxDurationSeconds": 60,
+  "visibleSignature": {
+    "id": 7554,
+    "pageNumber": 1,
+    "originX": 35,
+    "originY": 416,
+    "width": 200,
+    "height": 75
+  },
   "signer": {
     "fullName": "Ali Veli",
     "identityNumber": "12345678901",
@@ -634,6 +653,13 @@ curl -X POST https://app.dijitalbelge.com/api/external/process-instances/147/doc
     "signatureType": { "code": "TCKK_ONBOARDING" },
     "promptText": "Lütfen adınızı ve soyadınızı okuyun",
     "videoMaxDurationSeconds": 60,
+    "visibleSignature": {
+      "pageNumber": 1,
+      "originX": 35,
+      "originY": 416,
+      "width": 200,
+      "height": 75
+    },
     "signer": {
       "fullName": "Ali Veli",
       "identityNumber": "12345678901",
