@@ -32,7 +32,11 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
 
 ## `visibleSignature` Nesnesi (İmza / Alan Konumu)
 
-`visibleSignature`, bir imzanın veya metin/QR alanının PDF üzerinde **nerede ve nasıl** görüneceğini tanımlar. Aşağıdaki uç noktalarda kullanılır: [Sürece Tekil Döküman Ekle](#1-surece-tekil-dokuman-ekle) (`signings[].visibleSignature`, `adds[].visibleSignature`) ve [Dökümana İmzacı Ekle](#8-dokumana-imzac-ekle) (`visibleSignature`).
+`visibleSignature`, bir imzanın veya metin/QR alanının PDF üzerinde **nerede ve nasıl** görüneceğini tanımlar. Bir belgeye imzacı eklenen **her uç noktada** kullanılabilir:
+
+- [Sürece Tekil Döküman Ekle](#1-surece-tekil-dokuman-ekle) — `signings[].visibleSignature`, `adds[].visibleSignature`
+- [Taslaktan Döküman Ekle](progress_doctype.md#imzac-tanm-signings) — `signings[].visibleSignature` (taslakta konum tanımlıysa opsiyonel, override için kullanılabilir)
+- [Dökümana İmzacı Ekle](#8-dokumana-imzac-ekle) — `visibleSignature` (taslak bağlantısı olmadığından **gönderilmesi önerilir**)
 
 | Alan | Tip | Zorunlu | Açıklama |
 |------|-----|---------|----------|

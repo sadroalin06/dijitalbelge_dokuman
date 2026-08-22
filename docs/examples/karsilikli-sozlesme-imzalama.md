@@ -121,6 +121,8 @@ POST /api/external/process-instances/150/document/document-type
 > `signings[1].signer.id` → Taraf B / karşı taraf için sistemde kayıtlı imzacı (`id: 215`).
 >
 > Karşı taraf henüz sistemde kayıtlı değilse, `signer` alanı yerine `fullName`, `email`, `phone`, `identityNumber` bilgileriyle yeni bir imzacı satır içinde tanımlanabilir (bkz. [Abonelik Sözleşmesi örneği](abonelik-sozlesmesi.md)).
+>
+> `id: 60` ve `id: 61` taslakta önceden tasarlanmış imza sıraları olduğundan, imza konumu (`visibleSignature`) **taslakta zaten tanımlıdır** — burada ayrıca gönderilmesi gerekmez. Taslaktaki konumu değiştirmek isterseniz `signings[].visibleSignature` ile override edebilirsiniz (bkz. [Taslaktan Döküman Ekleme – `visibleSignature`](../progress_doctype.md#imzac-tanm-signings)).
 
 **Yanıt:**
 

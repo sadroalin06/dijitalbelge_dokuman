@@ -94,12 +94,18 @@ POST /api/external/process/{processId}/document/document-type
 |----|---------|
 | id | Taslaktadaki İmzacı sırası |
 | stepOrder | İmzalama ekranındaki görünme sırası |
+| visibleSignature | İmzanın PDF üzerindeki konumu (`pageNumber`, `originX`, `originY`, `width`, `height` vb.). Detaylı alan listesi için [Döküman API – `visibleSignature` Nesnesi](documents.md#visiblesignature-nesnesi-imza-alan-konumu) sayfasına bakın |
 | signer | İmzacı bağlama |
 | signer->id | Tanımlı İmzacı id |
 | signer->fullName | Yeni İmzacı İsim ve soyismi |
 | signer->email | Yeni İmzacı email |
 | signer->phone | Yeni İmzacı telefon |
 | signer->identityNumber | Yeni İmzacı TC kimlik numarası |
+
+!!! warning "Önemli: `visibleSignature` (İmza Konumu)"
+    `id` alanı taslaktaki önceden tasarlanmış bir imza sırasına (`signing`) referans verdiği için, o sıranın imza konumu **normalde taslakta zaten tanımlıdır** ve `visibleSignature` göndermeye gerek yoktur.
+
+    Ancak taslakta **konumu tanımlanmamış bir sıra** kullanılıyorsa veya konum **taslaktakinden farklı** olacaksa, `visibleSignature` bu istekte açıkça gönderilerek taslaktaki konum **override edilebilir**. `visibleSignature` hem gönderilmez hem de taslakta tanımlı değilse, imza PDF üzerinde görünür bir konuma yerleştirilmez.
 
 !!! warning "Önemli: `stepOrder` (İmzalama Sırası)"
     `stepOrder` imzacıların imzalama ekranında hangi sırayla görüneceğini belirler. **Sırası gelmeyen imzacı imzalama ekranında görünmez.**
@@ -133,6 +139,26 @@ POST /api/external/process/{processId}/document/document-type
                 
             }
 ```            
+
+**Taslakta konum tanımlı olmayan bir sıra için `visibleSignature` ile konum belirtme örneği:**
+
+```json
+{
+  "id": 63,
+  "stepOrder": 3,
+  "visibleSignature": {
+    "pageNumber": 1,
+    "originX": 320,
+    "originY": 100,
+    "width": 200,
+    "height": 75
+  },
+  "signer": {
+    "id": 320
+  }
+}
+```
+
 ---
 
 ## Response – 201 Created
