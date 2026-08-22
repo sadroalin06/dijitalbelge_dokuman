@@ -30,6 +30,29 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
 
 ---
 
+## `visibleSignature` Nesnesi (İmza / Alan Konumu)
+
+`visibleSignature`, bir imzanın veya metin/QR alanının PDF üzerinde **nerede ve nasıl** görüneceğini tanımlar. Aşağıdaki uç noktalarda kullanılır: [Sürece Tekil Döküman Ekle](#1-surece-tekil-doküman-ekle) (`signings[].visibleSignature`, `adds[].visibleSignature`) ve [Dökümana İmzacı Ekle](#8-dokumana-imzaci-ekle) (`visibleSignature`).
+
+| Alan | Tip | Zorunlu | Açıklama |
+|------|-----|---------|----------|
+| `pageNumber` | Integer | Hayır | İmzanın/alanın basılacağı PDF sayfa numarası |
+| `originX` | Integer | Hayır | Sayfa üzerindeki X koordinatı |
+| `originY` | Integer | Hayır | Sayfa üzerindeki Y koordinatı |
+| `width` | Integer | Hayır | Alanın genişliği |
+| `height` | Integer | Hayır | Alanın yüksekliği |
+| `data` | String | Hayır | Görüntülenecek metin içeriği (ör. imzacının adı) |
+| `image` | Boolean | Hayır | Alanın bir görsel (imza görseli) olup olmadığı |
+| `fontSize` | Integer | Hayır | Metin font boyutu |
+| `textColor` | String | Hayır | Metin rengi (hex, ör. `#000000`) |
+| `backgroundColor` | String | Hayır | Arka plan rengi (hex, ör. `#ffffff`) |
+| `alignment` | String (enum) | Hayır | Metin/alan hizalaması: `LEFTTOP`, `CENTER`, `RIGHTBOTTOM` |
+
+!!! note "Konum belirtilmezse"
+    `visibleSignature` gönderilmezse veya boş bırakılırsa, imza/alan PDF üzerinde görünür bir konuma yerleştirilmez.
+
+---
+
 ## Döküman Yönetimi
 
 ### 1. Sürece Tekil Döküman Ekle
@@ -100,7 +123,7 @@ Her eleman, belgeye bir imza görevi ekler.
 | `signer` | object | **Evet** | İmzacı bilgisi (aşağıya bakın) |
 | `stepOrder` | number | Hayır | İmzalama ekranında görünme sırası. **Belirtilmezse, `signings` dizisindeki sırasına göre otomatik olarak 1'den başlayarak atanır** (yani boş bırakmak imzacıyı görünmez yapmaz — bu davranış [Taslaktan Döküman Ekleme](progress_doctype.md)'deki `signings.stepOrder` kuralından farklıdır) |
 | `signatureType` | object | Hayır | `{ "id": <SignatureType ID> }`. Belirtilmezse varsayılan olarak **EIMZA** kullanılır |
-| `visibleSignature` | object | Hayır | İmza/metin görünürlük konumu (`pageNumber`, `originX`, `originY`, `width`, `height`, `fontSize`, `textColor`, `backgroundColor`, `alignment` vb.) |
+| `visibleSignature` | object | Hayır | İmza/metin görünürlük konumu — bkz. [`visibleSignature` Nesnesi](#visiblesignature-nesnesi-imza-alan-konumu) |
 | `promptText` | string | Hayır | Yalnızca `signatureType` `TCKK_ONBOARDING` ise kullanılır — imzacıya gösterilecek yönerge metni |
 | `videoMaxDurationSeconds` | number | Hayır | Yalnızca `signatureType` `TCKK_ONBOARDING` ise kullanılır. Belirtilmezse varsayılan **30** |
 
@@ -126,7 +149,7 @@ Her eleman, belgeye bir metin veya QR alanı ekler (döküman taslağındaki `Do
 | `content` | string | Hayır | Sabit içerik. `addType: "QR"` iken boş bırakılırsa, otomatik olarak sürecin imzalama linkine (`/sign/{token}`) yönlenen bir QR üretilir |
 | `fieldName` | string | Hayır | Alanı dinamik bir form değeriyle eşlemek için kullanılan anahtar |
 | `docqr` | boolean | Hayır | Bu alanın belge doğrulama QR'ı olarak işaretlenip işaretlenmeyeceği |
-| `visibleSignature` | object | Hayır | Alanın belge üzerindeki konumu (`pageNumber`, `originX`, `originY`, `width`, `height` vb.) |
+| `visibleSignature` | object | Hayır | Alanın belge üzerindeki konumu — bkz. [`visibleSignature` Nesnesi](#visiblesignature-nesnesi-imza-alan-konumu) |
 
 > ℹ️ `storeadd` alanı bu endpoint için desteklenmez; gönderilse dahi her zaman `false` olarak işlenir.
 
@@ -548,7 +571,13 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
     "originX": 35,
     "originY": 416,
     "width": 200,
-    "height": 75
+    "height": 75,
+    "data": "Ali Veli",
+    "image": false,
+    "fontSize": 14,
+    "textColor": "#000000",
+    "backgroundColor": "#ffffff",
+    "alignment": "CENTER"
   },
   "signer": {
     "fullName": "Ali Veli",
@@ -572,7 +601,7 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 | `signatureType.code` | string | Hayır | İmza türü kodu (örn: `TCKK_ONBOARDING`) |
 | `promptText` | string | Hayır | Video imzalama için imzacıya gösterilecek yönerge metni |
 | `videoMaxDurationSeconds` | number | Hayır | Video imzalama için maksimum süre (saniye) |
-| `visibleSignature` | object | Hayır | İmzanın belge üzerindeki konumu (`pageNumber`, `originX`, `originY`, `width`, `height`, `fontSize`, `textColor`, `backgroundColor`, `alignment` vb.) |
+| `visibleSignature` | object | Hayır | İmzanın belge üzerindeki konumu — bkz. [`visibleSignature` Nesnesi](#visiblesignature-nesnesi-imza-alan-konumu) |
 | `signer` | object | Hayır | İmzacı kimlik bilgileri (TCKK doğrulama akışı için) |
 | `signer.fullName` | string | Hayır | İmzacının ad soyadı |
 | `signer.identityNumber` | string | Hayır | T.C. Kimlik Numarası (11 haneli) |

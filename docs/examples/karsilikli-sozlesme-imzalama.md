@@ -210,7 +210,12 @@ POST /api/external/process-instances/150/document/7401/signers
     "originX": 320,
     "originY": 100,
     "width": 200,
-    "height": 75
+    "height": 75,
+    "data": "Mehmet Tanık",
+    "fontSize": 14,
+    "textColor": "#000000",
+    "backgroundColor": "#ffffff",
+    "alignment": "CENTER"
   }
 }
 ```
@@ -222,6 +227,11 @@ POST /api/external/process-instances/150/document/7401/signers
 | `visibleSignature.pageNumber` | İmzanın basılacağı PDF sayfası |
 | `visibleSignature.originX` / `originY` | İmzanın sayfa üzerindeki konumu (koordinat) |
 | `visibleSignature.width` / `height` | İmza alanının boyutu |
+| `visibleSignature.data` | İmza alanında görünecek metin (ör. imzacının adı) |
+| `visibleSignature.fontSize`, `textColor`, `backgroundColor` | Metin/alan görünüm ayarları |
+| `visibleSignature.alignment` | Metin hizalaması: `LEFTTOP`, `CENTER`, `RIGHTBOTTOM` |
+
+> Tüm `visibleSignature` alanlarının tam listesi için [Döküman API – `visibleSignature` Nesnesi](../documents.md#visiblesignature-nesnesi-imza-alan-konumu) sayfasına bakın.
 
 **Yanıt:**
 

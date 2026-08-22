@@ -341,7 +341,7 @@ POST /api/external/process-instances/148/document/document-type
         "fontSize": 14,
         "textColor": "#000000",
         "backgroundColor": "#ffffff",
-        "alignment": "Center"
+        "alignment": "CENTER"
       },
       "signatureFileId": null,
       "promptText": null,
@@ -380,7 +380,7 @@ POST /api/external/process-instances/148/document/document-type
         "fontSize": 14,
         "textColor": "#000000",
         "backgroundColor": "#ffffff",
-        "alignment": "Center"
+        "alignment": "CENTER"
       },
       "signatureFileId": null,
       "promptText": null,
