@@ -11,7 +11,7 @@ Bu örnek, **iki tarafın da elektronik imza (E-İmza) ile imzaladığı** karş
     Özellikle **kurumsal sözleşmelerde**, taraflardan birinin imza yetkisini kanıtlayan **imza sirküleri** gibi destekleyici belgelerin de süreçle birlikte talep edilmesi gerekebilir. Bu belgeler ayrı bir **"yüklemeli" döküman taslağı** olarak sürece eklenir ve ilgili tarafın imzalama sırasına bağlanır. Bu sayede karşı taraf, kendi sırası geldiğinde hem sözleşmeyi imzalar hem de talep edilen ek belgeyi (ör. imza sirküleri) sisteme yükler. Detaylar için [Ek Evrak Yükleme](#ek-evrak-yukleme-imza-sirkuleri-ornegi) bölümüne bakın.
 
 !!! tip "Sözleşmeye Sonradan İmzacı Ekleme (ör. Tanık, Kefil)"
-    Süreç başladıktan sonra, taslakta önceden tanımlanmamış üçüncü bir taraf (ör. tanık, kefil) sözleşmeye imzacı olarak eklenmek istenebilir. Bu durumda taslağın `signings` sırası kullanılamaz; imzanın PDF üzerinde nereye basılacağı **taslaktan otomatik gelmez** ve isteğe `visibleSignature` ile açıkça belirtilmesi gerekir. Detaylar için [Sonradan İmzacı Ekleme](#sonradan-imzaci-ekleme-imza-konumu-belirterek) bölümüne bakın.
+    Süreç başladıktan sonra, taslakta önceden tanımlanmamış üçüncü bir taraf (ör. tanık, kefil) sözleşmeye imzacı olarak eklenmek istenebilir. Bu durumda taslağın `signings` sırası kullanılamaz; imzanın PDF üzerinde nereye basılacağı **taslaktan otomatik gelmez** ve isteğe `visibleSignature` ile açıkça belirtilmesi gerekir. Detaylar için [Sonradan İmzacı Ekleme](#sonradan-imzac-ekleme-imza-konumu-belirterek) bölümüne bakın.
 
 ---
 
@@ -190,7 +190,7 @@ POST /api/external/process-instances/150/document/document-type
 
 ## Sonradan İmzacı Ekleme (İmza Konumu Belirterek)
 
-Adım 2'de sözleşmeye eklenen imzacılar (Taraf A ve Taraf B), döküman taslağındaki `signings` sırasını (`id: 60`, `id: 61`) referans alır — bu sıraların PDF üzerindeki imza konumu **taslakta önceden tasarlanmıştır**. Ancak taslakta yer almayan üçüncü bir tarafın (ör. **tanık**, **kefil**) sözleşmeye sonradan imzacı olarak eklenmesi gerekebilir. Bu durumda taslağın `signings` yapısı kullanılamaz; bunun yerine [Dökümana İmzacı Ekle](../documents.md#8-dokumana-imzaci-ekle) uç noktası ile doğrudan dökümana imzacı eklenir.
+Adım 2'de sözleşmeye eklenen imzacılar (Taraf A ve Taraf B), döküman taslağındaki `signings` sırasını (`id: 60`, `id: 61`) referans alır — bu sıraların PDF üzerindeki imza konumu **taslakta önceden tasarlanmıştır**. Ancak taslakta yer almayan üçüncü bir tarafın (ör. **tanık**, **kefil**) sözleşmeye sonradan imzacı olarak eklenmesi gerekebilir. Bu durumda taslağın `signings` yapısı kullanılamaz; bunun yerine [Dökümana İmzacı Ekle](../documents.md#8-dokumana-imzac-ekle) uç noktası ile doğrudan dökümana imzacı eklenir.
 
 !!! warning "Bu durumda imza konumu (`visibleSignature`) zorunludur"
     Bu yolla eklenen imzacı, taslaktaki önceden tasarlanmış bir imza konumuna bağlı değildir. `visibleSignature` alanı **belirtilmezse imza PDF üzerinde görünür bir konuma yerleştirilmez.** Bu nedenle yeni imzacı eklenirken sözleşme PDF'i üzerinde imzanın basılacağı sayfa ve koordinatlar (`pageNumber`, `originX`, `originY`, `width`, `height`) mutlaka gönderilmelidir.

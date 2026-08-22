@@ -32,7 +32,7 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
 
 ## `visibleSignature` Nesnesi (İmza / Alan Konumu)
 
-`visibleSignature`, bir imzanın veya metin/QR alanının PDF üzerinde **nerede ve nasıl** görüneceğini tanımlar. Aşağıdaki uç noktalarda kullanılır: [Sürece Tekil Döküman Ekle](#1-surece-tekil-doküman-ekle) (`signings[].visibleSignature`, `adds[].visibleSignature`) ve [Dökümana İmzacı Ekle](#8-dokumana-imzaci-ekle) (`visibleSignature`).
+`visibleSignature`, bir imzanın veya metin/QR alanının PDF üzerinde **nerede ve nasıl** görüneceğini tanımlar. Aşağıdaki uç noktalarda kullanılır: [Sürece Tekil Döküman Ekle](#1-surece-tekil-dokuman-ekle) (`signings[].visibleSignature`, `adds[].visibleSignature`) ve [Dökümana İmzacı Ekle](#8-dokumana-imzac-ekle) (`visibleSignature`).
 
 | Alan | Tip | Zorunlu | Açıklama |
 |------|-----|---------|----------|
@@ -41,12 +41,16 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
 | `originY` | Integer | Hayır | Sayfa üzerindeki Y koordinatı |
 | `width` | Integer | Hayır | Alanın genişliği |
 | `height` | Integer | Hayır | Alanın yüksekliği |
-| `data` | String | Hayır | Görüntülenecek metin içeriği (ör. imzacının adı) |
-| `image` | Boolean | Hayır | Alanın bir görsel (imza görseli) olup olmadığı |
+| `data` | String | Hayır | `image: false` ise belge üzerinde görünecek metin (ör. `"Genel Müdür Ali Veli"`) — E-İmza ve Mobil İmza için kullanılır. `image: true` ise bu alana görselleştirilecek imza resmi **Base64** olarak gönderilir |
+| `image` | Boolean | Hayır | `data` alanının nasıl yorumlanacağını belirler: `true` ise `data` bir Base64 **resim**, `false`/belirtilmezse `data` bir **metin**dir |
 | `fontSize` | Integer | Hayır | Metin font boyutu |
 | `textColor` | String | Hayır | Metin rengi (hex, ör. `#000000`) |
 | `backgroundColor` | String | Hayır | Arka plan rengi (hex, ör. `#ffffff`) |
 | `alignment` | String (enum) | Hayır | Metin/alan hizalaması: `LEFTTOP`, `CENTER`, `RIGHTBOTTOM` |
+
+!!! note "`data` / `image` İlişkisi"
+    - **E-İmza / Mobil İmza:** `image: false` (veya belirtilmezse) `data`, belge üzerinde görünecek **isim/ünvan metnidir** (ör. `"Genel Müdür Ali Veli"`).
+    - `image: true` verilirse `data` alanına, belge üzerinde görselleştirilecek **imza resmi Base64** olarak gönderilir.
 
 !!! note "Konum belirtilmezse"
     `visibleSignature` gönderilmezse veya boş bırakılırsa, imza/alan PDF üzerinde görünür bir konuma yerleştirilmez.
