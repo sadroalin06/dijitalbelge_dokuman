@@ -23,7 +23,7 @@ Bir sürecin nasıl işleyeceğini `processType` alanı belirler. Süreç oluşt
 |-------|----------|
 | `BELGE_IMZALAMA` | **(Varsayılan)** Belge üzerinde PDF imzalama işlemi yapılır. İmzacılar, dökümanı `DocumentSigningTask` üzerinden PDF olarak imzalar. |
 | `DIJITAL_ONAY` | Metin tabanlı dijital onay işlemi yapılır. Onaylayan kişi metni onaylar; onay dosyası oluşturularak metne bağlanır. |
-| `DOSYA_IMZALAMA` | Herhangi bir dosya türü (PDF, DOCX, XML vb.) CAdES ayrık imzayla imzalanır. Sürece eklenen tüm belgeler, tüm imzacılar tarafından imzalanır. Her imza `.p7s` formatında ayrık olarak saklanır. |
+| `DOSYA_IMZALAMA` | Herhangi bir dosya türü (PDF, DOCX, XML vb.) CAdES ayrık imzayla imzalanır. Sürece eklenen tüm belgeler, tüm imzacılar tarafından imzalanır. Her imza ASiC-E (`.asice`) container'ı olarak ayrık şekilde saklanır. Ayrıntılar için [Dosya İmzalama API](dosya-imzalama.md) sayfasına bakın. |
 | `DIJITAL_KIMLIK_DOGRULAMA` | Belge imzalanmaz; bir kişinin kimliği TCKK NFC çip okuma + yüz/video doğrulama ile teyit edilir. İmzacı gizli bir "signing control" belgesine bağlanır, gerçek bir dosya üretilmez. |
 
 !!! info "Varsayılan Değer"
