@@ -56,8 +56,8 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
     - **E-İmza / Mobil İmza:** `image: false` (veya belirtilmezse) `data`, belge üzerinde görünecek **isim/ünvan metnidir** (ör. `"Genel Müdür Ali Veli"`).
     - `image: true` verilirse `data` alanına, belge üzerinde görselleştirilecek **imza resmi Base64** olarak gönderilir.
 
-!!! warning "`visibleSignature` şu anda zorunludur"
-    `visibleSignature` gönderilmezse istek **hata** ile sonuçlanır. Konum bilgisi mutlaka gönderilmelidir.
+!!! warning "`visibleSignature` zorunludur"
+    `visibleSignature` gönderilmezse istek **hata** ile sonuçlanır.
 
 ---
 
