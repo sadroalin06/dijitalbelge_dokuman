@@ -1,3 +1,7 @@
+---
+description: Karşılıklı elektronik sözleşme imzalama örneği — iki tarafın da e-imza ile imzaladığı sözleşme sürecinin API ile nasıl kurulacağını gösteren adım adım rehber.
+---
+
 # Karşılıklı Elektronik Sözleşme İmzalama
 
 Bu örnek, **iki tarafın da elektronik imza (E-İmza) ile imzaladığı** karşılıklı bir sözleşme sürecinin API aracılığıyla nasıl kurulacağını adım adım açıklar. Tipik kullanım alanı; iki şirket veya bir şirket ile bir gerçek/tüzel kişi arasında imzalanan **karşılıklı sözleşmelerdir** (ör. hizmet sözleşmesi, iş birliği sözleşmesi, tedarik sözleşmesi).

@@ -1,3 +1,7 @@
+---
+description: Abonelik sözleşmesi imzalama örneği — e-imza, yapay zeka kimlik doğrulama (TCKK) ve mobil imza senaryolarıyla API üzerinden uçtan uca imza akışı.
+---
+
 # Abonelik Sözleşmesi İmzalama
 
 Bu örnek, arayüzden yüklenen bir **Abonelik Sözleşmesi** taslağının API aracılığıyla imzalatılmasını adım adım açıklar.

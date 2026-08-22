@@ -1,3 +1,7 @@
+---
+description: PAdES ve CAdES/ASiC-E imza formatlarının açıklaması — e-imza ve mobil imza ile atılan imzaların API üzerinden nasıl doğrulanacağı.
+---
+
 # İmza Formatları ve Doğrulama
 
 Dosya imzalama sisteminde süreç tipine göre farklı imza formatları kullanılır. Bu bölüm

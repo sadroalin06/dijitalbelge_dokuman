@@ -1,3 +1,7 @@
+---
+description: Dosya İmzalama API'si (CAdES/ASiC-E) ile PDF, DOCX, XML gibi her dosya türünü değiştirmeden e-imza veya mobil imza ile ayrık (detached) imzayla imzalatın.
+---
+
 # Dosya İmzalama API (CAdES / ASiC-E)
 
 Bu doküman, `DOSYA_IMZALAMA` süreç tipini kullanarak **herhangi bir dosya türünü** (PDF, DOCX, XML, resim, video vb.) CAdES ayrık imza (detached signature) ile imzalatmak için kullanılan API uç noktalarını açıklar.

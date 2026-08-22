@@ -1,3 +1,7 @@
+---
+description: E-İmza ile Login API — üçüncü taraf uygulamalara e-imza kullanarak kimlik doğrulama ve giriş (login) entegrasyonu sağlayan DijitalBelge API'si.
+---
+
 # E-İmza ile Login API
 
 Üçüncü taraf platformların kendi kullanıcılarını Dijital Belge sistemi ile  e-imza ile giriş yaptırmak için kullandığı API'dir.

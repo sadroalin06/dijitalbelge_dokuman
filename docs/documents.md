@@ -1,3 +1,7 @@
+---
+description: DijitalBelge Döküman API'si ile süreçlere PDF belge ekleme, imza alanı (signing) tanımlama ve e-imza/mobil imza ile imzalatma uç noktaları.
+---
+
 # Döküman API
 
 Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman imzacılarını yönetmek için kullanılan API uç noktalarını açıklar. Döküman eklemeden önce ilgili sürecin oluşturulmuş olması gerekir — bkz. [Süreç API](progress.md).

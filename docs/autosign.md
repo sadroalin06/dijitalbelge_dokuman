@@ -1,3 +1,7 @@
+---
+description: Bulut İmzalama (Autosign) API'si ile TC kimlik numarasına bağlı imzacılar için otomatik e-imza işlemlerini süreçlerinizde etkinleştirin.
+---
+
 # Bulut İmzalama (Autosign)
 
 **Bulut İmzalama**, DijitalBelge platformunun lisanslı bir hizmetidir. Hesabınıza kayıtlı ve yetkilendirilmiş bir cihazın ilgili bilgisayarda aktif olması koşuluyla, bir sürece TC kimlik numarası ile imzacı olarak eklenen kişinin belgesi **otomatik olarak imzalanır**.

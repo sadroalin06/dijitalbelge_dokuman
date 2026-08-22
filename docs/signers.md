@@ -1,3 +1,7 @@
+---
+description: DijitalBelge Signer (İmzacı) API'si ile e-imza ve mobil imza süreçlerine imzacı ekleme, arama ve yönetme uç noktaları.
+---
+
 # Signer API (External)
 
 Bu doküman, **Signer (İmzacı)** yönetimi için kullanılan **External Signer API** uç noktalarını açıklar.  

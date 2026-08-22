@@ -1,3 +1,7 @@
+---
+description: Döküman taslağından (doctype) süreç oluşturma API'si — hazır belge şablonlarını e-imza veya mobil imza ile hızlıca imzaya açın.
+---
+
 # Sürece döküman tasğalından belge ekleme
 
 Bu endpoint, tanımlı bir **Döküman Taslağı** bilgisini kullanarak ilgili **süreç (process)** içerisine yeni bir belge eklemek için kullanılır. **Basit API** lisansı olan kullanıcılarda kullanılabilir. Hazırlanmış döküman taslağına tanımlı bir imzacı veya yeni imzacı bağlama işlemi yapabilirsiniz. Döküman imzalama ayarları döküman taslağında tanımlanır. Referans API üzerinden tanımlı döküman taslaklarına ulaşabilirsiniz

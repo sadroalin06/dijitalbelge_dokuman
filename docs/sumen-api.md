@@ -1,3 +1,7 @@
+---
+description: Sümen masaüstü uygulaması WebSocket API'si ile yerel e-imza cihazlarını yönetme ve imzalama komutları gönderme.
+---
+
 # Sümen Masaüstü Uygulaması API
 
 Dijital Belge'nin masaüstü yazılımı olan **Sümen**, yerel WebSocket API'si aracılığıyla imzalama işlemleri ve cihaz yönetimi için komutlar sunar.

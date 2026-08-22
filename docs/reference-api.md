@@ -1,3 +1,7 @@
+---
+description: DijitalBelge External API için ortak referans değerleri (imza türleri, ünvanlar, döküman taslakları) — e-imza ve mobil imza API entegrasyonlarında kullanılan sabit listeler.
+---
+
 # Reference API (External)
 
 Bu döküman **External API** için kullanılacak referans değerlerin listesini verir. Bu tüm apilerde ortak kullanılan alanları API ile çekebilirsiniz.

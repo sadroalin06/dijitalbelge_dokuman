@@ -1,3 +1,7 @@
+---
+description: DijitalBelge API yetkileri (scopes) ve paket bazlı erişim seviyeleri — e-imza, mobil imza ve belge imzalama API'lerini kullanmak için gereken scope'lar.
+---
+
 # Scopes & Paket Bazlı Yetkilendirme
 
 Bu doküman, platformda kullanılan **yetkilerin (scopes)** hangi **paket (versiyon)** kapsamında kullanılabildiğini açıklar.  

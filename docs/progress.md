@@ -1,3 +1,7 @@
+---
+description: DijitalBelge Süreç Yönetimi API'si ile e-imza ve mobil imza tabanlı belge imzalama süreçlerini oluşturma, başlatma ve durum takibi.
+---
+
 # Süreç Yönetimi API
 
 Dijital Belge Sistemi'nde belge işleme süreçlerini yönetmek için kullanılan API'dir.

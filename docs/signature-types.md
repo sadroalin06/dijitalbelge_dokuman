@@ -1,3 +1,7 @@
+---
+description: DijitalBelge'de desteklenen imzalama türleri — e-imza (E-İmza), mobil imza, SMS OTP, TCKK ve yapay zeka kimlik doğrulama ile API üzerinden imzalama senaryoları.
+---
+
 # İmzalama Türleri ve Kullanım Senaryoları
 
 Bu sayfa, Dijital Belge platformunda kullanılabilen imzalama türlerini ve bu türlerin karşılıklı imzalama senaryolarında nasıl bir arada kullanıldığını açıklamaktadır.

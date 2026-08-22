@@ -1,3 +1,7 @@
+---
+description: Mobil İmza ile Login API — üçüncü taraf uygulamalara mobil imza kullanarak kimlik doğrulama ve giriş (login) entegrasyonu sağlayan DijitalBelge API'si.
+---
+
 # Mobil İmza ile Login API
 
 Üçüncü taraf platformların kendi kullanıcılarını Dijital Belge sistemi ile mobil imza kullanarak giriş yaptırmak için kullandığı API'dir.

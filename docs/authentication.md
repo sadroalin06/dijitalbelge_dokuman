@@ -1,3 +1,7 @@
+---
+description: DijitalBelge External API için ClientId/ClientSecret ile kimlik doğrulama (authentication) adımları — e-imza ve mobil imza API entegrasyonuna başlamadan önce gereken kurulum.
+---
+
 # 🔐 Kimlik Doğrulama (Authentication)
 
 DijitalBelge External API’ye yapılan tüm istekler **entegrasyon bazlı kimlik doğrulama**
