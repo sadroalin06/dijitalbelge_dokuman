@@ -1,3 +1,7 @@
+---
+description: DijitalBelge webhook bildirimleri ile e-imza ve mobil imza süreçlerindeki DOCUMENT_SIGNED, PROCESS_STATUS_CHANGED gibi olayları gerçek zamanlı takip edin.
+---
+
 # Webhook
 
 Sistem olayları gerçekleştiğinde, kayıtlı ve aktif webhook URL'lerine **HTTP POST** olarak bildirim gönderilir.
