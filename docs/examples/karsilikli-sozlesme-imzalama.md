@@ -195,7 +195,7 @@ POST /api/external/process-instances/150/document/document-type
 Adım 2'de sözleşmeye eklenen imzacılar (Taraf A ve Taraf B), döküman taslağındaki `signings` sırasını (`id: 60`, `id: 61`) referans alır — bu sıraların PDF üzerindeki imza konumu **taslakta önceden tasarlanmıştır**. Ancak taslakta yer almayan üçüncü bir tarafın (ör. **tanık**, **kefil**) sözleşmeye sonradan imzacı olarak eklenmesi gerekebilir. Bu durumda taslağın `signings` yapısı kullanılamaz; bunun yerine [Dökümana İmzacı Ekle](../documents.md#8-dokumana-imzac-ekle) uç noktası ile doğrudan dökümana imzacı eklenir.
 
 !!! warning "Bu durumda imza konumu (`visibleSignature`) zorunludur"
-    Bu yolla eklenen imzacı, taslaktaki önceden tasarlanmış bir imza konumuna bağlı değildir. `visibleSignature` alanı **belirtilmezse imza PDF üzerinde görünür bir konuma yerleştirilmez.** Bu nedenle yeni imzacı eklenirken sözleşme PDF'i üzerinde imzanın basılacağı sayfa ve koordinatlar (`pageNumber`, `originX`, `originY`, `width`, `height`) mutlaka gönderilmelidir.
+    Bu yolla eklenen imzacı, taslaktaki önceden tasarlanmış bir imza konumuna bağlı değildir. `visibleSignature` alanı **belirtilmezse istek hata verir.** Bu nedenle yeni imzacı eklenirken sözleşme PDF'i üzerinde imzanın basılacağı sayfa ve koordinatlar (`pageNumber`, `originX`, `originY`, `width`, `height`) mutlaka gönderilmelidir.
 
 ```http
 POST /api/external/process-instances/150/document/7401/signers

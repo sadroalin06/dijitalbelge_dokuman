@@ -36,7 +36,7 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
 
 - [Sürece Tekil Döküman Ekle](#1-surece-tekil-dokuman-ekle) — `signings[].visibleSignature`, `adds[].visibleSignature`
 - [Taslaktan Döküman Ekle](progress_doctype.md#imzac-tanm-signings) — `signings[].visibleSignature` (taslakta konum tanımlıysa opsiyonel, override için kullanılabilir)
-- [Dökümana İmzacı Ekle](#8-dokumana-imzac-ekle) — `visibleSignature` (taslak bağlantısı olmadığından **gönderilmesi önerilir**)
+- [Dökümana İmzacı Ekle](#8-dokumana-imzac-ekle) — `visibleSignature` (taslak bağlantısı olmadığından **zorunludur**)
 
 | Alan | Tip | Zorunlu | Açıklama |
 |------|-----|---------|----------|
@@ -56,8 +56,8 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
     - **E-İmza / Mobil İmza:** `image: false` (veya belirtilmezse) `data`, belge üzerinde görünecek **isim/ünvan metnidir** (ör. `"Genel Müdür Ali Veli"`).
     - `image: true` verilirse `data` alanına, belge üzerinde görselleştirilecek **imza resmi Base64** olarak gönderilir.
 
-!!! note "Konum belirtilmezse"
-    `visibleSignature` gönderilmezse veya boş bırakılırsa, imza/alan PDF üzerinde görünür bir konuma yerleştirilmez.
+!!! warning "`visibleSignature` şu anda zorunludur"
+    `visibleSignature` gönderilmezse istek **hata** ile sonuçlanır. Konum bilgisi mutlaka gönderilmelidir.
 
 ---
 
@@ -131,7 +131,7 @@ Her eleman, belgeye bir imza görevi ekler.
 | `signer` | object | **Evet** | İmzacı bilgisi (aşağıya bakın) |
 | `stepOrder` | number | Hayır | İmzalama ekranında görünme sırası. **Belirtilmezse, `signings` dizisindeki sırasına göre otomatik olarak 1'den başlayarak atanır** (yani boş bırakmak imzacıyı görünmez yapmaz — bu davranış [Taslaktan Döküman Ekleme](progress_doctype.md)'deki `signings.stepOrder` kuralından farklıdır) |
 | `signatureType` | object | Hayır | `{ "id": <SignatureType ID> }`. Belirtilmezse varsayılan olarak **EIMZA** kullanılır |
-| `visibleSignature` | object | Hayır | İmza/metin görünürlük konumu — bkz. [`visibleSignature` Nesnesi](#visiblesignature-nesnesi-imza-alan-konumu) |
+| `visibleSignature` | object | **Evet** | İmza/metin görünürlük konumu — bkz. [`visibleSignature` Nesnesi](#visiblesignature-nesnesi-imza-alan-konumu). **Belirtilmezse istek hata verir.** |
 | `promptText` | string | Hayır | Yalnızca `signatureType` `TCKK_ONBOARDING` ise kullanılır — imzacıya gösterilecek yönerge metni |
 | `videoMaxDurationSeconds` | number | Hayır | Yalnızca `signatureType` `TCKK_ONBOARDING` ise kullanılır. Belirtilmezse varsayılan **30** |
 
@@ -609,7 +609,7 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 | `signatureType.code` | string | Hayır | İmza türü kodu (örn: `TCKK_ONBOARDING`) |
 | `promptText` | string | Hayır | Video imzalama için imzacıya gösterilecek yönerge metni |
 | `videoMaxDurationSeconds` | number | Hayır | Video imzalama için maksimum süre (saniye) |
-| `visibleSignature` | object | Hayır | İmzanın belge üzerindeki konumu — bkz. [`visibleSignature` Nesnesi](#visiblesignature-nesnesi-imza-alan-konumu) |
+| `visibleSignature` | object | **Evet** | İmzanın belge üzerindeki konumu — bkz. [`visibleSignature` Nesnesi](#visiblesignature-nesnesi-imza-alan-konumu). **Belirtilmezse istek hata verir.** |
 | `signer` | object | Hayır | İmzacı kimlik bilgileri (TCKK doğrulama akışı için) |
 | `signer.fullName` | string | Hayır | İmzacının ad soyadı |
 | `signer.identityNumber` | string | Hayır | T.C. Kimlik Numarası (11 haneli) |
@@ -621,8 +621,8 @@ POST {baseURL}/process-instances/{processId}/document/{documentId}/signers
 
 > ℹ️ `signer` nesnesi, `TCKK_ONBOARDING` gibi kimlik doğrulama gerektiren imza türlerinde kullanılır. Standart imzalama akışlarında bu alan zorunlu değildir.
 
-!!! warning "Önemli: `visibleSignature` (İmza Konumu)"
-    Bu endpoint ile eklenen imzacı, döküman taslağındaki önceden tanımlı bir `signings` sırasına bağlı **değildir** — bu yüzden imzanın PDF üzerinde nereye basılacağı taslak tarafından otomatik belirlenmez. Yeni eklenen imzacı için **`visibleSignature` belirtilmezse imza, belge üzerinde görünür bir konuma yerleştirilmez.** Bu nedenle bu endpoint ile imzacı eklerken `visibleSignature` (`pageNumber`, `originX`, `originY`, `width`, `height`) alanının gönderilmesi önerilir.
+!!! warning "Önemli: `visibleSignature` (İmza Konumu) zorunludur"
+    Bu endpoint ile eklenen imzacı, döküman taslağındaki önceden tanımlı bir `signings` sırasına bağlı **değildir** — bu yüzden imzanın PDF üzerinde nereye basılacağı taslak tarafından otomatik belirlenmez. **`visibleSignature` (`pageNumber`, `originX`, `originY`, `width`, `height`) gönderilmezse istek hata verir.**
 
 !!! warning "Önemli: `order` (İmzalama Sırası)"
     `order` alanı imzacıların sırasını belirler. **İmzalama ekranında yalnızca sırası gelen imzacı görünür.**

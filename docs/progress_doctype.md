@@ -105,7 +105,7 @@ POST /api/external/process/{processId}/document/document-type
 !!! warning "Önemli: `visibleSignature` (İmza Konumu)"
     `id` alanı taslaktaki önceden tasarlanmış bir imza sırasına (`signing`) referans verdiği için, o sıranın imza konumu **normalde taslakta zaten tanımlıdır** ve `visibleSignature` göndermeye gerek yoktur.
 
-    Ancak taslakta **konumu tanımlanmamış bir sıra** kullanılıyorsa veya konum **taslaktakinden farklı** olacaksa, `visibleSignature` bu istekte açıkça gönderilerek taslaktaki konum **override edilebilir**. `visibleSignature` hem gönderilmez hem de taslakta tanımlı değilse, imza PDF üzerinde görünür bir konuma yerleştirilmez.
+    Ancak taslakta **konumu tanımlanmamış bir sıra** kullanılıyorsa veya konum **taslaktakinden farklı** olacaksa, `visibleSignature` bu istekte açıkça gönderilerek taslaktaki konum **override edilebilir**. `visibleSignature` hem gönderilmez hem de taslakta tanımlı değilse istek **hata** verir.
 
 !!! warning "Önemli: `stepOrder` (İmzalama Sırası)"
     `stepOrder` imzacıların imzalama ekranında hangi sırayla görüneceğini belirler. **Sırası gelmeyen imzacı imzalama ekranında görünmez.**
