@@ -63,6 +63,7 @@ Her oluşturulan sürecin **otomatik olarak benzersiz bir QR kodu** oluşturulur
 |--------|------|-------|----------|
 | `POST` | `/process-instances` | `process:start` | Yeni süreç oluştur |
 | `GET` | `/process-instances/{processId}` | `process:status` | Süreç detayını getir |
+| `GET` | `/process-instances/{processId}/qr` | `process:status` | Doğrulama QR kodunu PNG olarak getir |
 | `PUT` | `/process-instances/{processId}/status/start` | `process:start` | Süreci başlat |
 | `PUT` | `/process-instances/{processId}/status/cancel` | `process:start` | Süreci iptal et |
 | `PUT` | `/process-instances/{processId}/status/complete` | `process:start` | Süreci tamamla |
@@ -358,6 +359,40 @@ DELETE {baseURL}/process-instances/{processId}
 curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147 \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 7. Doğrulama QR Kodunu Getir (PNG)
+
+Belgeye gömülen doğrulama QR'ının PNG görselini döndürür. Entegratör kendi doğrulama
+ekranında dökümanla aynı QR'ı göstermek için kullanabilir.
+
+**Scope:** `process:status`
+
+#### İstek
+
+```http
+GET {baseURL}/process-instances/{processId}/qr?size=300
+```
+
+**Query Parameters:**
+
+| Parametre | Tip | Varsayılan | Açıklama |
+|-----------|-----|------------|----------|
+| `size` | number | `300` | PNG kenar uzunluğu (px) |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK** — `Content-Type: image/png` (ham PNG byte'ları).
+
+#### Örnek cURL
+
+```bash
+curl -X GET "https://app.dijitalbelge.com/api/external/process-instances/147/qr?size=300" \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx" \
+  --output surec-147-qr.png
 ```
 
 ---

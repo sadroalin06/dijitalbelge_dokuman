@@ -29,7 +29,7 @@ process:documenttype:write
 ## Endpoint
 
 ```
-POST /api/external/process/{processId}/document/document-type
+POST /api/external/process-instances/{processId}/document/document-type
 ```
 
 ---

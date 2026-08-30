@@ -1,0 +1,1594 @@
+{
+  "info": {
+    "name": "DijitalBelge External API",
+    "_postman_id": "d1b1e1a0-ex7e-4c0a-9a10-dijitalbelge0001",
+    "description": "DijitalBelge External API (guncel).\n\n- Base URL: {{baseUrl}}  (varsayilan: https://testapp.dijitalbelge.com:8443/api/external)\n- Kimlik dogrulama: her istekte X-Client-Id + X-Client-Secret header'lari (koleksiyon seviyesinde tanimli).\n- Entegrasyon uygulamasi: Panel > Ayarlar > API Entegrasyonu > Yeni Uygulama. ClientSecret bir kez gosterilir.\n- Cagrilar yalnizca hesabin paketine tanimli scope'lari kullanabilir; yetersizse 403 doner.\n\nDegiskenler: baseUrl, clientId, clientSecret, processId, documentId, signerId, taskId, storedFileId, partyTypeId, signatureTypeId, loginTxId, operator.\n\nBir cok istekte test scripti donen id'yi ilgili degiskene yazar (processId, documentId, signerId, taskId, loginTxId).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://testapp.dijitalbelge.com:8443/api/external"
+    },
+    {
+      "key": "clientId",
+      "value": "app_xxxxx"
+    },
+    {
+      "key": "clientSecret",
+      "value": "secret_xxxxx"
+    },
+    {
+      "key": "processId",
+      "value": "0"
+    },
+    {
+      "key": "documentId",
+      "value": "0"
+    },
+    {
+      "key": "signerId",
+      "value": "0"
+    },
+    {
+      "key": "taskId",
+      "value": "0"
+    },
+    {
+      "key": "storedFileId",
+      "value": "0"
+    },
+    {
+      "key": "partyTypeId",
+      "value": "1"
+    },
+    {
+      "key": "signatureTypeId",
+      "value": "1"
+    },
+    {
+      "key": "operator",
+      "value": "TURKCELL"
+    },
+    {
+      "key": "loginTxId",
+      "value": ""
+    },
+    {
+      "key": "definitionId",
+      "value": "0"
+    }
+  ],
+  "item": [
+    {
+      "name": "Reference (referance)",
+      "description": "Ortak referans listeleri. Base path: {{baseUrl}}/referance",
+      "item": [
+        {
+          "name": "GET partytype (unvanlar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/referance/partytype",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "referance",
+                "partytype"
+              ]
+            },
+            "description": "Hesaptaki tanimli unvanlar (PartyType). Scope: signer:read"
+          }
+        },
+        {
+          "name": "GET documenttype (belge taslaklari)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/referance/documenttype?all=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "referance",
+                "documenttype"
+              ],
+              "query": [
+                {
+                  "key": "all",
+                  "value": "false",
+                  "description": "true = pasifler dahil"
+                }
+              ]
+            },
+            "description": "Hesaptaki belge taslaklari (DocumentType). Scope: documenttype:read"
+          }
+        },
+        {
+          "name": "GET signaturetype (imza turleri)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/referance/signaturetype",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "referance",
+                "signaturetype"
+              ]
+            },
+            "description": "Kullanilabilir imza turleri (id + code). EIMZA, EMAIL_TIMESTAMP, TCKK_TIMESTAMP, SMSOTP_TIMESTAMP, MOBILE_IMZA, TCKK_FACE_TIMESTAMP, TCKK_ONBOARDING ..."
+          }
+        },
+        {
+          "name": "GET form (form tasarimlari)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/referance/form",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "referance",
+                "form"
+              ]
+            },
+            "description": "Hesaptaki dinamik form tasarimlari (jsonSchema ile). Scope: form:read"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Signers (imzaci rehberi)",
+      "description": "Base path: {{baseUrl}}/signers",
+      "item": [
+        {
+          "name": "GET search (sayfali arama)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "const first = (j.content && j.content[0]) || null;",
+                  "if (first && first.id) { pm.collectionVariables.set('signerId', first.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/signers/search?search=&fullName=&phone=&email=&identityNumber=&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "signers",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "partyTypeNames",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "fullName",
+                  "value": ""
+                },
+                {
+                  "key": "phone",
+                  "value": ""
+                },
+                {
+                  "key": "email",
+                  "value": ""
+                },
+                {
+                  "key": "identityNumber",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "id,desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Imzacilarin sayfali listesi. Scope: signer:read"
+          }
+        },
+        {
+          "name": "POST bulk-insert (imzaci ekle)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "const arr = Array.isArray(j) ? j : (j.content || []);",
+                  "if (arr[0] && arr[0].id) { pm.collectionVariables.set('signerId', arr[0].id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"fullName\": \"Ali Veli\",\n    \"email\": \"ali.veli@example.com\",\n    \"phone\": \"+905551112233\",\n    \"identityNumber\": \"12345678901\",\n    \"partyTypeId\": {{partyTypeId}}\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/signers/bulk-insert",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "signers",
+                "bulk-insert"
+              ]
+            },
+            "description": "Signer listesi ekler. fullName + email + identityNumber + partyTypeId zorunlu. Scope: signer:managment"
+          }
+        },
+        {
+          "name": "PUT {id} (imzaci guncelle)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Ali Veli\",\n  \"email\": \"ali.veli@example.com\",\n  \"phone\": \"+905551112233\",\n  \"identityNumber\": \"12345678901\",\n  \"partyTypeId\": {{partyTypeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/signers/{{signerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "signers",
+                "{{signerId}}"
+              ]
+            },
+            "description": "Scope: signer:managment"
+          }
+        },
+        {
+          "name": "DELETE {id} (imzaci pasiflestir)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/signers/{{signerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "signers",
+                "{{signerId}}"
+              ]
+            },
+            "description": "Soft delete (isActive=false). Scope: signer:managment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Process Instances (surec)",
+      "description": "Base path: {{baseUrl}}/process-instances",
+      "item": [
+        {
+          "name": "POST / (yeni surec olustur)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.code === 201);",
+                  "const j = pm.response.json();",
+                  "if (j && j.id) { pm.collectionVariables.set('processId', j.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Sureci\",\n  \"processType\": \"BELGE_IMZALAMA\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process-instances",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances"
+              ]
+            },
+            "description": "processType: BELGE_IMZALAMA (varsayilan) | DIJITAL_ONAY | DOSYA_IMZALAMA | DIJITAL_KIMLIK_DOGRULAMA. Opsiyonel: processDefinitionId (taslaktan), name, hasQrCode, responsibleId. Scope: process:start"
+          }
+        },
+        {
+          "name": "GET {processId} (surec detayi + imzacilar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}"
+              ]
+            },
+            "description": "Scope: process:status"
+          }
+        },
+        {
+          "name": "GET {processId}/qr (dogrulama QR png)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/qr?size=300",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "qr"
+              ],
+              "query": [
+                {
+                  "key": "size",
+                  "value": "300"
+                }
+              ]
+            },
+            "description": "Belgeye gomulen dogrulama QR'inin PNG hali. Scope: process:status"
+          }
+        },
+        {
+          "name": "PUT {processId}/status/start (baslat)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/status/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "status",
+                "start"
+              ]
+            },
+            "description": "Scope: process:start"
+          }
+        },
+        {
+          "name": "PUT {processId}/status/cancel (iptal)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/status/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "status",
+                "cancel"
+              ]
+            },
+            "description": "Scope: process:start"
+          }
+        },
+        {
+          "name": "PUT {processId}/status/complete (tamamla)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/status/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "status",
+                "complete"
+              ]
+            },
+            "description": "Scope: process:start"
+          }
+        },
+        {
+          "name": "DELETE {processId} (sureci sil)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}"
+              ]
+            },
+            "description": "Scope: process:start"
+          }
+        },
+        {
+          "name": "GET {processId}/download-zip (tum surec ZIP base64)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/download-zip",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "download-zip"
+              ]
+            },
+            "description": "Tum belgeler + imza dosyalari tek ZIP (FileStorageDto.content = base64). Scope: document:read"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Process Definitions (taslak)",
+      "description": "Base path: {{baseUrl}}/process-definitions",
+      "item": [
+        {
+          "name": "GET / (surec taslaklarini listele)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j=pm.response.json();",
+                  "if(Array.isArray(j)&&j[0]&&j[0].id){pm.collectionVariables.set(\"definitionId\",j[0].id);}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-definitions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-definitions"
+              ]
+            },
+            "description": "Hesaptaki aktif surec taslaklari (belge gereksinimleri + imza adimlari + izinli taraf tipleri). Scope: process:status"
+          }
+        },
+        {
+          "name": "GET /{definitionId} (taslak detayi)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-definitions/{{definitionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-definitions",
+                "{{definitionId}}"
+              ]
+            },
+            "description": "Scope: process:status"
+          }
+        },
+        {
+          "name": "POST /{definitionId}/start (taslaktan surec baslat)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"201\",()=>pm.response.code===201);",
+                  "const j=pm.response.json();",
+                  "if(j&&j.id){pm.collectionVariables.set(\"processId\",j.id);}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Taslaktan Surec\",\n  \"autoStart\": false,\n  \"responsibleId\": null,\n  \"signers\": [\n    { \"signerId\": {{signerId}}, \"partyTypeId\": {{partyTypeId}} }\n  ],\n  \"formValues\": { \"ornek_alan\": \"deger\" },\n  \"documentSignerOverrides\": {},\n  \"formDesignIds\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process-definitions/{{definitionId}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-definitions",
+                "{{definitionId}}",
+                "start"
+              ]
+            },
+            "description": "Tek surec baslatir. signers = taslaktaki DocumentTypeSigning.partyType'lar icin imzaci atamasi (sabit imzaci tanimliysa gerekmeyebilir). autoStart=true => hemen STARTED. Scope: process:start"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents (surece belge)",
+      "description": "Base path: {{baseUrl}}/process-instances/{{processId}}/document",
+      "item": [
+        {
+          "name": "POST document/single (tekil belge ekle)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.id) { pm.collectionVariables.set('documentId', j.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sozlesme.pdf\",\n  \"fileName\": \"sozlesme.pdf\",\n  \"base64\": \"JVBERi0xLjQK...\",\n  \"mustsigned\": true,\n  \"signings\": [\n    {\n      \"signer\": { \"id\": {{signerId}} },\n      \"stepOrder\": 1,\n      \"signatureType\": { \"id\": {{signatureTypeId}} },\n      \"visibleSignature\": { \"pageNumber\": 1, \"originX\": 100, \"originY\": 100, \"width\": 200, \"height\": 75 }\n    }\n  ],\n  \"adds\": [\n    {\n      \"addType\": \"QR\",\n      \"docqr\": true,\n      \"visibleSignature\": { \"pageNumber\": 1, \"originX\": 400, \"originY\": 50, \"width\": 80, \"height\": 80 }\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/single",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "single"
+              ]
+            },
+            "description": "SignDocumentRequest. signings/adds opsiyonel (tek kullanimlik). signings[].visibleSignature zorunludur. Scope: document:write"
+          }
+        },
+        {
+          "name": "POST document/document-type (taslaktan belge ekle)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.id) { pm.collectionVariables.set('documentId', j.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 45,\n  \"signings\": [\n    { \"signer\": { \"id\": {{signerId}} }, \"stepOrder\": 1, \"signatureType\": { \"id\": {{signatureTypeId}} } }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/document-type",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "document-type"
+              ]
+            },
+            "description": "DocumentTypeDto — id = referance/documenttype'daki taslak id. signings/adds opsiyonel override. Scope: process:documenttype:write"
+          }
+        },
+        {
+          "name": "GET document/{documentId} (belge bilgisi)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}"
+              ]
+            },
+            "description": "Scope: document:read"
+          }
+        },
+        {
+          "name": "GET document/{documentId}/file (son yuklu belge base64)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}/file",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}",
+                "file"
+              ]
+            },
+            "description": "Scope: document:read"
+          }
+        },
+        {
+          "name": "GET document/{documentId}/files (kanit + ek dosya listesi)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (Array.isArray(j) && j[0] && j[0].storedFileId) { pm.collectionVariables.set('storedFileId', j[0].storedFileId); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}/files",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}",
+                "files"
+              ]
+            },
+            "description": "ORIGINAL/SIGNED/EVIDENCE/ATTACHMENT metadata. Indirme icin storedFileId kullanilir. Scope: document:read"
+          }
+        },
+        {
+          "name": "GET document/{documentId}/file/{storedFileId} (belirli dosya base64)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}/file/{{storedFileId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}",
+                "file",
+                "{{storedFileId}}"
+              ]
+            },
+            "description": "Scope: document:read"
+          }
+        },
+        {
+          "name": "DELETE document/{documentId} (belge sil)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}"
+              ]
+            },
+            "description": "Scope: document:write"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Signing Tasks (belge imzaci)",
+      "description": "Base path: {{baseUrl}}/process-instances/{{processId}}",
+      "item": [
+        {
+          "name": "POST document/{documentId}/signers (belgeye imzaci ekle)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201', () => pm.response.code === 201);",
+                  "const j = pm.response.json();",
+                  "if (j && j.id) { pm.collectionVariables.set('taskId', j.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"signerId\": {{signerId}},\n  \"signatureTypeId\": {{signatureTypeId}},\n  \"stepOrder\": 1,\n  \"mustSign\": true,\n  \"visibleSignature\": { \"pageNumber\": 1, \"originX\": 100, \"originY\": 100, \"width\": 200, \"height\": 75 }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}/signers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}",
+                "signers"
+              ]
+            },
+            "description": "DocumentSigningTaskDto. signerId doluysa kayitli imzaci; yoksa fullName/email/phone/identityNumber ile yeni harici imzaci. Scope: document:sign"
+          }
+        },
+        {
+          "name": "POST signers/all-documents (DOSYA_IMZALAMA - tum belgelere)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"signerId\": {{signerId}},\n  \"signatureTypeId\": {{signatureTypeId}},\n  \"stepOrder\": 1,\n  \"mustSign\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/signers/all-documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "signers",
+                "all-documents"
+              ]
+            },
+            "description": "Imzaciyi surecteki tum belgelere tek seferde ekler. Sirali imza icin farkli stepOrder'larla tekrar cagirin. Scope: document:sign"
+          }
+        },
+        {
+          "name": "DELETE document/{documentId}/signer/{signerId} (belgeden imzaci cikar)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}/signer/{{signerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}",
+                "signer",
+                "{{signerId}}"
+              ]
+            },
+            "description": "Scope: document:sign"
+          }
+        },
+        {
+          "name": "DELETE signer/{signerId} (surec genelinde imzaci cikar)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/signer/{{signerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "signer",
+                "{{signerId}}"
+              ]
+            },
+            "description": "Tum belgelerdeki gorevleri kapsar. Scope: document:sign"
+          }
+        },
+        {
+          "name": "GET document/{documentId}/tasks/{taskId}/signature/file (imza dosyasi base64)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}/tasks/{{taskId}}/signature/file",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}",
+                "tasks",
+                "{{taskId}}",
+                "signature",
+                "file"
+              ]
+            },
+            "description": "Scope: document:read"
+          }
+        },
+        {
+          "name": "GET document/{documentId}/tasks/{taskId}/signature/verify (imza dogrula)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/document/{{documentId}}/tasks/{{taskId}}/signature/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "document",
+                "{{documentId}}",
+                "tasks",
+                "{{taskId}}",
+                "signature",
+                "verify"
+              ]
+            },
+            "description": "CAdES/PAdES gecerlilik + ASiC-E butunluk. Scope: document:read"
+          }
+        },
+        {
+          "name": "GET signers/{signerId}/signature/file (imzacinin son imza dosyasi)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/signers/{{signerId}}/signature/file",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "signers",
+                "{{signerId}}",
+                "signature",
+                "file"
+              ]
+            },
+            "description": "documentId/taskId bilmeye gerek yok. Scope: document:read"
+          }
+        },
+        {
+          "name": "GET signers/{signerId}/signature/verify (imzacinin son imzasini dogrula)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/signers/{{signerId}}/signature/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "signers",
+                "{{signerId}}",
+                "signature",
+                "verify"
+              ]
+            },
+            "description": "Scope: document:read"
+          }
+        }
+      ]
+    },
+    {
+      "name": "AutoSign (bulut imzalama)",
+      "description": "IP whitelist zorunlu. Base path: {{baseUrl}}/process-instances/{{processId}}/autosign",
+      "item": [
+        {
+          "name": "POST autosign (etkinlestir)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"signerId\": {{signerId}},\n  \"expiresHours\": 72\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/autosign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "autosign"
+              ]
+            },
+            "description": "signerId zorunlu. Istek hesaba tanimli IP whitelist'inden gelmelidir. Scope: autosign:write (Enterprise)"
+          }
+        },
+        {
+          "name": "DELETE autosign (devre disi birak)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/process-instances/{{processId}}/autosign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "process-instances",
+                "{{processId}}",
+                "autosign"
+              ]
+            },
+            "description": "Scope: autosign:write"
+          }
+        }
+      ]
+    },
+    {
+      "name": "E-Imza Login (Sumen)",
+      "description": "Base path: {{baseUrl}}/auth",
+      "item": [
+        {
+          "name": "POST auth/tx (e-imza login baslat)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.loginTxId) { pm.collectionVariables.set('loginTxId', j.loginTxId); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ahmet@x.com\",\n  \"ceptel\": \"5441234567\",\n  \"tckn\": \"12345678901\",\n  \"platformUserId\": \"U-91\",\n  \"userInfo\": {\n    \"ipAddress\": \"1.2.3.4\",\n    \"userAgent\": \"Chrome/120 Windows 11\",\n    \"deviceHint\": \"DESKTOP\",\n    \"locale\": \"tr-TR\",\n    \"timeZone\": \"Europe/Istanbul\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/tx",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "tx"
+              ]
+            },
+            "description": "loginTxId + challenge + expiresIn doner. Scope: sumen:tx:request"
+          }
+        },
+        {
+          "name": "GET auth/tx/{loginTxId} (login sonucu)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/tx/{{loginTxId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "tx",
+                "{{loginTxId}}"
+              ]
+            },
+            "description": "Sumen imzayi tamamlayinca cagirilir. Scope: sumen:tx:request"
+          }
+        },
+        {
+          "name": "GET auth/tx/{loginTxId}/audit (audit log)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/tx/{{loginTxId}}/audit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "tx",
+                "{{loginTxId}}",
+                "audit"
+              ]
+            },
+            "description": "Scope: sumen:tx:request"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mobil Imza Login",
+      "description": "Base path: {{baseUrl}}/auth",
+      "item": [
+        {
+          "name": "GET auth/operators (operatorler)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/operators",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "operators"
+              ]
+            },
+            "description": "TURKCELL, VODAFONE, TURK_TELEKOM ... Scope: mobilsumen:tx:request"
+          }
+        },
+        {
+          "name": "POST auth/{operator}/mobiltx (mobil imza login baslat)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.loginTxId) { pm.collectionVariables.set('loginTxId', j.loginTxId); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ahmet@x.com\",\n  \"ceptel\": \"5441234567\",\n  \"tckn\": \"12345678901\",\n  \"platformUserId\": \"U-91\",\n  \"userInfo\": {\n    \"ipAddress\": \"1.2.3.4\",\n    \"userAgent\": \"Chrome/120 Windows 11\",\n    \"deviceHint\": \"MOBILE\",\n    \"locale\": \"tr-TR\",\n    \"timeZone\": \"Europe/Istanbul\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/{{operator}}/mobiltx",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "{{operator}}",
+                "mobiltx"
+              ]
+            },
+            "description": "Scope: mobilsumen:tx:request"
+          }
+        },
+        {
+          "name": "GET auth/{operator}/mobil/{loginTxId} (durum polling)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Secret",
+                "value": "{{clientSecret}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/{{operator}}/mobil/{{loginTxId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "{{operator}}",
+                "mobil",
+                "{{loginTxId}}"
+              ]
+            },
+            "description": "Scope: mobilsumen:tx:request"
+          }
+        }
+      ]
+    }
+  ]
+}

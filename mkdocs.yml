@@ -18,15 +18,17 @@ theme:
 nav:
   - Genel Bakış: index.md
   - Kimlik Doğrulama: authentication.md
-  - Yetkiler: scopes.md    
+  - Yetkiler: scopes.md
+  - Postman Koleksiyonu: postman.md
   - İmzalama Türleri: signature-types.md
   - Bulut İmzalama (Autosign): autosign.md
   - Referans API: reference-api.md
   - İmzacı API: signers.md
   - Belge İmzalama:
       - Süreç API: progress.md
+      - Süreç Taslakları API: process-definitions.md
       - Döküman API: documents.md
-      - Taslaktan Süreç API: progress_doctype.md
+      - Taslaktan Döküman Ekleme: progress_doctype.md
       - İmza Formatları ve Doğrulama: signature-verification.md
   - Dosya İmzalama (CAdES/ASiC-E): dosya-imzalama.md
   - Login İşlemleri:
@@ -49,6 +51,7 @@ extra:
 
 markdown_extensions:
   - admonition
+  - attr_list
   - tables
   - toc:
       permalink: true

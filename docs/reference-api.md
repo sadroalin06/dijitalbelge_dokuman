@@ -25,6 +25,8 @@ Yetkilendirme için header da Client ID ve Client Secret kullanılır.
 | Scope | Description |
 |------|-------------|
 | signer:read | Read party types |
+| documenttype:read | Read document types / signature types |
+| form:read | Read dynamic form designs |
 | documenttype:read | Read document types |
 
 ## Party Types
@@ -123,4 +125,39 @@ Kullanılabilir imzalama türleri listelenir
 | `code` | string | İmzalama türü kodu |
 | `name` | string | İmza türü adı |
 | `description` | string | İmza türü açıklaması |
+
+## Form Tasarımları
+
+### GET /form
+
+Hesaba tanımlı dinamik form tasarımları `jsonSchema` ile birlikte listelenir. Belge
+şablonlarındaki `{{alan}}` yer tutucularının kaynağı bu form alanlarıdır.
+
+**Scope:** `form:read`
+
+```json
+[
+  {
+    "id": 3,
+    "name": "Görev Formu",
+    "jsonSchema": {
+      "fields": [
+        { "key": "ad_soyad", "type": "text", "label": "Adı Soyadı", "params": "", "required": false },
+        { "key": "gorevbas", "type": "date", "label": "Görev Başlangıç Tarihi", "params": "", "required": false }
+      ]
+    }
+  }
+]
+```
+
+**Response Alanları:**
+
+| Alan | Tip | Açıklama |
+|------|-----|---------|
+| `id` | number | Form tasarımı ID |
+| `name` | string | Form adı |
+| `jsonSchema.fields[]` | array | Alan tanımları — `key`, `type` (`text`/`number`/`date`/`select`/`check`), `label`, `params` (ör. `select` seçenekleri), `required` |
+
+> Bu form alanlarının değerleri süreç başlatılırken `formValues` ile gönderilir
+> (bkz. [Süreç Taslakları API](process-definitions.md)).
 

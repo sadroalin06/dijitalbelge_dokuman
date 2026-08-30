@@ -29,7 +29,8 @@ Bu döküman, bir **süreç (process)** içindeki dökümanları ve döküman im
 | `GET` | `/process-instances/{processId}/document/{documentId}/file/{storedFileId}` | `document:read` | Belirli bir dosyayı (ORIGINAL/SIGNED/EVIDENCE/ATTACHMENT) `storedFileId` ile indir (Base64) |
 | `DELETE` | `/process-instances/{processId}/document/{documentId}` | `document:write` | Dökümanı sil |
 | `POST` | `/process-instances/{processId}/document/{documentId}/signers` | `document:sign` | Dökümana imzacı ekle |
-| `DELETE` | `/process-instances/{processId}/document/{documentId}/signer/{signerId}` | `document:sign` | Döküman imzacısını sil |
+| `DELETE` | `/process-instances/{processId}/document/{documentId}/signer/{signerId}` | `document:sign` | Döküman imzacısını sil (yalnız o belge) |
+| `DELETE` | `/process-instances/{processId}/signer/{signerId}` | `document:sign` | İmzacıyı süreç genelinde sil (tüm belgelerdeki görevleri) |
 | `GET` | `/process-instances/{processId}/document/{documentId}/tasks/{taskId}/signature/file` | `document:read` | İmzacının imza kanıt dosyasını (.p7s/JAdES) indir (Base64) |
 
 ---
@@ -747,6 +748,43 @@ DELETE {baseURL}/process-instances/{processId}/document/{documentId}/signer/{sig
 
 ```bash
 curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/document/7203/signer/138 \
+  -H "X-Client-Id: app_xxxxx" \
+  -H "X-Client-Secret: secret_xxxxx"
+```
+
+---
+
+### 9.1. İmzacıyı Süreç Genelinde Sil
+
+İmzacının **tüm belgelerdeki** imza görevlerini tek istekte kaldırır (belirli bir belge değil).
+
+**Scope:** `document:sign`
+
+#### İstek
+
+```http
+DELETE {baseURL}/process-instances/{processId}/signer/{signerId}
+```
+
+**Path Parameters:**
+
+| Parametre | Tip | Açıklama |
+|-----------|-----|----------|
+| `processId` | number | Sürecin ID'si |
+| `signerId` | number | Süreçten çıkarılacak imzacının ID'si |
+
+#### Başarılı Yanıt
+
+**HTTP 200 OK**
+
+```
+İmzacı Silindi
+```
+
+#### Örnek cURL
+
+```bash
+curl -X DELETE https://app.dijitalbelge.com/api/external/process-instances/147/signer/138 \
   -H "X-Client-Id: app_xxxxx" \
   -H "X-Client-Secret: secret_xxxxx"
 ```
