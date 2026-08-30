@@ -11,6 +11,9 @@ services:
       - "traefik.http.routers.dijitalbelgedokumanhttp.entrypoints=web"
       - "traefik.http.routers.dijitalbelgedokumanhttp.middlewares=redirecthttps"
 
+      # Middleware tanımı (bu servis üzerinde tanımlanmalı, aksi halde "does not exist" hatası verir)
+      - "traefik.http.middlewares.redirecthttps.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirecthttps.redirectscheme.permanent=true"
 
       - "traefik.http.routers.dijitalbelgedokuman.rule=Host(`dokuman.dijitalbelge.com`)"
       - "traefik.http.routers.dijitalbelgedokuman.entrypoints=websecure"
