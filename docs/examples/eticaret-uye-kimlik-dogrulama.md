@@ -40,7 +40,7 @@ konum** doğrulaması yeterli olan akışlar için önerilen yöntem budur:
 E-ticaret üyelik doğrulamasında genelde ek biyometri gerekmediğinden en hafif seçenek
 olan `TCKK_TIMESTAMP` yeterlidir; daha yüksek güvence gerekiyorsa aynı akış
 `TCKK_FACE_TIMESTAMP` veya `TCKK_ONBOARDING` ile birebir aynı şekilde kurulabilir
-(yalnızca `signatureType.code` değişir).
+(yalnızca Adım 3'teki `signatureTypeId` değişir).
 
 ---
 
@@ -51,7 +51,12 @@ olan `TCKK_TIMESTAMP` yeterlidir; daha yüksek güvence gerekiyorsa aynı akış
 - Üyenin **TC kimlik numarası**, **cep telefonu** ve **e-posta** bilgisi, KVKK
   aydınlatma/onay süreciniz tamamlanmış şekilde elinizde olmalı.
 - API kimlik bilgileriniz (`X-Client-Id` / `X-Client-Secret`) ve gerekli scope'lar:
-  `process:start`, `document:write`, `document:sign`, `process:status`.
+  `process:start`, `signer:managment`, `document:sign`, `process:status`.
+
+!!! warning "`document:write` gerekmez — hiç döküman yüklemeyeceksiniz"
+    Önceki örneklerin aksine bu akışta **hiçbir aşamada dosya yüklenmez**. Aşağıda
+    göreceğiniz gibi imzacıyı sürece bağladığınız tek çağrı, gizli "signing control"
+    belgesini de kendisi oluşturur.
 
 ---
 
@@ -61,7 +66,8 @@ olan `TCKK_TIMESTAMP` yeterlidir; daha yüksek güvence gerekiyorsa aynı akış
 Üye "Kimliğimi Doğrula" der
         → Süreç Oluştur (processType: DIJITAL_KIMLIK_DOGRULAMA)
         → processId ↔ üyeId eşlemesini kendi veritabanınızda saklayın
-        → Doğrulama Görevini Ekle (döküman + TCKK_TIMESTAMP imzacı)
+        → İmzacıyı Oluştur / Bul
+        → İmzacıyı Sürece Bağla (TCKK_TIMESTAMP) — döküman otomatik oluşur, ayrıca yüklenmez
         → Süreci Başlat  →  üyeye link/QR gider
         → Üye: Kimlik Kartı NFC + SMS Kodu + Konum İzni
         → Webhook (DOCUMENT_SIGNED)  →  üye hesabı "Kimliği Doğrulandı" işaretlenir
@@ -106,99 +112,85 @@ POST /api/external/process-instances
 
 ---
 
-## Adım 2 – Doğrulama Görevi İçin Belge Ekle
+## Adım 2 – İmzacıyı Oluştur / Bul
 
-`DIJITAL_KIMLIK_DOGRULAMA` sürecinde **gerçek bir belge imzalanmaz**, ama imza/kimlik
-doğrulama görevi teknik olarak yine bir dökümana bağlanır — sistem bunu üyeye asla
-göstermeyeceği, imzalatmayacağı **gizli bir "signing control" belgesi** olarak
-kullanır (bkz. [Süreç Tipleri](../progress.md#surec-tipleri-processtype)). Bu yüzden
-küçük, içeriği önemsiz bir belge eklemeniz yeterlidir:
+`DIJITAL_KIMLIK_DOGRULAMA` sürecinde imzacı, `/document/{documentId}/signers`
+endpoint'indeki gibi bilgileriyle **inline** oluşturulamaz — önce hesabın imzacı
+rehberinde bir `Signer` kaydı olması gerekir. Üye sisteminizde daha önce
+doğrulanmamışsa `bulk-insert` ile oluşturun (kayıtlıysa bu adım atlanıp mevcut
+`signerId` kullanılır):
 
 ```http
-POST /api/external/process-instances/512/document/single
+POST /api/external/signers/bulk-insert
 ```
 
 ```json
-{
-  "name": "Kimlik Doğrulama Kaydı",
-  "fileName": "kimlik-dogrulama.pdf",
-  "base64": "JVBERi0xLjQK..."
-}
+[
+  {
+    "fullName": "Ali Veli",
+    "email": "ali.veli@example.com",
+    "phone": "+905551112233",
+    "identityNumber": "12345678901"
+  }
+]
 ```
 
-**Yanıt (HTTP 201):**
+**Yanıt:**
 
 ```json
-{
-  "id": 8801,
-  "fileName": "kimlik-dogrulama.pdf",
-  "uploaded": true,
-  "signed": false
-}
+[
+  { "id": 138, "fullName": "Ali Veli" }
+]
 ```
 
-`id: 8801` değerini bir sonraki adımda `documentId` olarak kullanın.
+`id: 138` değerini bir sonraki adımda `signerId` olarak kullanın.
 
 ---
 
-## Adım 3 – İmzacıyı `TCKK_TIMESTAMP` ile Ekle
+## Adım 3 – İmzacıyı `TCKK_TIMESTAMP` ile Sürece Bağla
+
+Burada **döküman yüklenmez** — imzacıyı doğrudan sürece bağlayan tek bir çağrı
+yeterlidir. `signatureTypeId: 11`, [Referans API — İmzalama
+Türleri](../reference-api.md#imzalama-turleri)'nden `TCKK_TIMESTAMP` kodunun ID'sidir.
 
 ```http
-POST /api/external/process-instances/512/document/8801/signers
+POST /api/external/process-instances/512/signers/all-documents
 ```
 
 ```json
 {
-  "signerName": "Ali Veli",
-  "order": 1,
-  "isRequired": true,
-  "signatureType": { "code": "TCKK_TIMESTAMP" },
-  "visibleSignature": {
-    "pageNumber": 1,
-    "originX": 0,
-    "originY": 0,
-    "width": 1,
-    "height": 1
-  },
-  "signer": {
-    "fullName": "Ali Veli",
-    "identityNumber": "12345678901",
-    "phone": "+905551112233",
-    "email": "ali.veli@example.com"
-  }
+  "signerId": 138,
+  "signatureTypeId": 11,
+  "stepOrder": 1,
+  "mustSign": true
 }
 ```
 
 | Alan | Açıklama |
 |------|----------|
-| `signatureType.code: "TCKK_TIMESTAMP"` | Kimlik doğrulama yöntemi: kimlik kartı NFC + SMS + konum + zaman damgası |
-| `signer.identityNumber` | Doğrulanacak T.C. Kimlik Numarası — üyenin NFC ile okuttuğu kimlik kartıyla eşleşmesi gerekir |
-| `signer.phone` | SMS doğrulama kodunun gönderileceği, üyenin kayıtlı cep telefonu numarası |
-| `visibleSignature` | Bu süreç tipinde belge görünür şekilde işlenmediği için değerlerin bir önemi yoktur, ancak alan **zorunlu** olduğundan minimal bir değer gönderilir |
+| `signerId` | Adım 2'de oluşturulan/bulunan `Signer` ID'si |
+| `signatureTypeId: 11` | `TCKK_TIMESTAMP` — kimlik kartı NFC + SMS + konum + zaman damgası |
+| `stepOrder` | Süreçte birden fazla kişi doğrulanacaksa sırayı belirler; tek kişilik akışta `1` |
+| `mustSign` | `true` — doğrulama tamamlanmadan süreç kapanmaz |
 
-!!! info "`order: 1` şart"
-    [Döküman API](../documents.md#8-dokumana-imzac-ekle) sayfasındaki kurala göre
-    `order` gönderilmezse imzacı doğrulama ekranında hiç görünmez.
+!!! info "Belge burada, sizin göndermenize gerek kalmadan oluşur"
+    Bu istek ilk kez çağrıldığında sistem, sürece ait **gizli bir "signing control"
+    belgesi** (`isSigningControl: true`, dosya adı otomatik `imza_belgesi_
+    DIJITAL_KIMLIK_DOGRULAMA_512` gibi üretilir) yoksa **kendisi oluşturur** ve
+    imzacıyı ona bağlar — üyeye hiçbir zaman gösterilmez, indirilebilir gerçek bir
+    dosya değildir (bkz. [Süreç Tipleri](../progress.md#surec-tipleri-processtype)).
+    Aynı sürece birden fazla kişi ekleyecekseniz bu endpoint'i farklı `signerId` /
+    `stepOrder` ile tekrar çağırmanız yeterli; hepsi aynı gizli belgeye bağlanır.
 
-**Yanıt (HTTP 201):**
+**Yanıt (HTTP 200) — oluşturulan görev ID'si:**
 
 ```json
-{
-  "id": 9,
-  "documentInstanceId": 8801,
-  "signerName": "Ali Veli",
-  "order": 1,
-  "statusCode": "PENDING",
-  "signatureType": { "code": "TCKK_TIMESTAMP" },
-  "signer": {
-    "fullName": "Ali Veli",
-    "identityNumber": "12345678901",
-    "phone": "+905551112233",
-    "email": "ali.veli@example.com"
-  },
-  "createdAt": "2026-09-15T10:00:05"
-}
+[9]
 ```
+
+`9`, bu imza/doğrulama görevinin (`DocumentSigningTask`) ID'sidir; ayrıca izlemeniz
+gerekmiyorsa saklamanıza gerek yoktur — süreç durumunu her zaman `processId` (`512`)
+ile sorgulayabilirsiniz.
 
 ---
 
@@ -248,11 +240,16 @@ Doğrulama — JAdES](../signature-verification.md#formatlar)).
   "data": {
     "processId": 512,
     "documentId": 8801,
-    "documentName": "Kimlik Doğrulama Kaydı",
+    "documentName": "imza_belgesi_DIJITAL_KIMLIK_DOGRULAMA_512",
     "allSigned": true
   }
 }
 ```
+
+`documentId` (`8801`), Adım 3'te sizin göndermediğiniz, sistemin otomatik oluşturduğu
+gizli signing-control belgesinin ID'sidir — Adım 6'daki kanıt indirme çağrısı için
+webhook'tan öğrenirsiniz; ayrıca `documentName` her zaman `imza_belgesi_
+<processType>_<processId>` kalıbında otomatik üretilir.
 
 Webhook handler'ınızda yapmanız gereken:
 
@@ -274,7 +271,14 @@ Webhook handler'ınızda yapmanız gereken:
 ## Adım 6 (Opsiyonel) – Doğrulama Kanıtını Sakla
 
 Denetim veya uyuşmazlık durumunda ("üye şu tarihte şu konumda kimliğini doğruladı"
-kanıtı) ayrı olarak saklanan JAdES kanıt dosyası indirilebilir:
+kanıtı) ayrı olarak saklanan JAdES kanıt dosyası indirilebilir. `documentId`'yi
+webhook'tan almadıysanız (ör. henüz gelmediyse) süreç detayından da öğrenebilirsiniz:
+
+```http
+GET /api/external/process-instances/512
+```
+
+Yanıttaki `documents[0].id` alanı, aradığınız `documentId`'dir (`8801`).
 
 ```http
 GET /api/external/process-instances/512/document/8801/files
@@ -306,7 +310,8 @@ JAdES](../signature-verification.md#formatlar)).
 ## İlgili Kaynaklar
 
 - [Süreç Yönetimi API — Süreç Tipleri](../progress.md#surec-tipleri-processtype) — `DIJITAL_KIMLIK_DOGRULAMA` detayı
+- [Dosya İmzalama (CAdES/ASiC-E) — İmzacıyı Sürece Bağla](../dosya-imzalama.md#3-imzacy-surece-bagla-tum-belgeler) — `/signers/all-documents` endpoint'inin (DOSYA_IMZALAMA için yazılmış ama aynı yapıyı kullanan) tam alan referansı
 - [İmzalama Türleri](../signature-types.md) — `TCKK_TIMESTAMP` / `TCKK_FACE_TIMESTAMP` / `TCKK_ONBOARDING` karşılaştırması
-- [Döküman API — Dökümana İmzacı Ekle](../documents.md#8-dokumana-imzac-ekle) — `signer` nesnesi alan referansı
+- [İmzacı API](../signers.md) — imzacı oluşturma / arama
 - [Webhook](../webhook.md) — olay tipleri ve imza doğrulama (HMAC)
 - [İmza Formatları ve Doğrulama](../signature-verification.md) — JAdES kanıt dosyası
