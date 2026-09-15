@@ -260,6 +260,7 @@ curl -s "${AUTH[@]}" -H "Content-Type: application/json" \
 
 ## İlgili Kaynaklar
 
+- [Taslaktan Dinamik Süreç Başlatma](examples/taslaktan-dinamik-surec.md) — uçtan uca çalışan `formValues` örneği
 - [Referans API](reference-api.md) — taraf tipleri, imza türleri, form tasarımları, belge taslakları
 - [İmzacı API](signers.md) — imzacı oluşturma / arama
 - [Süreç API](progress.md) — süreç durumu, QR, iptal/tamamla
