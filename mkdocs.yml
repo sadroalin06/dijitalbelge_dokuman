@@ -41,6 +41,7 @@ nav:
       - Taslaktan Dinamik Süreç Başlatma: examples/taslaktan-dinamik-surec.md
       - Abonelik Sözleşmesi İmzalama: examples/abonelik-sozlesmesi.md
       - Karşılıklı Elektronik Sözleşme İmzalama: examples/karsilikli-sozlesme-imzalama.md
+      - E-Ticaret Üyesi Kimlik Doğrulama: examples/eticaret-uye-kimlik-dogrulama.md
 extra_css:
   - assets/extra.css
 
