@@ -175,7 +175,7 @@ POST {baseURL}/process-definitions/{definitionId}/start
 | `signers[].signerId` | number | Evet | Hesabın imzacı rehberindeki `Signer` ID'si (bkz. [İmzacı API](signers.md)) |
 | `signers[].partyTypeId` | number | Evet | Bu imzacının karşılık geldiği taraf tipi ID'si |
 | `documentSignerOverrides` | object | Hayır | `{ "<documentTypeId>": <signerId> }` — o belgenin imza adım(lar)ındaki imzacıyı değiştirir (taslaktaki sabit imzacı dahil) |
-| `formValues` | object | Hayır | Belgelerdeki `{{alan}}` yer tutucularına / form alanlarına işlenecek değerler. `autoStart` sırasında belgelere uygulanır |
+| `formValues` | object | Hayır | Belgelerdeki `{{alan}}` yer tutucularına / form alanlarına işlenecek değerler. `autoStart` sırasında belgelere uygulanır. Taslaktaki bir imza adımı `TCKK_ONBOARDING` ise ve adımın video yönerge metninde (`promptText`) `{{alan}}` yer tutucusu varsa, aynı `formValues` ile doldurulur (bkz. aşağıdaki not) |
 | `formDesignIds` | number[] | Hayır | Sürece bağlanacak form tasarımı ID'leri |
 
 ### Başarılı Yanıt
@@ -197,6 +197,18 @@ POST {baseURL}/process-definitions/{definitionId}/start
   ]
 }
 ```
+
+!!! tip "TCKK_ONBOARDING video yönergesi (`promptText`)"
+    Taslaktaki bir imza adımı için panelde `promptText` / `videoMaxDurationSeconds`
+    tanımlanmışsa (bkz. [Dökümana İmzacı Ekle](documents.md#8-dokumana-imzac-ekle) —
+    yalnızca `TCKK_ONBOARDING` imza türünde geçerlidir), bu değerler yeni sürecin
+    imza görevine **otomatik kopyalanır**. `promptText` içinde `{{alan}}` yer
+    tutucusu varsa, isteğin `formValues`'ı ile (belge içeriğindeki yer tutucularla
+    aynı mekanizma) doldurulur — örn. taslakta
+    `"Merhaba {{ad_soyad}}, lütfen kimliğinizi kameraya gösterin"` yazıyorsa ve
+    `formValues: {"ad_soyad": "Ali Veli"}` gönderilirse, imzacı video kayıt
+    ekranında `"Merhaba Ali Veli, lütfen kimliğinizi kameraya gösterin"` görür.
+    `formValues`'ta karşılığı olmayan bir `{{alan}}` boş string'e döner.
 
 ### Hata Durumları
 
