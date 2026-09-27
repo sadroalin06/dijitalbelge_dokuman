@@ -202,6 +202,60 @@ POST /api/external/process-definitions/12/start
 
 ---
 
+## İmzacı bilgileri (`{{imzaciN.alan}}`) {#imzaci-bilgileri-imzacinalan}
+
+Yukarıdaki örnekte personelin adı `formValues.ad_soyad` ile ayrıca gönderildi. Oysa bu
+bilgi imzacı kaydında (`signers[0]`) zaten var. Taslaktaki belgeye yer tutucu
+`{{ad_soyad}}` yerine **`{{imzaci1.adsoyad}}`** olarak yerleştirilirse, değer süreç
+başlarken imzacıdan otomatik alınır; `formValues`'ta göndermeniz gerekmez.
+
+**Biçim:** `{{imzaci<N>.<alan>}}`
+
+| Alan | İmzacı kaydındaki karşılığı |
+|------|------------------------------|
+| `adsoyad` | Ad soyad (`fullName`) |
+| `ad` | Ad (son kelime hariç) |
+| `soyad` | Soyad (son kelime) |
+| `tckn` | T.C. kimlik numarası (`identityNumber`) |
+| `eposta` | E-posta |
+| `telefon` | Telefon |
+| `dogumtarihi` | Doğum tarihi |
+
+**N nasıl belirlenir?** Numara **belge bazındadır**: yer tutucunun bulunduğu belgenin
+imzacıları, o belgedeki **imza sırasına** göre 1'den numaralanır. Önce imzalayan küçük
+numarayı alır; aynı adımdaki (paralel) imzacılar eklenme sırasına göre sıralanır. Aynı
+kişinin o belgede birden fazla imza görevi olsa da tek numara alır. Örneğin Görev
+Belgesi'nde 1. adım Personel, 2. adım Genel Müdür ise:
+
+| Yer tutucu | Belgeye basılan |
+|------------|-----------------|
+| `{{imzaci1.adsoyad}}` | Personel'in adı soyadı (ör. "Ali Veli") |
+| `{{imzaci1.tckn}}` | Personel'in T.C. kimlik numarası |
+| `{{imzaci2.adsoyad}}` | Genel Müdür'ün adı soyadı |
+
+Bu durumda başlatma isteği yalnızca görev bilgilerini taşır:
+
+```json
+{
+  "autoStart": true,
+  "signers": [ { "signerId": 138, "partyTypeId": 11 } ],
+  "formValues": { "gorevbas": "2026-09-01" },
+  "expiresAt": "2026-09-15T18:00:00"
+}
+```
+
+!!! note "Kurallar"
+    - Belgede olmayan bir imzacı numarası (ör. 2 imzacılı belgede `{{imzaci3.adsoyad}}`)
+      boş olarak basılır; süreç yine başlar.
+    - `formValues`'ta aynı anahtar (`"imzaci1.adsoyad"`) gönderilirse **form değeri geçerli
+      olur** (geriye dönük uyumluluk).
+    - `{{imzaciN.…}}` alanları [Adım 1](#adm-1-taslag-ve-form-alanlarn-ogren)'deki form
+      alanları listesinde yer almaz ve public başvuru sayfasında ziyaretçiye sorulmaz.
+    - Panelde "Dökümana Yazı Ekle" penceresindeki **İmzacı Bilgisi** bölümünden bu yer
+      tutucular tıklanarak eklenebilir.
+
+---
+
 ## Ek Senaryo: Dinamik Video Yönergesi (`TCKK_ONBOARDING`)
 
 Personel taraf tipi, taslakta e-imza yerine **`TCKK_ONBOARDING`** (kimlik kartı NFC +

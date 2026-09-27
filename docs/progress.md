@@ -96,7 +96,8 @@ POST {baseURL}/process-instances
 ```json
 {
   "name": "test süreci",
-  "processType": "BELGE_IMZALAMA"
+  "processType": "BELGE_IMZALAMA",
+  "expiresAt": "2026-10-15T18:00:00"
 }
 ```
 
@@ -104,6 +105,7 @@ POST {baseURL}/process-instances
 |------|-----|---------|----------|
 | `name` | string | Hayır | Sürecin adı |
 | `processType` | string | Hayır | Süreç tipi. **Gönderilmezse varsayılan olarak `BELGE_IMZALAMA` kullanılır.** Olası değerler için [Süreç Tipleri](#süreç-tipleri-processtype) bölümüne bakın. |
+| `expiresAt` | string | Hayır | Sürecin **son geçerlilik tarihi** (ISO 8601, saat dilimi eki olmadan, Türkiye saati). Bu zamana kadar tamamlanmayan süreç otomatik iptal edilir. Gönderilmezse süreç süresiz açık kalır. Bkz. [Geçerlilik Süresi](#gecerlilik-suresi-son-tarih) |
 
 #### Başarılı Yanıt
 
@@ -123,7 +125,10 @@ POST {baseURL}/process-instances
   "updatedAt": "2026-01-05T19:59:29.5282888",
   "responsibleBy": null,
   "accessToken": "kQQQioa",
-  "tokenExpiry": null
+  "tokenExpiry": null,
+  "expiresAt": "2026-10-15T18:00:00",
+  "startedAt": null,
+  "completedAt": null
 }
 ```
 
@@ -142,6 +147,9 @@ POST {baseURL}/process-instances
 | `responsibleBy` | string | Sorumlu kişi |
 | `accessToken` | string | Erişim token'ı |
 | `tokenExpiry` | string | Token geçerlilik süresi |
+| `expiresAt` | string \| null | Sürecin son geçerlilik tarihi; `null` ise süresiz |
+| `startedAt` | string \| null | Sürecin başlatıldığı an (`STARTED`'a ilk geçiş) |
+| `completedAt` | string \| null | Sürecin tamamlandığı an. Tamamlanma süresi = `completedAt − startedAt` |
 
 #### Örnek cURL
 
@@ -205,7 +213,10 @@ GET {baseURL}/process-instances/{processId}
   "updatedAt": "2026-01-05T19:59:29.5282888",
   "responsibleBy": null,
   "accessToken": "kQQQioa",
-  "tokenExpiry": null
+  "tokenExpiry": null,
+  "expiresAt": "2026-10-15T18:00:00",
+  "startedAt": "2026-10-01T09:12:44",
+  "completedAt": null
 }
 ```
 
@@ -418,8 +429,29 @@ Bulut İmzalama (Autosign) endpoint'leri bu sayfadan ayrılmış olup ayrıntıl
 | `IN_PROGRESS` | İlk imzacı imzaladığında süreç devam ediyor durumuna geçer |
 | `COMPLETED` | Tüm imzacılar imzalamayı tamamladığında süreç tamamlanır |
 | `ARCHIVED` | Tamamlanan süreçler, arşiv hizmeti alınmış ise arşive taşınır |
-| `CANCELED` | Süreç iptal edilmiş durumda |
+| `CANCELED` | Süreç iptal edilmiş durumda (elle ya da [geçerlilik süresi](#gecerlilik-suresi-son-tarih) dolduğu için) |
 | `DELETED` | Süreç silinmiş durumda |
+
+---
+
+## Geçerlilik Süresi (Son Tarih) {#gecerlilik-suresi-son-tarih}
+
+Süreç oluştururken (`POST /process-instances`) ya da taslaktan başlatırken
+(`POST /process-definitions/{definitionId}/start`) isteğe bağlı `expiresAt` gönderilebilir.
+
+- **Biçim:** ISO 8601, saat dilimi eki olmadan (`"2026-10-15T18:00:00"`); değer **Türkiye saati
+  (Europe/Istanbul)** olarak yorumlanır.
+- **Süre dolunca:** Bu zamana kadar sonuçlanmamış (`COMPLETED`, `CANCELED`, `ARCHIVED`,
+  `DELETED` dışındaki) süreç otomatik olarak `CANCELED` yapılır. Kontrol **5 dakikada bir**
+  çalışır; iptal son tarihten en geç birkaç dakika sonra gerçekleşir.
+- **Webhook:** Otomatik iptalde de elle iptaldeki gibi `PROCESS_STATUS_CHANGED`
+  (`newStatus: "CANCELED"`) olayı gönderilir (bkz. [Webhook](webhook.md#process_status_changed)).
+- **Süresiz:** `expiresAt` gönderilmezse süreç süresiz açık kalır (önceki davranış).
+- **Geçmiş tarih:** Şimdiden önceki bir tarih **400 Bad Request** ile reddedilir
+  (`"Geçerlilik süresi ileri bir tarih olmalıdır"`).
+
+Yanıttaki `startedAt` / `completedAt` alanlarıyla sürecin ne kadar sürede tamamlandığını
+hesaplayabilirsiniz.
 
 ---
 

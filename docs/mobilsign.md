@@ -255,7 +255,7 @@ GET {baseURL}/auth/{operator}/mobil/{loginTxId}
 |-------|----------|
 | `PENDING` | İmza isteği gönderildi, kullanıcı henüz onaylamadı |
 | `USED` | Kullanıcı mobil imzayı onayladı, işlem başarıyla tamamlandı |
-| `EXPIRED` | İşlem zaman aşımına uğradı veya kullanıcı reddetti |
+| `EXPIRED` | İşlem zaman aşımına uğradı, kullanıcı reddetti/iptal etti, operatör hata döndü ya da sertifikadaki T.C. kimlik numarası eşleşmedi. Bu durumlarda sorgu **hemen** `EXPIRED` döner; tekrar denemek için yeni bir işlem başlatın |
 
 #### Başarısız Yanıt (İşlem Zaman Aşımı)
 

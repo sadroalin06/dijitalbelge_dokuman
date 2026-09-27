@@ -162,7 +162,8 @@ POST {baseURL}/process-definitions/{definitionId}/start
     "ad_soyad": "Ali Veli",
     "gorevbas": "2026-09-01"
   },
-  "formDesignIds": []
+  "formDesignIds": [],
+  "expiresAt": "2026-10-15T18:00:00"
 }
 ```
 
@@ -177,6 +178,13 @@ POST {baseURL}/process-definitions/{definitionId}/start
 | `documentSignerOverrides` | object | Hayır | `{ "<documentTypeId>": <signerId> }` — o belgenin imza adım(lar)ındaki imzacıyı değiştirir (taslaktaki sabit imzacı dahil) |
 | `formValues` | object | Hayır | Belgelerdeki `{{alan}}` yer tutucularına / form alanlarına işlenecek değerler. `autoStart` sırasında belgelere uygulanır. Taslaktaki bir imza adımı `TCKK_ONBOARDING` ise ve adımın video yönerge metninde (`promptText`) `{{alan}}` yer tutucusu varsa, aynı `formValues` ile doldurulur (bkz. aşağıdaki not) |
 | `formDesignIds` | number[] | Hayır | Sürece bağlanacak form tasarımı ID'leri |
+| `expiresAt` | string | Hayır | Sürecin son geçerlilik tarihi (ISO 8601, Türkiye saati). Bu zamana kadar tamamlanmayan süreç otomatik `CANCELED` yapılır; boşsa süresiz. Bkz. [Geçerlilik Süresi](progress.md#gecerlilik-suresi-son-tarih) |
+
+!!! info "İmzacı bilgileri `formValues`'ta gönderilmez"
+    Taslaktaki belgede imzacı bilgisi `{{imzaciN.alan}}` biçiminde yerleştirilmişse
+    (örn. `{{imzaci1.adsoyad}}`, `{{imzaci1.tckn}}`), bu alanlar süreç başlarken belgenin
+    N. imzacısının kayıtlı bilgisinden **otomatik** doldurulur; `formValues`'ta göndermeniz
+    gerekmez. Ayrıntı: [Taslaktan Dinamik Süreç Başlatma → İmzacı bilgileri](examples/taslaktan-dinamik-surec.md#imzaci-bilgileri-imzacinalan).
 
 ### Başarılı Yanıt
 
@@ -214,7 +222,7 @@ POST {baseURL}/process-definitions/{definitionId}/start
 
 | HTTP Kodu | Açıklama |
 |-----------|----------|
-| 400 | İmzacı çözülemedi (ne `signers` ne sabit imzacı verildi), geçersiz `signerId`, iş kuralı hatası |
+| 400 | İmzacı çözülemedi (ne `signers` ne sabit imzacı verildi), geçersiz `signerId`, geçmiş bir `expiresAt`, iş kuralı hatası |
 | 401 | Kimlik doğrulama bilgisi yok |
 | 403 | `process:start` scope yok / paket yetersiz |
 | 404 | Taslak bu hesaba ait değil / bulunamadı |

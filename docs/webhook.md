@@ -119,7 +119,9 @@ Başarısız teslimatlar otomatik yeniden denenir:
 
 ### `PROCESS_STATUS_CHANGED`
 
-Süreç durumu değiştiğinde tetiklenir (başlatma, tamamlama, iptal).
+Süreç durumu değiştiğinde tetiklenir (başlatma, tamamlama, iptal). Süreç
+[geçerlilik süresi](progress.md#gecerlilik-suresi-son-tarih) (`expiresAt`) dolduğu için
+otomatik iptal edildiğinde de `newStatus: "CANCELED"` ile gönderilir.
 
 ```json
 {

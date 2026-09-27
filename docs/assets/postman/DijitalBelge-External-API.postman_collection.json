@@ -414,7 +414,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Test Sureci\",\n  \"processType\": \"BELGE_IMZALAMA\"\n}"
+              "raw": "{\n  \"name\": \"Test Sureci\",\n  \"processType\": \"BELGE_IMZALAMA\",\n  \"expiresAt\": \"2026-12-31T18:00:00\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/process-instances",
@@ -425,7 +425,7 @@
                 "process-instances"
               ]
             },
-            "description": "processType: BELGE_IMZALAMA (varsayilan) | DIJITAL_ONAY | DOSYA_IMZALAMA | DIJITAL_KIMLIK_DOGRULAMA. Opsiyonel: processDefinitionId (taslaktan), name, hasQrCode, responsibleId. Scope: process:start"
+            "description": "processType: BELGE_IMZALAMA (varsayilan) | DIJITAL_ONAY | DOSYA_IMZALAMA | DIJITAL_KIMLIK_DOGRULAMA. Opsiyonel: processDefinitionId (taslaktan), name, hasQrCode, responsibleId. Scope: process:start\n\nexpiresAt (opsiyonel): surecin son gecerlilik tarihi (ISO 8601, Turkiye saati). Bu zamana kadar tamamlanmayan surec otomatik CANCELED olur; gonderilmezse surec suresiz kalir, gecmis tarih 400 doner."
           }
         },
         {
@@ -735,7 +735,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Taslaktan Surec\",\n  \"autoStart\": false,\n  \"responsibleId\": null,\n  \"signers\": [\n    { \"signerId\": {{signerId}}, \"partyTypeId\": {{partyTypeId}} }\n  ],\n  \"formValues\": { \"ornek_alan\": \"deger\" },\n  \"documentSignerOverrides\": {},\n  \"formDesignIds\": []\n}"
+              "raw": "{\n  \"name\": \"Taslaktan Surec\",\n  \"autoStart\": false,\n  \"responsibleId\": null,\n  \"signers\": [\n    { \"signerId\": {{signerId}}, \"partyTypeId\": {{partyTypeId}} }\n  ],\n  \"formValues\": { \"ornek_alan\": \"deger\" },\n  \"documentSignerOverrides\": {},\n  \"formDesignIds\": [],\n  \"expiresAt\": \"2026-12-31T18:00:00\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/process-definitions/{{definitionId}}/start",
@@ -748,7 +748,7 @@
                 "start"
               ]
             },
-            "description": "Tek surec baslatir. signers = taslaktaki DocumentTypeSigning.partyType'lar icin imzaci atamasi (sabit imzaci tanimliysa gerekmeyebilir). autoStart=true => hemen STARTED. Scope: process:start"
+            "description": "Tek surec baslatir. signers = taslaktaki DocumentTypeSigning.partyType'lar icin imzaci atamasi (sabit imzaci tanimliysa gerekmeyebilir). autoStart=true => hemen STARTED. Scope: process:start\n\nexpiresAt (opsiyonel): surecin son gecerlilik tarihi (ISO 8601, Turkiye saati). Bu zamana kadar tamamlanmayan surec otomatik CANCELED olur; gonderilmezse surec suresiz kalir, gecmis tarih 400 doner."
           }
         }
       ]

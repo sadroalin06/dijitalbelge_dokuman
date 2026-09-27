@@ -1,12 +1,14 @@
 ---
-description: E-ticaret üyesinin TCKK_TIMESTAMP ile kimlik doğrulaması örneği — kimlik kartı NFC, SMS ve konum doğrulaması, webhook ile üye hesabının otomatik doğrulanmış olarak işaretlenmesi.
+description: Platform üyelerinin TCKK_TIMESTAMP ile kimlik doğrulaması örneği — kimlik kartı NFC, SMS ve konum doğrulaması, webhook ile üye hesabının otomatik doğrulanmış olarak işaretlenmesi. E-ticaret, kripto, kiralama/paylaşım, bahis ve fintech gibi örnek sektörler dahil.
 ---
 
-# E-Ticaret Üyesi Kimlik Doğrulama (`TCKK_TIMESTAMP`)
+# Üyelik Kimlik Doğrulama (`TCKK_TIMESTAMP`)
 
-Bu örnek, bir e-ticaret sitesinin üyelerinden birine **kimlik doğrulama** yaptırmasını
-ve doğrulama tamamlandığında **webhook** ile üyenin hesabını otomatik olarak
-"kimliği doğrulandı" durumuna almasını gösterir.
+Bu örnek, bir platformun üyelerinden birine **kimlik doğrulama** yaptırmasını ve
+doğrulama tamamlandığında **webhook** ile üyenin hesabını otomatik olarak "kimliği
+doğrulandı" durumuna almasını gösterir. Akış, aşağıda **e-ticaret** senaryosu
+üzerinden anlatılıyor; ancak süreç, imzacı ve webhook mantığı [Örnek
+Sektörler](#ornek-sektorler) bölümündeki tüm kullanım alanları için birebir aynıdır.
 
 Önceki örneklerden farkı: burada bir **sözleşme imzalatılmıyor** — amaç yalnızca
 kişinin gerçekten iddia ettiği kişi olduğunu (TC kimlik kartı + telefon + konum ile)
@@ -14,14 +16,35 @@ teyit etmek. Bu yüzden süreç tipi olarak [`DIJITAL_KIMLIK_DOGRULAMA`](../prog
 kullanılır: **belge imzalanmaz, gerçek bir dosya üretilmez**, yalnızca kimlik
 doğrulama kanıtı oluşturulur.
 
-**Senaryo:** E-ticaret sitesi, belirli bir işlem limitinin üzerine çıkan (ör. yüksek
-tutarlı sipariş, taksitli ödeme, satıcı hesabı başvurusu vb.) üyelerinden kimlik
-doğrulaması istiyor. Üye "Kimliğimi Doğrula" butonuna bastığında sistem
-**TCKK_TIMESTAMP** yöntemiyle bir doğrulama süreci başlatır: üye telefonunun NFC
-anteniyle TC kimlik kartını okutur, kayıtlı cep telefonuna gelen SMS kodunu girer ve
-cihazın konumu okunur; tüm bunlar bir zaman damgasıyla mühürlenir. Doğrulama
-tamamlanınca e-ticaret sistemine webhook düşer ve üyenin hesabı otomatik olarak
+**Senaryo (e-ticaret):** Bir e-ticaret sitesi, belirli bir işlem limitinin üzerine
+çıkan (ör. yüksek tutarlı sipariş, taksitli ödeme, satıcı hesabı başvurusu vb.)
+üyelerinden kimlik doğrulaması istiyor. Üye "Kimliğimi Doğrula" butonuna bastığında
+sistem **TCKK_TIMESTAMP** yöntemiyle bir doğrulama süreci başlatır: üye telefonunun
+NFC anteniyle TC kimlik kartını okutur, kayıtlı cep telefonuna gelen SMS kodunu girer
+ve cihazın konumu okunur; tüm bunlar bir zaman damgasıyla mühürlenir. Doğrulama
+tamamlanınca platformun sistemine webhook düşer ve üyenin hesabı otomatik olarak
 doğrulanmış işaretlenir.
+
+---
+
+## Örnek Sektörler
+
+`DIJITAL_KIMLIK_DOGRULAMA` + `TCKK_TIMESTAMP` ikilisi, "bir belge imzalatmadan,
+yalnızca bu kişi gerçekten iddia ettiği kişi mi?" sorusuna cevap arayan her üyelik
+akışında kullanılabilir:
+
+| Sektör | Doğrulama Genelde Ne Zaman İstenir | Amaç |
+|---|---|---|
+| **E-Ticaret** | Yüksek tutarlı sipariş, taksitli ödeme, satıcı/mağaza hesabı başvurusu | Dolandırıcılık ve "chargeback" riskini azaltmak |
+| **Kripto Para / Yatırım Platformları** | Hesap açılışı, para çekme limiti aşımı | KYC ("Müşterini Tanı") mevzuat yükümlülüğü |
+| **Araç / Gayrimenkul Kiralama ve Paylaşım** | İlan verme, araç veya konut teslim alma | Kiralayanın gerçek kimliğiyle eşleştiğinin garanti edilmesi |
+| **Bahis / Şans Oyunları** | Üyelik açılışı, para çekme talebi | Yaş doğrulama ve "tek kişi tek hesap" kuralı |
+| **Fintech / Ödeme Kuruluşları** | Hesap açılışı, limit artışı, IBAN ekleme | BDDK/MASAK KYC yükümlülüğü |
+| **İkinci El Pazar Yerleri** | Yüksek değerli ilan, "doğrulanmış satıcı" rozeti | Alıcı güvenini artırmak |
+
+Sektöre göre değişen tek şey Adım 1'deki süreç adı (`name`) ve Adım 5'te webhook'u
+aldığınızda hesabınızda tetiklediğiniz iş kuralıdır (örn. e-ticarette sipariş limiti
+açmak, fintech'te IBAN eklemeye izin vermek); API çağrılarının kendisi değişmez.
 
 ---
 
@@ -37,10 +60,10 @@ konum** doğrulaması yeterli olan akışlar için önerilen yöntem budur:
 | `TCKK_FACE_TIMESTAMP` | ✅ | ✅ | ✅ | Anlık yüz |
 | `TCKK_ONBOARDING` | ✅ | ✅ | ✅ | Fotoğraf + video |
 
-E-ticaret üyelik doğrulamasında genelde ek biyometri gerekmediğinden en hafif seçenek
-olan `TCKK_TIMESTAMP` yeterlidir; daha yüksek güvence gerekiyorsa aynı akış
-`TCKK_FACE_TIMESTAMP` veya `TCKK_ONBOARDING` ile birebir aynı şekilde kurulabilir
-(yalnızca Adım 3'teki `signatureTypeId` değişir).
+E-ticaret ve fintech gibi çoğu üyelik doğrulama akışında ek biyometri gerekmediğinden
+en hafif seçenek olan `TCKK_TIMESTAMP` yeterlidir. Bahis veya kripto gibi daha yüksek
+güvence gerektiren sektörlerde aynı akış `TCKK_FACE_TIMESTAMP` veya `TCKK_ONBOARDING`
+ile birebir aynı şekilde kurulabilir (yalnızca Adım 3'teki `signatureTypeId` değişir).
 
 ---
 
@@ -263,7 +286,7 @@ Webhook handler'ınızda yapmanız gereken:
 !!! success "Tamamlandı"
     Ali Veli, telefonuyla kimlik kartını okutup SMS kodunu girdikten ve konum izni
     verdikten sonra sürecin tek imzacısı olduğu için süreç `COMPLETED` durumuna
-    geçti; e-ticaret sistemi webhook'u alarak üyeyi "kimliği doğrulandı" olarak
+    geçti; platformun sistemi webhook'u alarak üyeyi "kimliği doğrulandı" olarak
     işaretledi — hiçbir belge imzalanmadı, yalnızca kimlik doğrulama kanıtı üretildi.
 
 ---
