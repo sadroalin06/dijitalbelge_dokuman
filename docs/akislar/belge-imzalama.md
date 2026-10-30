@@ -108,8 +108,8 @@ gönderir; belge içeriği uygulamanızdan geçmez.
 
 ## İmzayı doğrulama
 
-İmzalı belgenin geçerliliği hem API'den hem de herkese açık doğrulama sayfasından
-kontrol edilebilir: [İmza Formatları ve Doğrulama](../signature-verification.md).
+İmzalı belge QR kodla, doğrulama sayfasına yüklenerek ya da API ile doğrulanır:
+[Belge Doğrulama](../dogrulama/index.md).
 
 ## Örnekler
 

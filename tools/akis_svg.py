@@ -196,10 +196,54 @@ def models():
     (OUT / "imzalama-modelleri.svg").write_text("".join(p), encoding="utf-8")
 
 
+def verify_ways():
+    """Belge doğrulama: QR, dosya yükleme ve API ile doğrulama yolları."""
+    h = 470
+    p = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" width="{W}" height="{h}" role="img" '
+         f'aria-label="Belge doğrulama yolları">',
+         f'<defs><marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">'
+         f'<path d="M0,0 L10,5 L0,10 z" fill="{MUTED}"/></marker></defs>',
+         f'<rect x="0.5" y="0.5" width="{W - 1}" height="{h - 1}" rx="14" fill="#FFFFFF" stroke="{LINE}"/>']
+
+    def box(x, y, w, hh, title, lines, fill, text="#FFFFFF", subfill=None, mono=False):
+        p.append(f'<rect x="{x - w / 2}" y="{y}" width="{w}" height="{hh}" rx="12" fill="{fill}"/>')
+        p.append(t(x, y + 28, title, 17, 700, text))
+        for k, line in enumerate(lines):
+            p.append(t(x, y + 52 + k * 20, line, 13.5, 400, subfill or text, mono=mono))
+
+    def arrow(x, y1, y2):
+        p.append(f'<line x1="{x}" y1="{y1}" x2="{x}" y2="{y2 - 6}" stroke="{MUTED}" stroke-width="2" marker-end="url(#av)"/>')
+
+    cols = [(170, "1 · QR kod", "Belgeyi elinde tutan herkes", TEAL, "#D5F0EC",
+             ["Belgedeki QR okutulur"], ["/sign/{accessToken}"],
+             ["Süreç, belgeler ve", "imzacıların durumu"]),
+            (500, "2 · Dosya yükleyerek", "Belgeyi alan üçüncü kişi", AMBER, NAVY,
+             ["Doğrulama sayfasına", "dosya yüklenir"], ["/sign/dogrula", "POST /files/verify"],
+             ["İmzalar, zaman damgası,", "bütünlük, kanıt bağı"]),
+            (830, "3 · API ile", "Sizin sisteminiz", NAVY, "#DCE3F5",
+             ["Süreçteki imza", "otomatik doğrulanır"], ["…/tasks/{id}/signature/verify", "…/signers/{id}/signature/verify"],
+             ["valid · message ·", "imza ayrıntıları"])]
+    for x, title, who, fill, subfill, step, api, result in cols:
+        text = NAVY if fill == AMBER else "#FFFFFF"
+        p.append(t(x, 44, title, 20, 700, fill if fill != AMBER else "#B7860B"))
+        p.append(t(x, 68, who, 14, 400, MUTED))
+        box(x, 90, 290, 90, "Ne yapılır", step, fill, text=text, subfill=subfill)
+        arrow(x, 180, 214)
+        box(x, 214, 290, 90, "Nereye", api, "#F9FAFB", text=INK, subfill=MUTED, mono=True)
+        p.append(f'<rect x="{x - 145}" y="214" width="290" height="90" rx="12" fill="none" stroke="{LINE}"/>')
+        arrow(x, 304, 338)
+        box(x, 338, 290, 90, "Sonuç", result, "#F3F4F6", text=INK, subfill=INK)
+    p.append(t(W / 2, h - 18, "Dış doğrulayıcılarla da doğrulanabilir: PAdES ve ASiC-E dosyaları EU DSS ya da TÜBİTAK İmzager ile açılır.",
+               14, 400, MUTED))
+    p.append("</svg>")
+    (OUT / "dogrulama-yollari.svg").write_text("".join(p), encoding="utf-8")
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     decision()
     models()
+    verify_ways()
 
     three = {"sys": "Sizin sisteminiz", "db": "DijitalBelge", "user": "İmzacı"}
 

@@ -16,6 +16,9 @@ DijitalBelge'yi dört farklı amaçla entegre edebilirsiniz. Her akışın kendi
 | **Kimlik Doğrulama** | Belge olmadan, bir kişinin **gerçekten iddia ettiği kişi olduğunun** teyidi (üyelik, KYC) | Mühürlü kimlik doğrulama kanıtı | [Kimlik Doğrulama](kimlik-dogrulama.md) |
 | **Login** | Kullanıcılarınızın sitenize **e-imza ya da mobil imza ile giriş** yapması | Doğrulanmış kimlikle oturum + audit log | [Login](login.md) |
 
+İmzalanan ya da onaylanan belgelerin sonradan doğrulanması (QR kod, dosya yükleme, API) ayrı bir
+bölümde anlatılır: [Belge Doğrulama](../dogrulama/index.md).
+
 !!! tip "Hepsi için ortak ön koşul"
     Tüm akışlarda istekler `X-Client-Id` ve `X-Client-Secret` başlıklarıyla yapılır.
     Bu bilgileri almak için [API Erişimi](../authentication.md) sayfasına bakın.

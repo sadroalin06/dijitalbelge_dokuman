@@ -23,6 +23,9 @@ nav:
       - Dijital Onay: akislar/dijital-onay.md
       - Kimlik Doğrulama: akislar/kimlik-dogrulama.md
       - Login: akislar/login.md
+  - Belge Doğrulama:
+      - Doğrulama Yolları: dogrulama/index.md
+      - İmza Formatları ve Doğrulama API: signature-verification.md
   - API Erişimi (ClientId): authentication.md
   - Yetkiler: scopes.md
   - Postman Koleksiyonu: postman.md
@@ -35,7 +38,6 @@ nav:
       - Süreç Taslakları API: process-definitions.md
       - Döküman API: documents.md
       - Taslaktan Döküman Ekleme: progress_doctype.md
-      - İmza Formatları ve Doğrulama: signature-verification.md
   - Dosya İmzalama (CAdES/ASiC-E): dosya-imzalama.md
   - Login İşlemleri:
       - E-İmza Login API: esign.md
