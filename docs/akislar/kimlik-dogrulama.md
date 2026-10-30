@@ -43,6 +43,66 @@ satıcı hesabı başvurusu, araç ya da konut kiralama, yaş doğrulama.
     Authentication) ve çipin kopya olmadığı (Active Authentication). İki doğrulamanın
     sonucu da kanıt dosyasına yazılır.
 
+## Bireysel ve kurumsal doğrulama
+
+Doğrulanan kişinin türü imzacı kaydındaki `signerType` alanından gelir
+([İmzacı türleri](../signers.md#imzac-turleri)):
+
+| Tür | Kim doğrulanır | İmzacı kaydı |
+|---|---|---|
+| Bireysel | Kendi adına işlem yapan kişi | `signerType: INDIVIDUAL` |
+| Kurumsal | Bir kurum adına işlem yapan yetkili | `signerType: CORPORATE` + kurum (`institutionId` ya da `institutionTitle`, vergi no, vergi dairesi) |
+
+Kurumsal doğrulamada da kişinin kimliği kendi TC kimlik kartıyla doğrulanır; hangi kurum adına
+işlem yaptığı imzacı kaydındaki kurum bilgisinden gelir. Kurumun yetkiyi gösteren belgeleri
+(imza sirküleri vb.) [ek belge](#ek-belge-isteme) olarak istenir.
+
+## Ek belge isteme
+
+Kimlik doğrulamanın yanında kişiden **ek belge** de istenebilir. İstenecek belgeler
+bireysel ve kurumsal doğrulamada genelde farklıdır, örneğin:
+
+| Tür | Örnek ek belgeler |
+|---|---|
+| Bireysel | İkametgâh belgesi, adres beyanı, gelir belgesi |
+| Kurumsal | Vergi levhası, imza sirküleri, ticaret sicil gazetesi, yetki belgesi |
+
+Ek belgeler bir **süreç taslağında** tanımlanır; bu yüzden ek belgeli doğrulama, süreci
+sıfırdan oluşturmak yerine taslaktan başlatılarak yapılır:
+
+1. **Taslakları hazırlayın (panelden, bir kez):** Bireysel ve kurumsal doğrulama için ayrı birer
+   süreç taslağı oluşturun. Süreç tipini `DIJITAL_KIMLIK_DOGRULAMA` seçin ve istenecek belge
+   türlerini ekleyin. Her belge için **yüklenmesi zorunlu** ve **onay gerekli** seçenekleri
+   ayrı ayrı belirlenir.
+2. **Doğru taslağı seçin:** Kişi bireyselse bireysel, kurumsalsa kurumsal taslağın ID'sini
+   kullanın. Taslakları listelemek için: `GET /external/process-definitions`.
+3. **Süreci başlatın:** İmzacıyı taslaktaki taraf tipine bağlayarak süreci taslaktan başlatın.
+
+    ```http
+    POST /api/external/process-definitions/{definitionId}/start
+    ```
+
+    ```json
+    {
+      "name": "Kurumsal Kimlik Doğrulama - Örnek Teknoloji A.Ş.",
+      "autoStart": true,
+      "signers": [ { "signerId": 138, "partyTypeId": 6 } ]
+    }
+    ```
+
+4. **Kişi belgeleri yükler:** Doğrulama sırasında kimliğini doğrularken istenen belgeleri de yükler.
+5. **Belgeleri inceleyin:** Onay gerektiren belgeler panelden onaylanır ya da reddedilir. Sonuç
+   `DOCUMENT_APPROVED` webhook'uyla gelir (`status`: `APPROVED`, `REJECTED`, `REVOKED`).
+6. **Belgeleri alın:** Yüklenen dosyalar `GET /external/process-instances/{processId}/document/{documentId}/files`
+   ile listelenir ve indirilir.
+
+!!! tip "Hesabı ne zaman doğrulanmış sayın?"
+    Ek belge istenen doğrulamada kişiyi yalnızca kimlik doğrulaması (`DOCUMENT_SIGNED`) geldiğinde
+    değil, onay gerektiren belgelerin hepsi `APPROVED` olduğunda doğrulanmış sayın.
+
+Taslaktan süreç başlatmanın ayrıntıları: [Süreç Taslakları API](../process-definitions.md) ·
+[Taslaktan Dinamik Süreç Başlatma](../examples/taslaktan-dinamik-surec.md).
+
 ## Örnek
 
 Uçtan uca istek ve yanıtlarıyla: [Üyelik Kimlik Doğrulama](../examples/uyelik-kimlik-dogrulama.md).

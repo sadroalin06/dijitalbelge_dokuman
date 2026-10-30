@@ -90,9 +90,89 @@ signer:managment
 | `phone` | `String` | ❌ | Telefon numarası |
 | `identityNumber` | `String` | ✅ | TCKN / Kimlik No |
 | `partyTypeId` | `Long` | ✅ | Ünvan ID |
+| `signerType` | `String` | ❌ | İmzacı türü: `INDIVIDUAL` (varsayılan), `CORPORATE` ya da `SEAL` — bkz. [İmzacı türleri](#imzac-turleri) |
+| `institutionId` | `Long` | Kurumsalda ⚠️ | Kurumsal imzacının bağlı olduğu, daha önce oluşturulmuş kurum |
+| `institutionTitle` | `String` | Kurumsalda ⚠️ | `institutionId` verilmezse yeni kurumun ünvanı |
+| `institutionTaxNumber` | `String` | ❌ | Yeni kurumun vergi numarası (10 haneli VKN ya da 11 haneli TCKN) |
+| `institutionTaxOffice` | `String` | ❌ | Yeni kurumun vergi dairesi |
 
 
 > ⚠️ `email`, `fullName`,`partyTypeId` veya `identityNumber` alanlarının **hepsi** dolu olmalıdır.
+
+---
+
+## 🏷️ İmzacı türleri
+
+Her imzacının bir türü vardır. Tür, imzacının kimin adına imzaladığını ve `identityNumber`
+alanında ne tutulduğunu belirler.
+
+| `signerType` | Kim | `identityNumber` | Kurum |
+|---|---|---|---|
+| `INDIVIDUAL` | Kendi adına imzalayan kişi (varsayılan) | Kişinin TCKN'si | Yok |
+| `CORPORATE` | Bir kurumun yetkili personeli; kurum adına imzalar | Personelin TCKN'si | Zorunlu: `institutionId` ya da `institutionTitle` |
+| `SEAL` | Kurumun elektronik mührü (e-mühür); kişiye değil kuruma aittir | Kurumun VKN'si; şahıs şirketinde TCKN | Yok |
+
+=== "Bireysel"
+
+    ```json
+    {
+      "signerType": "INDIVIDUAL",
+      "fullName": "Ali Veli",
+      "email": "ali.veli@example.com",
+      "identityNumber": "12345678901",
+      "partyTypeId": 6
+    }
+    ```
+
+=== "Kurumsal (yeni kurum)"
+
+    ```json
+    {
+      "signerType": "CORPORATE",
+      "fullName": "Ayşe Demir",
+      "email": "ayse.demir@firma.com.tr",
+      "identityNumber": "12345678901",
+      "partyTypeId": 6,
+      "institutionTitle": "Örnek Teknoloji A.Ş.",
+      "institutionTaxNumber": "1234567890",
+      "institutionTaxOffice": "Kadıköy"
+    }
+    ```
+
+=== "Kurumsal (mevcut kurum)"
+
+    ```json
+    {
+      "signerType": "CORPORATE",
+      "fullName": "Mehmet Kaya",
+      "email": "mehmet.kaya@firma.com.tr",
+      "identityNumber": "10987654321",
+      "partyTypeId": 6,
+      "institutionId": 41
+    }
+    ```
+
+=== "Mühür"
+
+    ```json
+    {
+      "signerType": "SEAL",
+      "fullName": "Örnek Teknoloji A.Ş. e-Mühür",
+      "email": "muhur@firma.com.tr",
+      "identityNumber": "1234567890",
+      "partyTypeId": 6
+    }
+    ```
+
+!!! warning "Aynı kurumu tekrar oluşturmayın"
+    `institutionId` olmadan `institutionTitle` gönderilen her istek **yeni bir kurum** kaydı oluşturur.
+    İlk imzacıyı eklerken dönen yanıttaki `institutionId` değerini saklayın ve aynı kurumun sonraki
+    imzacılarında onu gönderin.
+
+!!! info "Mühür kuralları"
+    `SEAL` türünde `identityNumber` zorunludur ve hane kısıtı yoktur (VKN 10, TCKN 11 hane). Kimlik
+    kartına özgü alanlar (doğum tarihi, seri no, geçerlilik) kullanılmaz; mühür bir kuruma
+    bağlanmaz.
 
 ---
 
@@ -176,6 +256,8 @@ signer:managment
 | `phone` | `String` | ❌ | Telefon numarası |
 | `identityNumber` | `String` | ✅ | TCKN / Kimlik No |
 | `partyTypeId` | `Long` | ✅ | Taraf tipi ID |
+| `signerType` | `String` | ❌ | `INDIVIDUAL`, `CORPORATE` ya da `SEAL`; değiştirilebilir. Kurumsal dışına geçince kurum bağlantısı kaldırılır |
+| `institutionId` / `institutionTitle` | | Kurumsalda ⚠️ | Bkz. [İmzacı türleri](#imzac-turleri) |
 
 ### Örnek Request
 

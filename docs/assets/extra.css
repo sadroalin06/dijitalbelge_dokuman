@@ -164,3 +164,12 @@
 .md-footer {
   background-color: var(--md-primary-fg-color--dark);
 }
+
+/* Tablo başlığındaki kod ve ilk sütundaki kısa kodlar */
+.md-typeset table:not([class]) th code {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+.md-typeset table:not([class]) td:first-child code {
+  white-space: nowrap;
+}
