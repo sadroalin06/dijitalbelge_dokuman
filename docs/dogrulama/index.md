@@ -13,7 +13,7 @@ ait olduğu kontrol edilir. Doğrulama için dört yol vardır.
 | Yol | Kim kullanır | Nasıl | Giriş gerekir mi |
 |---|---|---|---|
 | **1 · QR kod** | Belgenin basılı ya da PDF halini elinde tutan herkes | Belgedeki QR okutulur, sürecin sayfası açılır | Hayır |
-| **2 · Dosya yükleyerek** | Belgeyi e-posta ile alan karşı taraf, denetçi, mahkeme | Dosya [doğrulama sayfasına](https://app.dijitalbelge.com/sign/dogrula) yüklenir | Hayır (resimli doğrulama kodu ile) |
+| **2 · Dosya yükleyerek** | Belgeyi e-posta ile alan karşı taraf, denetçi, mahkeme | Dosya [doğrulama sayfasına](https://imza.dijitalbelge.com/sign/dogrula) yüklenir | Hayır (resimli doğrulama kodu ile) |
 | **3 · Süreçteki imzalar** | Sizin sisteminiz | DijitalBelge'de başlattığınız süreçteki imza, dosya göndermeden doğrulanır | Evet (`X-Client-Id`, `document:read`) |
 | **4 · Doğrulama API** | Sizin sisteminiz | Herhangi bir imzalı dosya (PAdES, ASiC-E, PDF + JAdES, JAdES, CAdES, XAdES) gönderilir; süreçle ilişkisi yoktur | Evet (`X-Client-Id`, `verify:document`) |
 
@@ -22,7 +22,7 @@ ait olduğu kontrol edilir. Doğrulama için dört yol vardır.
 ## 1 · QR kod
 
 Her sürecin belgeye basılabilen bir doğrulama QR kodu vardır. QR, sürecin sayfasını
-(`https://app.dijitalbelge.com/sign/{accessToken}`) açar; burada belgeler, imzacılar ve
+(`https://imza.dijitalbelge.com/sign/{accessToken}`) açar; burada belgeler, imzacılar ve
 her imzanın durumu görünür.
 
 QR'ın PNG görselini kendi ekranınızda göstermek için:
@@ -31,7 +31,7 @@ QR'ın PNG görselini kendi ekranınızda göstermek için:
 ## 2 · Dosya yükleyerek
 
 Belgeyi alan kişi, hesap açmadan
-[app.dijitalbelge.com/sign/dogrula](https://app.dijitalbelge.com/sign/dogrula) sayfasına
+[imza.dijitalbelge.com/sign/dogrula](https://imza.dijitalbelge.com/sign/dogrula) sayfasına
 dosyayı yükleyerek doğrular. Sayfa, yüklenen dosyanın türüne göre şunları kontrol eder:
 
 | Doğrulama türü | Yüklenen | Ne kontrol edilir |

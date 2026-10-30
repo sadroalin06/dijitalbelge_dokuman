@@ -19,7 +19,7 @@ iki modelde de aynıdır; fark imzacının imzayı hangi ekranda attığıdır.
 
 | | A · Merkezi imza ekranı | B · Uygulama içi imza |
 |---|---|---|
-| **İmza nerede atılır** | DijitalBelge imza ekranında (`/sign/{accessToken}`) | Sizin uygulamanızın kendi ekranında |
+| **İmza nerede atılır** | DijitalBelge imza ekranında (`https://imza.dijitalbelge.com/sign/{accessToken}`) | Sizin uygulamanızın kendi ekranında |
 | **İmzacı deneyimi** | Uygulamanızdan imza ekranına yönlendirilir ya da e-posta / SMS bağlantısıyla gelir | Uygulamanızdan hiç ayrılmaz |
 | **Sizin geliştirmeniz** | Yalnızca API: süreç, belge, imzacı, webhook | API + kendi imza ekranınız; e-imzada ayrıca Sümen entegrasyonu |
 | **Desteklenen imza türleri** | Tümü: e-imza, mobil imza, dijital onay türleri | E-imza (`EIMZA`, Sümen ile) ve mobil imza (`MOBILE_IMZA`, yalnızca API ile) |
@@ -45,7 +45,10 @@ Bir belgede birden çok imzacı olabilir ve her imzacıya ayrı tür verilebilir
 
 ## A · Merkezi imza ekranı
 
-Uygulamanız süreci hazırlar ve imzacıyı DijitalBelge imza ekranına gönderir. İmza
+Uygulamanız süreci hazırlar ve imzacıyı DijitalBelge imza ekranına gönderir. İmza ekranının adresi
+`https://imza.dijitalbelge.com/sign/{accessToken}` biçimindedir; `accessToken` süreç oluşturma ve
+başlatma yanıtlarında döner. İmzacı bağlantıyı açtığında kod girmeden doğrudan belgeye ulaşır.
+`https://imza.dijitalbelge.com` adresine doğrudan gelen kişiden ise erişim kodu istenir. İmza
 ekranı e-imza, mobil imza ve dijital onay türlerinin hepsini kendisi yönetir.
 
 ![Merkezi imza ekranıyla belge imzalama akışı](../assets/akislar/belge-imzalama.svg)
@@ -56,7 +59,7 @@ ekranı e-imza, mobil imza ve dijital onay türlerinin hepsini kendisi yönetir.
 | 2 | Belge eklenir: PDF yüklenir ya da hazır bir taslaktan üretilir | `POST …/document/single` · `POST …/document/document-type` | [Döküman API](../documents.md) · [Taslaktan Döküman](../progress_doctype.md) |
 | 3 | İmzacılar eklenir ve her birine imza türü verilir | `POST …/document/{documentId}/signers` | [İmzacı API](../signers.md) |
 | 4 | Süreç başlatılır; yanıttaki `accessToken` saklanır | `PUT …/status/start` | [Süreç API](../progress.md) |
-| 5 | İmzacı imza ekranına gelir: uygulamanızdaki "İmzala" butonuyla yönlendirilir ya da DijitalBelge'nin gönderdiği e-posta / SMS bağlantısıyla | `https://app.dijitalbelge.com/sign/{accessToken}` | |
+| 5 | İmzacı imza ekranına gelir: uygulamanızdaki "İmzala" butonuyla yönlendirilir ya da DijitalBelge'nin gönderdiği e-posta / SMS bağlantısıyla | `https://imza.dijitalbelge.com/sign/{accessToken}` | |
 | 6 | İmzacı imza ekranında e-imza ya da mobil imza ile imzalar | — | |
 | 7 | Her imzada webhook gelir; `allSigned: true` ise belgenin tüm imzacıları imzalamıştır | `DOCUMENT_SIGNED` | [Webhook](../webhook.md) |
 | 8 | İmzalı belge indirilir | `GET …/document/{documentId}/file` | [Döküman API](../documents.md) |

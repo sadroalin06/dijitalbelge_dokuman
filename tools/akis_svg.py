@@ -177,7 +177,7 @@ def models():
         box(x, 100, 120, 46, f"Uygulama {chr(65 + i)}", None, "#E8ECF7", text=NAVY)
         arrow(x, 146, cx + (i - 1) * 90, 226)
     p.append(t(cx + 150, 196, "imzacı yönlendirilir", 13, 600, MUTED))
-    box(cx, 226, 330, 64, "DijitalBelge imza ekranı", "app.dijitalbelge.com/sign/{accessToken}", AMBER, text=NAVY, subfill=NAVY)
+    box(cx, 226, 330, 64, "DijitalBelge imza ekranı", "imza.dijitalbelge.com/sign/{accessToken}", AMBER, text=NAVY, subfill=NAVY)
     arrow(cx, 290, cx, 336)
     box(cx, 336, 330, 60, "E-imza (Sümen) · mobil imza", "kimlik doğrulama · dijital onay", NAVY, subfill="#DCE3F5")
 
