@@ -45,7 +45,7 @@ Türlerin karşılaştırması ve kontör bilgisi: [İmzalama Türleri](../signa
 | 4 | Süreç başlatılır | `PUT …/status/start` | [Süreç API](../progress.md) |
 | 5 | DijitalBelge onaylayana e-posta / SMS ile bağlantı gönderir | — | |
 | 6 | Onaylayan kimliğini kanıtlar ve belgeyi onaylar | — | |
-| 7 | Kanıtlar zaman damgasıyla mühürlenir (JAdES kanıt dosyası); e-imza ve mobil imzada imza belgenin içine atılır | — | [İmza Formatları](../signature-verification.md) |
+| 7 | Kanıtlar zaman damgasıyla mühürlenir (JAdES kanıt dosyası). E-imza / mobil imzada PDF'in içine imza atılır; PDF dışı belgede imza JAdES dosyasına mühürlenir | — | [İmza Formatları](../signature-verification.md) |
 | 8 | Webhook gelir | `DOCUMENT_SIGNED` | [Webhook](../webhook.md) |
 | 9 | Onaylı belge ve kanıt dosyası indirilir | `GET …/document/{documentId}/files` | [Döküman API](../documents.md) |
 

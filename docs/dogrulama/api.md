@@ -27,7 +27,7 @@ e-imza ya da mobil imzayla atılmış imzalar da doğrulanır.
 | **PAdES** (imzalı PDF) | `POST /pades` | `file`: PDF |
 | **ASiC-E** | `POST /asice` | `file`: `.asice` |
 | **PDF + JAdES** | `POST /pdf-jades` | `file`: PDF · `jades`: `.jades` kanıt dosyası |
-| **JAdES** | `POST /jades` | `signature`: `.jades` · `file`: imzalanan dosya (yalnızca ayrık imzada) |
+| **JAdES** (e-imza / mobil imzalı ya da kanıt mührü) | `POST /jades` | `signature`: `.jades` · `file`: imzalanan dosya (yalnızca ayrık imzada) |
 | **CAdES** | `POST /cades` | `signature`: `.p7s` · `file`: imzalanan dosya (yalnızca ayrık imzada) |
 | **XAdES** | `POST /xades` | `signature`: imzalı XML · `file`: imzalanan dosya (yalnızca ayrık imzada) |
 
@@ -157,7 +157,7 @@ Tüm uçlar aynı yapıyı döner. `detectedType` formatı belirtir; o formata a
 | `message` | Tümü | Sonucun açıklaması; geçersizse en önemli neden |
 | `pdfSignatures[]` | PAdES, PDF + JAdES | PDF'teki her imza ve zaman damgası |
 | `asice` | ASiC-E | `signatures[]`, `files[]` (dosya bazında özet eşleşmesi), `allFilesMatch` |
-| `jades` | JAdES, PDF + JAdES | Kanıt mührü; kanıtın PDF'e bağı (`documentLinkValid`) |
+| `jades` | JAdES, PDF + JAdES | JAdES imzası: imzacı / sertifika, zaman damgası; PDF + JAdES'te PDF'e bağı (`documentLinkValid`) |
 | `cades[]` | CAdES | Her imzacı: `integrityValid`, `digestMatches`, `certificateTrusted`, `cadesLevel` |
 | `xades[]` | XAdES | Her imza: `signatureForm`, `xadesLevel`, `failedReferences`, `signingCertificateMatches` |
 

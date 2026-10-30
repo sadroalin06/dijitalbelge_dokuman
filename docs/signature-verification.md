@@ -23,9 +23,10 @@ her formatın ne olduğunu, ne zaman üretildiğini ve nasıl doğrulanacağın�
 
     Detaylı `processType` alan açıklamaları için bkz. [Süreç API – Süreç Tipleri](progress.md#süreç-tipleri-processtype).
 
-    **BELGE_IMZALAMA içinde**, imzacıya atanan `signatureType`'a göre PDF iki farklı şekilde işlenir:
+    **BELGE_IMZALAMA içinde**, imzacıya atanan `signatureType`'a ve belgenin türüne göre çıktı şöyle oluşur:
 
-    - **PKI tabanlı (`EIMZA`, `MOBILE_IMZA`):** PDF doğrudan **PAdES** formatında imzalanır — imza PDF'in içine gömülür, **zaman damgalı** ve **arşiv (LTV) özellikli**dir. Ayrı bir kanıt dosyası oluşmaz; PDF'in kendisi zaten imzalı halidir.
+    - **PKI tabanlı (`EIMZA`, `MOBILE_IMZA`), PDF belge:** PDF doğrudan **PAdES** formatında imzalanır — imza PDF'in içine gömülür, **zaman damgalı** ve **arşiv (LTV) özellikli**dir. Ayrı bir kanıt dosyası oluşmaz; PDF'in kendisi zaten imzalı halidir.
+    - **PKI tabanlı (`EIMZA`, `MOBILE_IMZA`), PDF dışı belge (HTML, XML vb.):** Belgenin içine imza gömülemez. İmzacı belgenin özetini e-imza kartıyla ya da mobil imzayla imzalar; bu imza, imzacının sertifikası ve belge içeriğiyle birlikte zaman damgalı bir **JAdES** dosyasına (`.jades`) mühürlenir.
     - **Kimlik/OTP tabanlı (`TCKK_TIMESTAMP`, `TCKK_FACE_TIMESTAMP`, `TCKK_ONBOARDING`, `SMSOTP_TIMESTAMP`, `EMAIL_TIMESTAMP`):** Bu yöntemler nitelikli elektronik imza sertifikası kullanmaz. PDF yalnızca **zaman damgası** ile mühürlenir; kimlik doğrulama sürecinin kanıtı ise ayrı bir **JAdES** dosyası olarak (`EVIDENCE` tipinde) saklanır.
 
 ---
@@ -37,7 +38,7 @@ her formatın ne olduğunu, ne zaman üretildiğini ve nasıl doğrulanacağın�
 | **PAdES** | `.pdf` | BELGE_IMZALAMA, tek PDF'in E-İmza/Mobil İmza ile imzalanması | İmza, PDF dosyasının içine gömülür (embedded). Dosyanın kendisi zaten imzalı halidir, ayrı bir imza dosyası yoktur. |
 | **CAdES** | `.p7s` | PDF olmayan tek bir dosyanın (docx, xml vb.) imzalanması | Ayrık (detached) imza — orijinal dosya değişmez, imza `.p7s` olarak ayrı kaydedilir. Doğrulamak için hem orijinal dosya hem `.p7s` gerekir. |
 | **ASiC-E** | `.asice` | **DOSYA_IMZALAMA** — bir imzacının süreçteki tüm dosyaları tek seferde imzalaması | ETSI TS 102 918 uyumlu ZIP container. İçinde: orijinal dosyalar + `process-metadata.json` + `ASiCManifest.xml` (her dosyanın SHA-256'sı) + `META-INF/signature001.p7s` (manifest'in CAdES imzası). Kendi kendine yeten kanıt paketi — dış bir doğrulayıcı (EU DSS, TÜBİTAK İmzager) sadece bu tek dosyayla hem dosya bütünlüğünü hem imzayı doğrulayabilir. |
-| **JAdES** | `.jades` | OTP/SMS/Email doğrulama, TCKK NFC kanıtları | Gerçek bir belge imzası değil — kimlik doğrulama **kanıtını** (evidence) mühürler. Task'ın `signatureStoredFile`'ına değil, ayrı `EVIDENCE` tipinde kaydedilir. |
+| **JAdES** | `.jades` | (1) OTP/SMS/E-posta ve TCKK yöntemlerinde kanıt; (2) PDF dışı belgelerin (HTML, XML vb.) e-imza / mobil imza ile imzalanması | Zaman damgalı JSON imza. (1)'de imzacının verdiği kimlik doğrulama **kanıtlarını** (evidence) mühürler; (2)'de imzacının **e-imza / mobil imza imzasını** ve sertifikasını belge içeriğiyle birlikte mühürler. Task'ın `signatureStoredFile`'ına değil, ayrı `EVIDENCE` tipinde kaydedilir. |
 
 **Önemli:** DOSYA_IMZALAMA sürecinde her imzacı **kendi ayrı `.asice`'ını** üretir — 3 imzacı
 varsa 3 ayrı `.asice` dosyası oluşur, aynı içerik (belgeler) her birine ayrı ayrı paketlenip

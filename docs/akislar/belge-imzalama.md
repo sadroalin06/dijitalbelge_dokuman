@@ -41,6 +41,12 @@ iki modelde de aynıdır; fark imzacının imzayı hangi ekranda attığıdır.
 Bir belgede birden çok imzacı olabilir ve her imzacıya ayrı tür verilebilir.
 Örneğin şirket yetkilisi `EIMZA`, müşteri `MOBILE_IMZA` ile imzalayabilir.
 
+| Belge türü | Ortaya çıkan imzalı dosya |
+|---|---|
+| PDF | İmzalı PDF (**PAdES**): imza PDF'in içinde, zaman damgalı ve LTV özellikli |
+| PDF dışı (HTML, XML vb.) | İmzalı **JAdES** (`.jades`): e-imza / mobil imza imzası, sertifika ve belge içeriği zaman damgasıyla mühürlenir |
+| Birden çok dosya, dosya değişmeden (`DOSYA_IMZALAMA`) | **ASiC-E** (`.asice`) container |
+
 ---
 
 ## A · Merkezi imza ekranı

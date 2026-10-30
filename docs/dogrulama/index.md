@@ -37,9 +37,9 @@ dosyayı yükleyerek doğrular. Sayfa, yüklenen dosyanın türüne göre şunla
 | Doğrulama türü | Yüklenen | Ne kontrol edilir |
 |---|---|---|
 | `PDF` | İmzalı PDF | PDF'teki e-imza ve zaman damgaları: geçerlilik, sertifika zinciri, imzadan sonra değişiklik |
-| `PDF_JADES` | PDF + kanıt dosyası (`.jades`) | Kanıtın bu PDF'e ait olduğu; kanıttaki SMS, konum, kimlik kartı, yüz ve video bilgileri |
+| `PDF_JADES` | PDF + `.jades` | `.jades`'in bu PDF'e ait olduğu; içindeki kanıtlar (SMS, konum, kimlik kartı, yüz, video) |
 | `ASICE` | `.asice` container | Container imzası ve içindeki her dosyanın bütünlüğü |
-| `JADES` | Yalnızca kanıt dosyası | Kanıt mührünün geçerliliği ve zaman damgası |
+| `JADES` | Yalnızca `.jades` | Mührün geçerliliği ve zaman damgası; e-imza / mobil imzalı JAdES'te imzacı sertifikası |
 
 Aynı kontrol API'den de yapılabilir: `POST /files/verify` (girişsiz; resimli doğrulama kodu
 `GET /public/sign/captcha` ile alınır). Ayrıntılar:
@@ -88,5 +88,6 @@ Ayrıntılar, örnekler ve geçerlilik kuralları: [Doğrulama API](api.md).
 |---|---|---|
 | E-imza / mobil imza ile ([Belge İmzalama](../akislar/belge-imzalama.md)) | İmzalı PDF (PAdES) | PDF tek başına doğrulanır; Adobe Reader, EU DSS ve TÜBİTAK İmzager de açabilir |
 | E-imza / mobil imza ile, PDF dışı dosyalar | `.asice` container | Container tek başına doğrulanır; EU DSS ve İmzager de açabilir |
+| E-imza / mobil imza ile, PDF dışı belge (HTML, XML vb.) | İmzalı `.jades` (JAdES) | `.jades` tek başına (`JADES`); belge içeriği dosyanın içindedir |
 | Dijital onay türleriyle ([Dijital Onay](../akislar/dijital-onay.md)) | Zaman damgalı PDF + `.jades` kanıt | PDF ve kanıt birlikte (`PDF_JADES`) |
 | Kimlik doğrulama ([Kimlik Doğrulama](../akislar/kimlik-dogrulama.md)) | Yalnızca `.jades` kanıt | Kanıt tek başına (`JADES`) |
