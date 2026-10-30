@@ -214,25 +214,29 @@ def verify_ways():
     def arrow(x, y1, y2):
         p.append(f'<line x1="{x}" y1="{y1}" x2="{x}" y2="{y2 - 6}" stroke="{MUTED}" stroke-width="2" marker-end="url(#av)"/>')
 
-    cols = [(170, "1 · QR kod", "Belgeyi elinde tutan herkes", TEAL, "#D5F0EC",
-             ["Belgedeki QR okutulur"], ["/sign/{accessToken}"],
+    bw = 228
+    cols = [(126, "1 · QR kod", "Belgeyi tutan herkes", TEAL, "#D5F0EC",
+             ["Belgedeki QR", "okutulur"], ["/sign/{accessToken}"],
              ["Süreç, belgeler ve", "imzacıların durumu"]),
-            (500, "2 · Dosya yükleyerek", "Belgeyi alan üçüncü kişi", AMBER, NAVY,
-             ["Doğrulama sayfasına", "dosya yüklenir"], ["/sign/dogrula", "POST /files/verify"],
-             ["İmzalar, zaman damgası,", "bütünlük, kanıt bağı"]),
-            (830, "3 · API ile", "Sizin sisteminiz", NAVY, "#DCE3F5",
-             ["Süreçteki imza", "otomatik doğrulanır"], ["…/tasks/{id}/signature/verify", "…/signers/{id}/signature/verify"],
-             ["valid · message ·", "imza ayrıntıları"])]
+            (374, "2 · Dosya yükleme", "Belgeyi alan kişi", AMBER, NAVY,
+             ["Doğrulama sayfasına", "dosya yüklenir"], ["/sign/dogrula"],
+             ["İmzalar, zaman", "damgası, kanıt bağı"]),
+            (626, "3 · Süreçteki imza", "Sizin sisteminiz", NAVY, "#DCE3F5",
+             ["Süreçteki imza", "dosyasız doğrulanır"], ["…/signature/verify"],
+             ["valid · message ·", "imza ayrıntıları"]),
+            (874, "4 · Doğrulama API", "Sizin sisteminiz", "#5B3E96", "#E4DCF3",
+             ["Herhangi bir imzalı", "dosya gönderilir"], ["/external/verify/…"],
+             ["PAdES · ASiC-E · JAdES", "CAdES · XAdES"])]
     for x, title, who, fill, subfill, step, api, result in cols:
         text = NAVY if fill == AMBER else "#FFFFFF"
-        p.append(t(x, 44, title, 20, 700, fill if fill != AMBER else "#B7860B"))
+        p.append(t(x, 44, title, 18, 700, fill if fill != AMBER else "#B7860B"))
         p.append(t(x, 68, who, 14, 400, MUTED))
-        box(x, 90, 290, 90, "Ne yapılır", step, fill, text=text, subfill=subfill)
+        box(x, 90, bw, 90, "Ne yapılır", step, fill, text=text, subfill=subfill)
         arrow(x, 180, 214)
-        box(x, 214, 290, 90, "Nereye", api, "#F9FAFB", text=INK, subfill=MUTED, mono=True)
-        p.append(f'<rect x="{x - 145}" y="214" width="290" height="90" rx="12" fill="none" stroke="{LINE}"/>')
+        box(x, 214, bw, 90, "Nereye", api, "#F9FAFB", text=INK, subfill=MUTED, mono=True)
+        p.append(f'<rect x="{x - bw / 2}" y="214" width="{bw}" height="90" rx="12" fill="none" stroke="{LINE}"/>')
         arrow(x, 304, 338)
-        box(x, 338, 290, 90, "Sonuç", result, "#F3F4F6", text=INK, subfill=INK)
+        box(x, 338, bw, 90, "Sonuç", result, "#F3F4F6", text=INK, subfill=INK)
     p.append(t(W / 2, h - 18, "Dış doğrulayıcılarla da doğrulanabilir: PAdES ve ASiC-E dosyaları EU DSS ya da TÜBİTAK İmzager ile açılır.",
                14, 400, MUTED))
     p.append("</svg>")

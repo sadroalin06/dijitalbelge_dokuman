@@ -25,6 +25,7 @@ nav:
       - Login: akislar/login.md
   - Belge Doğrulama:
       - Doğrulama Yolları: dogrulama/index.md
+      - Doğrulama API: dogrulama/api.md
       - İmza Formatları ve Doğrulama API: signature-verification.md
   - API Erişimi (ClientId): authentication.md
   - Yetkiler: scopes.md

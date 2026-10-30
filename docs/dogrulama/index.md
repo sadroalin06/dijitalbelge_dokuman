@@ -6,7 +6,7 @@ description: DijitalBelge ile imzalanan ya da onaylanan belgelerin doğrulanmas�
 
 DijitalBelge'de imzalanan ya da onaylanan her belge sonradan doğrulanabilir: imzanın
 geçerli olduğu, belgenin imzadan sonra değiştirilmediği ve imzanın kime, hangi tarihte
-ait olduğu kontrol edilir. Doğrulama için üç yol vardır.
+ait olduğu kontrol edilir. Doğrulama için dört yol vardır.
 
 ![Belge doğrulama yolları](../assets/akislar/dogrulama-yollari.svg)
 
@@ -14,7 +14,8 @@ ait olduğu kontrol edilir. Doğrulama için üç yol vardır.
 |---|---|---|---|
 | **1 · QR kod** | Belgenin basılı ya da PDF halini elinde tutan herkes | Belgedeki QR okutulur, sürecin sayfası açılır | Hayır |
 | **2 · Dosya yükleyerek** | Belgeyi e-posta ile alan karşı taraf, denetçi, mahkeme | Dosya [doğrulama sayfasına](https://app.dijitalbelge.com/sign/dogrula) yüklenir | Hayır (resimli doğrulama kodu ile) |
-| **3 · API ile** | Sizin sisteminiz | Süreçteki imza, imzacı ya da görev bazında doğrulanır | Evet (`X-Client-Id`, `document:read`) |
+| **3 · Süreçteki imzalar** | Sizin sisteminiz | DijitalBelge'de başlattığınız süreçteki imza, dosya göndermeden doğrulanır | Evet (`X-Client-Id`, `document:read`) |
+| **4 · Doğrulama API** | Sizin sisteminiz | Herhangi bir imzalı dosya (PAdES, ASiC-E, PDF + JAdES, JAdES, CAdES, XAdES) gönderilir; süreçle ilişkisi yoktur | Evet (`X-Client-Id`, `verify:document`) |
 
 ---
 
@@ -49,10 +50,10 @@ Aynı kontrol API'den de yapılabilir: `POST /files/verify` (girişsiz; resimli 
     ayrı bir `.jades` dosyasındadır. Karşı tarafa onaylı PDF ile birlikte kanıt dosyasını da
     gönderin; `PDF_JADES` türüyle ikisi birlikte doğrulanır.
 
-## 3 · API ile
+## 3 · Süreçteki imzalar
 
-Kendi sisteminizdeki bir sürecin imzalarını programlı olarak doğrularsınız. Yanıt her
-durumda aynı yapıdadır: `valid`, `message` ve imza ayrıntıları.
+DijitalBelge'de başlattığınız bir sürecin imzalarını, dosya göndermeden, süreç ve imzacı
+kimlikleriyle doğrularsınız. Yanıt her durumda aynı yapıdadır: `valid`, `message` ve imza ayrıntıları.
 
 | Ne zaman | API |
 |---|---|
@@ -60,6 +61,24 @@ durumda aynı yapıdadır: `valid`, `message` ve imza ayrıntıları.
 | Belge ve görev ID'sini biliyorsanız | `GET …/process-instances/{processId}/document/{documentId}/tasks/{taskId}/signature/verify` |
 
 Ayrıntılar ve yanıt alanları: [İmza Formatları ve Doğrulama](../signature-verification.md#dogrulama-endpointleri).
+
+## 4 · Doğrulama API
+
+Elinizdeki herhangi bir imzalı dosyayı API anahtarınızla doğrularsınız; dosyanın
+DijitalBelge'de imzalanmış ya da bir süreçte yer alıyor olması gerekmez. Başka bir
+sistemden gelen e-imzalı PDF'ler, `.p7s` (CAdES) ve imzalı XML (XAdES, ör. e-Reçete, e-Fatura)
+dosyaları da doğrulanır.
+
+| Format | API |
+|---|---|
+| PAdES (imzalı PDF) | `POST /external/verify/pades` |
+| ASiC-E | `POST /external/verify/asice` |
+| PDF + JAdES | `POST /external/verify/pdf-jades` |
+| JAdES | `POST /external/verify/jades` |
+| CAdES (`.p7s`, gömülü ya da ayrık) | `POST /external/verify/cades` |
+| XAdES (gömülü ya da ayrık) | `POST /external/verify/xades` |
+
+Ayrıntılar, örnekler ve geçerlilik kuralları: [Doğrulama API](api.md).
 
 ---
 

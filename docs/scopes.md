@@ -33,6 +33,14 @@ Bazı yetkiler yalnızca belirli paketlerde aktiftir. İlgili scope’u kullanab
 
 ---
 
+### ✅ Doğrulama Scopes
+
+| Scope | Açıklama | Minimum Paket |
+|------|---------|-------|
+| `verify:document` | Süreçten bağımsız imza doğrulama: PAdES, ASiC-E, PDF + JAdES, JAdES, CAdES, XAdES ([Doğrulama API](dogrulama/api.md)) | — |
+
+---
+
 ### 👤 Signer (İmzacı) Scopes
 
 | Scope | Açıklama | Minimum Paket |
