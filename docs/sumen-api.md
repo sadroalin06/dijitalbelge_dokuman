@@ -327,6 +327,77 @@ E-İmza Login API'sinden alınan challenge'ı sertifika ile imzalar. İmzalama i
 4. İmza başarısızsa hata alanı doldurulur (hatalı PIN, sertifika bulunamadı vb.)
 5. Başarılı imzadan sonra [E-İmza Login API](esign.md) ile `GET /external/auth/tx/{loginToken}` endpoint'ine `signature` parametresi gönderilerek kullanıcı kimliği doğrulanır
 
+---
+
+### 4. Sign Document - Belge İmzalama
+
+Bir belgeyi, kendi uygulamanızın ekranından e-imza ile imzalatır
+([Uygulama içi imza](akislar/belge-imzalama.md#b-uygulama-ici-imza) modeli). Sümen,
+belgenin özetini DijitalBelge'den alır, seçilen sertifikayla imzalar ve imzayı
+DijitalBelge'ye kendisi gönderir; belge içeriği uygulamanızdan geçmez.
+
+`token`, belgenin imzalama token'ıdır: süreç başlatıldıktan sonra
+`GET /api/files/process/{accessToken}` yanıtındaki `docsigfiles[].token` alanından alınır.
+
+#### İstek
+
+```json
+{
+  "requestId": "req_8k2m1x",
+  "command": "signDocument",
+  "pin": "xxxx",
+  "slot": 0,
+  "order": 0,
+  "token": "eyJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+**İstek Alanları:**
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `command` | string | `signDocument` |
+| `pin` | string | E-imza kartının PIN kodu |
+| `slot` | number | Cihazın sırası (`devices` yanıtındaki sıra); tek cihazda `0` |
+| `order` | number | Cihazdaki sertifikanın sırası; tek sertifikada `0` |
+| `token` | string | Belgenin imzalama token'ı |
+
+#### Başarılı Yanıt
+
+```json
+{
+  "type": "signDocumentResult",
+  "data": "...",
+  "requestId": "req_8k2m1x"
+}
+```
+
+#### Hatalı Yanıt
+
+DijitalBelge imzayı reddederse açıklaması aynen döner; `message` kullanıcıya gösterilebilir:
+
+```json
+{
+  "type": "signDocumentResult",
+  "error": {
+    "code": "SIGNER_NOT_MATCHED",
+    "message": "Seçilen sertifika bu belgenin imzacısına ait değil...",
+    "status": 409
+  },
+  "requestId": "req_8k2m1x"
+}
+```
+
+| `code` | Anlamı |
+|---|---|
+| `SIGNER_NOT_MATCHED` | Sertifikadaki TC kimlik numarası belgenin bekleyen imzacısıyla eşleşmiyor |
+| `INSUFFICIENT_CREDIT` | Hesabın kontör bakiyesi yetersiz |
+| `SIGNATURE_FIELD_NOT_FOUND` | Belgede imza alanı bulunamadı |
+| `SIGNER_CERTIFICATE_INVALID` | Sertifikanın süresi dolmuş ya da iptal edilmiş |
+| `HASH_FAILED` | Belge imzaya hazırlanamadı |
+
+PIN hatası gibi kart tarafındaki hatalarda `error` bir metin olarak döner.
+
 
 
 ---

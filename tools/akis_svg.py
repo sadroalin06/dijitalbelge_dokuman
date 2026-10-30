@@ -149,22 +149,83 @@ def decision():
     (OUT / "hangi-akis.svg").write_text("".join(p), encoding="utf-8")
 
 
+def models():
+    """Belge imzalama: merkezi imza ekranı ve uygulama içi imza modellerinin karşılaştırması."""
+    h = 440
+    p = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" width="{W}" height="{h}" role="img" '
+         f'aria-label="Belge imzalama entegrasyon modelleri">',
+         f'<defs><marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">'
+         f'<path d="M0,0 L10,5 L0,10 z" fill="{MUTED}"/></marker></defs>',
+         f'<rect x="0.5" y="0.5" width="{W - 1}" height="{h - 1}" rx="14" fill="#FFFFFF" stroke="{LINE}"/>',
+         f'<line x1="{W / 2}" y1="24" x2="{W / 2}" y2="{h - 24}" stroke="{LINE}" stroke-width="2"/>']
+
+    def box(x, y, w, hh, title, sub, fill, text="#FFFFFF", subfill=None):
+        p.append(f'<rect x="{x - w / 2}" y="{y}" width="{w}" height="{hh}" rx="12" fill="{fill}"/>')
+        p.append(t(x, y + (26 if sub else hh / 2 + 6), title, 16, 700, text))
+        if sub:
+            p.append(t(x, y + 48, sub, 13, 400, subfill or text))
+
+    def arrow(x1, y1, x2, y2):
+        p.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2 - 6}" stroke="{MUTED}" stroke-width="2" marker-end="url(#am)"/>')
+
+    # Sol: merkezi imza ekranı
+    cx = 250
+    p.append(t(cx, 50, "A · Merkezi imza ekranı", 20, 700, NAVY))
+    p.append(t(cx, 74, "Tüm uygulamalar tek imza ekranını kullanır", 14, 400, MUTED))
+    apps = [110, 250, 390]
+    for i, x in enumerate(apps):
+        box(x, 100, 120, 46, f"Uygulama {chr(65 + i)}", None, "#E8ECF7", text=NAVY)
+        arrow(x, 146, cx + (i - 1) * 90, 226)
+    p.append(t(cx + 150, 196, "imzacı yönlendirilir", 13, 600, MUTED))
+    box(cx, 226, 330, 64, "DijitalBelge imza ekranı", "app.dijitalbelge.com/sign/{accessToken}", AMBER, text=NAVY, subfill=NAVY)
+    arrow(cx, 290, cx, 336)
+    box(cx, 336, 330, 60, "E-imza (Sümen) · mobil imza", "kimlik doğrulama · dijital onay", NAVY, subfill="#DCE3F5")
+
+    # Sağ: uygulama içi imza
+    rx = 750
+    p.append(t(rx, 50, "B · Uygulama içi imza", 20, 700, TEAL))
+    p.append(t(rx, 74, "Her uygulama imzayı kendi ekranında alır", 14, 400, MUTED))
+    for i, x in enumerate([635, 865]):
+        box(x, 100, 200, 64, f"Uygulama {chr(65 + i)}", "kendi imza ekranı", TEAL, subfill="#D5F0EC")
+        arrow(x, 164, x, 226)
+        box(x, 226, 200, 60, "Sümen", "signDocument (yerel)", "#E6F4F1", text=TEAL, subfill=TEAL)
+        arrow(x, 286, rx + (x - rx) * 0.35, 336)
+    box(rx, 336, 330, 60, "DijitalBelge API", "imzalama token'ı · imza doğrulama", AMBER, text=NAVY, subfill=NAVY)
+    p.append(t(W / 2, h - 12, "", 1))
+    p.append("</svg>")
+    (OUT / "imzalama-modelleri.svg").write_text("".join(p), encoding="utf-8")
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     decision()
+    models()
 
     three = {"sys": "Sizin sisteminiz", "db": "DijitalBelge", "user": "İmzacı"}
 
-    flow("belge-imzalama", "Belge imzalama akışı", three, [
+    flow("belge-imzalama", "Merkezi imza ekranıyla belge imzalama akışı",
+         {"sys": "Sizin uygulamanız", "db": "DijitalBelge", "user": "İmzacı (imza ekranı)"}, [
         ("call", "sys", "db", "Süreç oluştur", "POST /process-instances"),
         ("call", "sys", "db", "Belge ekle (PDF / taslak)", "POST …/document/single"),
         ("call", "sys", "db", "İmzacı ekle (imza türüyle)", "EIMZA · MOBILE_IMZA"),
         ("call", "sys", "db", "Süreci başlat", "PUT …/status/start"),
-        ("event", "db", "user", "İmza daveti", "e-posta / SMS bağlantısı"),
-        ("act", "user", None, "E-imza / mobil imza ile imzalar", "Sümen + kart · operatör PIN"),
+        ("event", "db", "user", "İmza ekranına yönlendirme", "/sign/{accessToken} · e-posta / SMS"),
+        ("act", "user", None, "İmza ekranında imzalar", "e-imza (Sümen) · mobil imza"),
         ("event", "db", "sys", "Webhook", "DOCUMENT_SIGNED (allSigned)"),
         ("call", "sys", "db", "İmzalı belgeyi indir", "GET …/document/{id}/file"),
     ], note="Birden çok imzacıda 5–7. adımlar her imzacı için sırayla tekrarlanır.")
+
+    flow("belge-imzalama-uygulama-ici", "Uygulama içi belge imzalama akışı",
+         {"sys": "Sizin uygulamanız", "db": "DijitalBelge", "user": "Sümen (imzacının PC'si)"}, [
+        ("call", "sys", "db", "Süreç, belge ve imzacıyı hazırla", "process-instances · document · signers"),
+        ("call", "sys", "db", "Süreci başlat, accessToken al", "PUT …/status/start"),
+        ("call", "sys", "db", "Belgenin imzalama token'ını al", "GET /files/process/{accessToken}"),
+        ("act", "sys", None, "İmzacı kendi ekranınızda PIN girer", "cihaz / sertifika seçimi"),
+        ("call", "sys", "user", "signDocument komutu", "token · pin · slot · order"),
+        ("call", "user", "db", "Özeti al, kartla imzala, gönder", "…/hash → …/sign/{uid}"),
+        ("event", "user", "sys", "İmza sonucu", "WebSocket yanıtı"),
+        ("event", "db", "sys", "Webhook", "DOCUMENT_SIGNED"),
+    ], note="İmzacı uygulamanızdan hiç ayrılmaz; DijitalBelge imza ekranı kullanılmaz.")
 
     flow("dijital-onay", "Dijital onay akışı", {"sys": "Sizin sisteminiz", "db": "DijitalBelge", "user": "Onaylayan"}, [
         ("call", "sys", "db", "Süreç oluştur", "POST /process-instances"),
