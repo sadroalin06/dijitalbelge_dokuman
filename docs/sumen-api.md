@@ -337,7 +337,8 @@ belgenin özetini DijitalBelge'den alır, seçilen sertifikayla imzalar ve imzay
 DijitalBelge'ye kendisi gönderir; belge içeriği uygulamanızdan geçmez.
 
 `token`, belgenin imzalama token'ıdır: süreç başlatıldıktan sonra
-`GET /api/files/process/{accessToken}` yanıtındaki `docsigfiles[].token` alanından alınır.
+`GET /api/external/process-instances/{processId}/document/{documentId}/signing-token`
+ucundan alınır (`embedded:signing` yetkisi). Uçtan uca örnek: [Uygulama İçi E-imza](examples/uygulama-ici-eimza.md).
 
 #### İstek
 

@@ -303,14 +303,26 @@ def main():
     flow("belge-imzalama-uygulama-ici", "Uygulama içi belge imzalama akışı",
          {"sys": "Sizin uygulamanız", "db": "DijitalBelge", "user": "Sümen (imzacının PC'si)"}, [
         ("call", "sys", "db", "Süreç, belge ve imzacıyı hazırla", "process-instances · document · signers"),
-        ("call", "sys", "db", "Süreci başlat, accessToken al", "PUT …/status/start"),
-        ("call", "sys", "db", "Belgenin imzalama token'ını al", "GET /files/process/{accessToken}"),
+        ("call", "sys", "db", "Süreci başlat", "PUT …/status/start"),
+        ("call", "sys", "db", "Belgenin imzalama token'ını al", "GET …/document/{id}/signing-token"),
         ("act", "sys", None, "İmzacı kendi ekranınızda PIN girer", "cihaz / sertifika seçimi"),
         ("call", "sys", "user", "signDocument komutu", "token · pin · slot · order"),
         ("call", "user", "db", "Özeti al, kartla imzala, gönder", "…/hash → …/sign/{uid}"),
         ("event", "user", "sys", "İmza sonucu", "WebSocket yanıtı"),
-        ("event", "db", "sys", "Webhook", "DOCUMENT_SIGNED"),
+        ("call", "sys", "db", "İmzalı belgeyi al", "GET …/document/{id}/file"),
     ], note="İmzacı uygulamanızdan hiç ayrılmaz; DijitalBelge imza ekranı kullanılmaz.")
+
+    flow("belge-imzalama-mobil", "Uygulama içi mobil imza akışı",
+         {"sys": "Sizin uygulamanız", "db": "DijitalBelge", "user": "İmzacının telefonu"}, [
+        ("call", "sys", "db", "Süreç, belge, imzacı; başlat", "MOBILE_IMZA · PUT …/status/start"),
+        ("call", "sys", "db", "Mobil imza açık mı?", "POST …/mobile-sign/{op}/profile-query"),
+        ("call", "sys", "db", "İmzayı başlat", "POST …/mobile-sign/{op}/start"),
+        ("event", "db", "user", "Operatörden imza isteği", "Turkcell · Vodafone · Türk Telekom"),
+        ("act", "user", None, "Telefonda PIN ile onaylar", "SIM kart imzası"),
+        ("call", "sys", "db", "Durumu sorgula (polling)", "POST …/mobile-sign/{op}/status/{uid}"),
+        ("act", "db", None, "İmza belgeye işlenir", "kimlik eşleşmesi · kontör"),
+        ("call", "sys", "db", "İmzalı belgeyi al", "GET …/document/{id}/file"),
+    ], note="Sümen gerekmez; tüm adımlar API ile yapılır. İmzacının ekranı sizin uygulamanızdır.")
 
     flow("dijital-onay", "Dijital onay akışı", {"sys": "Sizin sisteminiz", "db": "DijitalBelge", "user": "Onaylayan"}, [
         ("call", "sys", "db", "Süreç oluştur", "POST /process-instances"),

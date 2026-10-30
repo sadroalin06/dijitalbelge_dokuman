@@ -21,8 +21,8 @@ iki modelde de aynıdır; fark imzacının imzayı hangi ekranda attığıdır.
 |---|---|---|
 | **İmza nerede atılır** | DijitalBelge imza ekranında (`/sign/{accessToken}`) | Sizin uygulamanızın kendi ekranında |
 | **İmzacı deneyimi** | Uygulamanızdan imza ekranına yönlendirilir ya da e-posta / SMS bağlantısıyla gelir | Uygulamanızdan hiç ayrılmaz |
-| **Sizin geliştirmeniz** | Yalnızca API: süreç, belge, imzacı, webhook | API + Sümen entegrasyonu + kendi imza ekranınız |
-| **Desteklenen imza türleri** | Tümü: e-imza, mobil imza, dijital onay türleri | E-imza (`EIMZA`, Sümen ile) |
+| **Sizin geliştirmeniz** | Yalnızca API: süreç, belge, imzacı, webhook | API + kendi imza ekranınız; e-imzada ayrıca Sümen entegrasyonu |
+| **Desteklenen imza türleri** | Tümü: e-imza, mobil imza, dijital onay türleri | E-imza (`EIMZA`, Sümen ile) ve mobil imza (`MOBILE_IMZA`, yalnızca API ile) |
 | **Birden çok uygulamanız varsa** | Hepsi aynı imza ekranını kullanır; imza ekranı tek yerde güncellenir | Her uygulamada ayrı ayrı entegrasyon yapılır |
 | **Ne zaman seçilir** | Hızlı entegrasyon, birden çok uygulama, farklı imza türleri | İmzanın kendi ürününüzün içinde, kesintisiz bir akışta atılması gerektiğinde |
 
@@ -65,34 +65,62 @@ ekranı e-imza, mobil imza ve dijital onay türlerinin hepsini kendisi yönetir.
 
 ## B · Uygulama içi imza
 
-İmzacı uygulamanızdan ayrılmadan, sizin ekranınızda imzalar. Uygulamanız
-DijitalBelge'den belgenin **imzalama token'ını** alır ve imzacının bilgisayarındaki
-[Sümen](../sumen-api.md) uygulamasına `signDocument` komutuyla iletir. Sümen belgenin
-özetini DijitalBelge'den alır, e-imza kartıyla imzalar ve imzayı DijitalBelge'ye kendisi
-gönderir; belge içeriği uygulamanızdan geçmez.
+İmzacı uygulamanızdan ayrılmadan, sizin ekranınızda imzalar. Süreç, belge ve imzacı
+hazırlığı A modeliyle aynıdır; imza anı ise tamamen `/external` API'si üzerinden yönetilir.
 
-![Uygulama içi belge imzalama akışı](../assets/akislar/belge-imzalama-uygulama-ici.svg)
+!!! info "Yetki"
+    Uygulama içi imza uçları `embedded:signing` yetkisi ister. İmza yalnızca **başlatılmış**
+    (`STARTED` / `IN_PROGRESS`) bir süreçte atılabilir. Belgeyi hangi imzacının imzaladığı,
+    imzalayan sertifikadaki TC kimlik numarası belgenin bekleyen imzacısıyla eşleştirilerek
+    belirlenir; eşleşmeyen sertifikayla imza reddedilir.
 
-| # | Ne yapılır | API | Ayrıntı |
-|---|---|---|---|
-| 1 | Süreç oluşturulur, belge ve imzacı (`EIMZA`) eklenir | A modelindeki 1–3. adımlar | [Süreç API](../progress.md) |
-| 2 | Süreç başlatılır; yanıttaki `accessToken` saklanır | `PUT …/status/start` | [Süreç API](../progress.md) |
-| 3 | Belgelerin imzalama token'ları alınır: her belge için `docsigfiles[].token` | `GET /api/files/process/{accessToken}` | |
-| 4 | İmzacı sizin ekranınızda e-imza cihazını, sertifikasını seçer ve PIN'ini girer | Sümen `devices` | [Sümen API](../sumen-api.md) |
-| 5 | Uygulamanız Sümen'e imzalama komutunu gönderir | Sümen `signDocument` | [Sümen API](../sumen-api.md) |
-| 6 | Sümen özeti alır, kartla imzalar ve DijitalBelge'ye gönderir | (Sümen yapar) | |
-| 7 | Sümen sonucu uygulamanıza döner | WebSocket yanıtı | |
-| 8 | Webhook gelir; imzalı belge indirilir | `DOCUMENT_SIGNED` · `GET …/document/{documentId}/file` | [Webhook](../webhook.md) |
+=== "E-imza (Sümen)"
+
+    Uygulamanız belgenin **imzalama token'ını** API'den alır ve imzacının bilgisayarındaki
+    [Sümen](../sumen-api.md) masaüstü uygulamasına `signDocument` komutuyla iletir. Sümen
+    belgenin özetini DijitalBelge'den alır, e-imza kartıyla imzalar ve imzayı DijitalBelge'ye
+    kendisi gönderir. Sonuç Sümen'den WebSocket mesajı olarak uygulamanıza döner; imzalı
+    belgeyi API'den alırsınız.
+
+    ![Uygulama içi e-imza akışı](../assets/akislar/belge-imzalama-uygulama-ici.svg)
+
+    | # | Ne yapılır | API |
+    |---|---|---|
+    | 1 | Süreç oluşturulur, belge ve imzacı (`EIMZA`) eklenir | A modelindeki 1–3. adımlar |
+    | 2 | Süreç başlatılır | `PUT /external/process-instances/{processId}/status/start` |
+    | 3 | Belgenin imzalama token'ı alınır (72 saat geçerli) | `GET /external/process-instances/{processId}/document/{documentId}/signing-token` |
+    | 4 | İmzacı sizin ekranınızda e-imza cihazını, sertifikasını seçer ve PIN'ini girer | Sümen `devices` |
+    | 5 | Token ve PIN Sümen'e gönderilir | Sümen `signDocument` |
+    | 6 | Sümen özeti alır, kartla imzalar, imzayı DijitalBelge'ye gönderir | (Sümen yapar) |
+    | 7 | Sümen sonucu WebSocket ile uygulamanıza döner | `signDocumentResult` |
+    | 8 | İmzalı belge alınır | `GET /external/process-instances/{processId}/document/{documentId}/file` |
+
+    Uçtan uca istek ve yanıtlar: [Uygulama İçi E-imza](../examples/uygulama-ici-eimza.md).
+
+=== "Mobil imza"
+
+    Sümen gerekmez; imzanın her adımı API ile yapılır. Uygulamanız imzacının telefon
+    numarasını ve TC kimlik numarasını alır, mobil imzanın açık olduğunu sorgular ve imza
+    isteğini başlatır. İmzacı telefonuna gelen isteği PIN'iyle onaylar; uygulamanız durumu
+    sorgular ve imza gelince belge kendiliğinden imzalanmış olur.
+
+    ![Uygulama içi mobil imza akışı](../assets/akislar/belge-imzalama-mobil.svg)
+
+    | # | Ne yapılır | API |
+    |---|---|---|
+    | 1 | Süreç oluşturulur, belge ve imzacı (`MOBILE_IMZA`) eklenir, süreç başlatılır | A modelindeki 1–4. adımlar |
+    | 2 | (İsteğe bağlı) Operatör listesi alınır | `GET /external/mobile-sign/operators` |
+    | 3 | İmzacının hattında mobil imzanın açık olduğu sorgulanır | `POST /external/process-instances/{processId}/document/{documentId}/mobile-sign/{operator}/profile-query` |
+    | 4 | İmza isteği başlatılır; yanıttaki `uid` ve `transactionId` saklanır | `POST …/mobile-sign/{operator}/start` |
+    | 5 | Operatör imzacının telefonuna imza isteği gönderir; imzacı PIN ile onaylar | — |
+    | 6 | Durum birkaç saniyede bir sorgulanır; imza geldiğinde belgeye işlenir | `POST …/mobile-sign/{operator}/status/{uid}` |
+    | 7 | Webhook gelir, imzalı belge alınır | `DOCUMENT_SIGNED` · `GET …/document/{documentId}/file` |
+
+    Uçtan uca istek ve yanıtlar: [Uygulama İçi Mobil İmza](../examples/uygulama-ici-mobil-imza.md).
 
 !!! warning "İmzalama token'ını imzacıdan başkasına göstermeyin"
-    `accessToken` ve belgenin imzalama token'ı, o belgeyi imzalama yetkisi taşır.
-    Token'ları yalnızca imzacının oturumunda kullanın; log'a ya da URL'ye yazmayın.
-    Belgeyi yalnızca, sertifikasındaki TC kimlik numarası imzacıyla eşleşen kişi imzalayabilir.
-
-!!! info "Gereksinimler"
-    - İmzacının bilgisayarında [Sümen](../sumen-api.md) kurulu ve çalışır olmalı.
-    - Uygulamanız Sümen'e tarayıcıdan, yerel WebSocket bağlantısıyla bağlanır.
-    - Mobil imza ve dijital onay türleri bu modelde desteklenmez; bunlar için A modelini kullanın.
+    İmzalama token'ı o belgeyi imzalama yetkisi taşır. Token'ı yalnızca imzacının oturumunda
+    kullanın; log'a ya da URL'ye yazmayın.
 
 ---
 

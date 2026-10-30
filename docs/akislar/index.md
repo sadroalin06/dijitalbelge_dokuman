@@ -36,3 +36,18 @@ Akış şemalarında üç taraf vardır:
 Düz oklar sizin yaptığınız API çağrılarıdır; kesikli oklar DijitalBelge'nin gönderdiği
 bildirimleri (e-posta, SMS, webhook) gösterir. Her şemadaki numaralar, sayfadaki adım
 tablosuyla birebir eşleşir.
+
+## API dışındaki bağlantılar
+
+Sizin sisteminizin DijitalBelge'ye yaptığı **tüm çağrılar** `/api/external` altındadır ve
+`X-Client-Id` / `X-Client-Secret` ile yapılır. Aşağıdakiler ise API çağrısı değildir ya da
+sizin değil, başka bir bileşenin yaptığı bağlantılardır:
+
+| Bağlantı | Kim kullanır | Ne için |
+|---|---|---|
+| `ws://localhost:5134/ws` | Uygulamanız (tarayıcıdan) → imzacının bilgisayarındaki Sümen | E-imza: uygulama içi imza (`signDocument`) ve e-imza ile login (`signLogin`). Yerel masaüstü uygulamasıdır, internete açık değildir. |
+| `/api/files/document/{token}/hash` · `…/sign/{uid}` | Sümen → DijitalBelge | Sümen'in imzalama sırasında özeti alıp imzayı göndermesi. Sizin çağırmanız gerekmez. |
+| `https://app.dijitalbelge.com/sign/{accessToken}` | İmzacı (tarayıcı) | Merkezi imza ekranı (A modeli) ve belgedeki QR'ın açtığı süreç sayfası. Web sayfasıdır. |
+| `https://app.dijitalbelge.com/sign/dogrula` · `/api/files/verify` · `/api/public/sign/captcha` | Belgeyi alan herkes (tarayıcı) | Herkese açık doğrulama sayfası; resimli doğrulama kodu ister. API karşılığı [`/external/verify`](../dogrulama/api.md). |
+| DijitalBelge mobil uygulaması | İmzacı / onaylayan (telefon) | Kimlik kartı (TCKK) gerektiren dijital onay ve kimlik doğrulama adımları. |
+| Webhook | DijitalBelge → sizin sunucunuz | Süreç ve belge olaylarının bildirimi ([Webhook](../webhook.md)). |

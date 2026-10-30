@@ -20,13 +20,13 @@ portalları, sağlık ve finans uygulamalarında güçlü kimlik doğrulama.
 
     | # | Ne yapılır | API |
     |---|---|---|
-    | 1 | Login işlemi başlatılır, geçici bir token alınır | `POST /auth/tx` |
+    | 1 | Login işlemi başlatılır, geçici bir token alınır | `POST /external/auth/tx` |
     | 2 | Token, kullanıcının bilgisayarındaki Sümen'e iletilir | Sümen WebSocket |
     | 3 | Kullanıcı e-imza kartıyla (PIN) imzalar | — |
     | 4 | Sümen imzayı DijitalBelge'ye gönderir | — |
     | 5 | Sertifika ve imza doğrulanır, audit log oluşur | — |
-    | 6 | Sonuç sorgulanır | `GET /auth/tx/{loginTxId}` |
-    | 7 | Audit log okunur ve kullanıcı giriş yaptırılır | `GET /auth/tx/{loginTxId}/audit` |
+    | 6 | Sonuç sorgulanır | `GET /external/auth/tx/{loginTxId}` |
+    | 7 | Audit log okunur ve kullanıcı giriş yaptırılır | `GET /external/auth/tx/{loginTxId}/audit` |
 
     Ayrıntılar: [E-İmza Login API](../esign.md) · [Sümen API](../sumen-api.md)
 
@@ -38,12 +38,12 @@ portalları, sağlık ve finans uygulamalarında güçlü kimlik doğrulama.
 
     | # | Ne yapılır | API |
     |---|---|---|
-    | 1 | Desteklenen operatörler alınır | `GET /auth/operators` |
-    | 2 | Login işlemi başlatılır | `POST /auth/{operator}/mobiltx` |
+    | 1 | Desteklenen operatörler alınır | `GET /external/auth/operators` |
+    | 2 | Login işlemi başlatılır | `POST /external/auth/{operator}/mobiltx` |
     | 3 | Operatör kullanıcının telefonuna imza isteği gönderir | — |
     | 4 | Kullanıcı telefonunda PIN ile onaylar | — |
-    | 5 | Durum sorgulanır (polling) | `GET /auth/{operator}/mobil/{loginTxId}` |
-    | 6 | Audit log okunur ve kullanıcı giriş yaptırılır | `GET /auth/tx/{loginTxId}/audit` |
+    | 5 | Durum sorgulanır (polling) | `GET /external/auth/{operator}/mobil/{loginTxId}` |
+    | 6 | Audit log okunur ve kullanıcı giriş yaptırılır | `GET /external/auth/tx/{loginTxId}/audit` |
 
     Ayrıntılar: [Mobil İmza Login API](../mobilsign.md)
 

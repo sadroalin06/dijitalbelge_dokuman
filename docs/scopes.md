@@ -84,7 +84,7 @@ Bazı yetkiler yalnızca belirli paketlerde aktiftir. İlgili scope’u kullanab
 
 | Scope | Açıklama | Minimum Paket |
 |------|---------|---------------|
-| `embedded:signing` | Uygulama içinde (iframe / custom UI) imzalama | **Enterprise** |
+| `embedded:signing` | Uygulama içi imzalama: belge imzalama token'ı (Sümen ile e-imza) ve mobil imza başlatma / durum ([Belge İmzalama · B](akislar/belge-imzalama.md#b-uygulama-ici-imza)) | **Enterprise** |
 | `sumen:integration` | Sumen Desktop uygulaması ile entegre imzalama | **Enterprise** |
 | `signing:full-control` | İmza akışını tamamen harici uygulama içinde yönetme | **Enterprise** |
 
