@@ -17,7 +17,13 @@ theme:
 
 nav:
   - Genel Bakış: index.md
-  - Kimlik Doğrulama: authentication.md
+  - Entegrasyon Akışları:
+      - Hangi Akış?: akislar/index.md
+      - Belge İmzalama: akislar/belge-imzalama.md
+      - Dijital Onay: akislar/dijital-onay.md
+      - Kimlik Doğrulama: akislar/kimlik-dogrulama.md
+      - Login: akislar/login.md
+  - API Erişimi (ClientId): authentication.md
   - Yetkiler: scopes.md
   - Postman Koleksiyonu: postman.md
   - İmzalama Türleri: signature-types.md

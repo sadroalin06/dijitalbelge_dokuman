@@ -27,6 +27,10 @@ DijitalBelge External API sayesinde;
 
 mümkün hale gelir.
 
+!!! tip "Nereden başlamalıyım?"
+    Belge imzalama, dijital onay, kimlik doğrulama ve login akışlarını şemalarıyla
+    anlatan [Entegrasyon Akışları](akislar/index.md) sayfasından size uygun akışı seçin.
+
 Bu API’yi kullanabilmek için DijitalBelge platformu üzerinden
 **üyelik oluşturmanız** ve entegrasyon erişim bilgilerinizi
 (`ClientId` ve `ClientSecret`) almanız gerekmektedir.
