@@ -9,43 +9,74 @@ theme:
   language: tr
   logo: assets/dark-logo.svg
   favicon: assets/logo.svg
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Koyu temaya geç
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Açık temaya geç
   features:
     - navigation.instant
+    - navigation.instant.progress
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - toc.follow
+    - search.suggest
+    - search.highlight
     - content.code.copy
+    - content.tabs.link
 
 nav:
-  - Genel Bakış: index.md
+  - Başlangıç:
+      - index.md
+      - API Erişimi (ClientId): authentication.md
+      - Yetkiler: scopes.md
+      - İmzalama Türleri: signature-types.md
+      - Postman Koleksiyonu: postman.md
+      - Hatalar: errors.md
   - Entegrasyon Akışları:
-      - Hangi Akış?: akislar/index.md
+      - akislar/index.md
       - Belge İmzalama: akislar/belge-imzalama.md
       - Dijital Onay: akislar/dijital-onay.md
       - Kimlik Doğrulama: akislar/kimlik-dogrulama.md
       - Login: akislar/login.md
   - Belge Doğrulama:
-      - Doğrulama Yolları: dogrulama/index.md
+      - dogrulama/index.md
       - Doğrulama API: dogrulama/api.md
       - İmza Formatları ve Doğrulama API: signature-verification.md
-  - API Erişimi (ClientId): authentication.md
-  - Yetkiler: scopes.md
-  - Postman Koleksiyonu: postman.md
-  - İmzalama Türleri: signature-types.md
-  - Bulut İmzalama (Autosign): autosign.md
-  - Referans API: reference-api.md
-  - İmzacı API: signers.md
-  - Belge İmzalama:
-      - Süreç API: progress.md
-      - Süreç Taslakları API: process-definitions.md
-      - Döküman API: documents.md
-      - Taslaktan Döküman Ekleme: progress_doctype.md
-  - Dosya İmzalama (CAdES/ASiC-E): dosya-imzalama.md
-  - Login İşlemleri:
-      - E-İmza Login API: esign.md
-      - Mobil İmza Login API: mobilsign.md
-  - Sumen API: sumen-api.md
-  - Webhook: webhook.md
-  - Hatalar: errors.md
+  - API Referansı:
+      - Süreç:
+          - Süreç API: progress.md
+          - Süreç Taslakları API: process-definitions.md
+          - Döküman API: documents.md
+          - Taslaktan Döküman Ekleme: progress_doctype.md
+          - İmzacı API: signers.md
+          - Referans API: reference-api.md
+      - İmzalama:
+          - Dosya İmzalama (CAdES/ASiC-E): dosya-imzalama.md
+          - Bulut İmzalama (Autosign): autosign.md
+          - Sümen API: sumen-api.md
+      - Login:
+          - E-İmza Login API: esign.md
+          - Mobil İmza Login API: mobilsign.md
+      - Webhook: webhook.md
   - Örnekler:
       - Taslaktan Dinamik Süreç Başlatma: examples/taslaktan-dinamik-surec.md
       - Abonelik Sözleşmesi İmzalama: examples/abonelik-sozlesmesi.md
@@ -65,6 +96,11 @@ extra:
 markdown_extensions:
   - admonition
   - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - tables
   - toc:
       permalink: true

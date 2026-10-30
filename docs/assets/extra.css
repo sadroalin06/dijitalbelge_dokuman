@@ -1,4 +1,166 @@
-/* Alt footer tamamen kapatılır */
-.md-footer {
+/* ── Marka renkleri (logo: lacivert #253467, sarı #F9B513) ───────────────── */
+:root,
+[data-md-color-scheme="default"] {
+  --db-navy: #253467;
+  --db-navy-dark: #1b2650;
+  --db-amber: #f9b513;
+  --db-amber-dark: #b7860b;
+  --db-teal: #0f766e;
+
+  --md-primary-fg-color: var(--db-navy);
+  --md-primary-fg-color--light: #3a4a86;
+  --md-primary-fg-color--dark: var(--db-navy-dark);
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: var(--db-amber-dark);
+  --md-accent-fg-color--transparent: rgba(249, 181, 19, 0.12);
+  --md-typeset-a-color: #2f4fa8;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #1b2650;
+  --md-primary-fg-color--light: #2a3770;
+  --md-primary-fg-color--dark: #141c3c;
+  --md-accent-fg-color: var(--db-amber);
+  --md-accent-fg-color--transparent: rgba(249, 181, 19, 0.15);
+  --md-typeset-a-color: #8fa8ff;
+  --md-default-bg-color: #12172b;
+  --md-code-bg-color: #1a2038;
+}
+
+/* ── Üst bar ve sekmeler ─────────────────────────────────────────────────── */
+.md-header {
+  box-shadow: none;
+  border-bottom: 3px solid var(--db-amber);
+}
+.md-tabs {
+  background-color: var(--md-primary-fg-color--dark);
+}
+.md-tabs__link {
+  font-weight: 600;
+  opacity: 0.8;
+}
+.md-tabs__link--active,
+.md-tabs__link:hover {
+  opacity: 1;
+  color: var(--db-amber);
+}
+
+/* ── Başlıklar ───────────────────────────────────────────────────────────── */
+.md-typeset h1 {
+  font-weight: 700;
+  color: var(--md-primary-fg-color);
+  letter-spacing: -0.01em;
+}
+[data-md-color-scheme="slate"] .md-typeset h1 {
+  color: #e6eaff;
+}
+.md-typeset h2 {
+  font-weight: 700;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* ── Tablolar ────────────────────────────────────────────────────────────── */
+.md-typeset table:not([class]) {
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.72rem;
+  box-shadow: 0 0 0 1px var(--md-default-fg-color--lightest);
+}
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: #ffffff;
+  font-weight: 600;
+}
+.md-typeset table:not([class]) tbody tr:hover {
+  background-color: var(--md-accent-fg-color--transparent);
+}
+
+/* ── Kod ─────────────────────────────────────────────────────────────────── */
+.md-typeset pre > code {
+  border-radius: 8px;
+}
+.md-typeset :not(pre) > code {
+  border-radius: 4px;
+}
+
+/* ── Akış şemaları ───────────────────────────────────────────────────────── */
+.md-typeset img[src*="assets/akislar/"] {
+  display: block;
+  margin: 1.2em auto;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(37, 52, 103, 0.10);
+}
+[data-md-color-scheme="slate"] .md-typeset img[src*="assets/akislar/"] {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* ── Admonition ──────────────────────────────────────────────────────────── */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 10px;
+  border-width: 0 0 0 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Kartlar (ana sayfa) ─────────────────────────────────────────────────── */
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  border-radius: 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.md-typeset .grid.cards > ul > li:hover {
+  transform: translateY(-2px);
+  border-color: var(--db-amber);
+  box-shadow: 0 6px 20px rgba(37, 52, 103, 0.12);
+}
+.md-typeset .grid.cards .lg {
+  color: var(--md-primary-fg-color);
+}
+[data-md-color-scheme="slate"] .md-typeset .grid.cards .lg {
+  color: var(--db-amber);
+}
+
+/* ── Ana sayfa giriş bandı ───────────────────────────────────────────────── */
+.db-hero {
+  margin: 0 0 1.6em;
+  padding: 1.8em 1.6em;
+  border-radius: 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #253467 0%, #33478f 60%, #3c55a8 100%);
+  border-bottom: 4px solid var(--db-amber);
+}
+.db-hero h1 {
+  margin: 0 0 0.4em;
+  color: #ffffff !important;
+}
+.db-hero p {
+  margin: 0 0 1em;
+  font-size: 0.85rem;
+  opacity: 0.92;
+}
+.db-hero .md-button {
+  margin: 0.2em 0.4em 0.2em 0;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.db-hero .md-button--primary {
+  background-color: var(--db-amber);
+  border-color: var(--db-amber);
+  color: var(--db-navy);
+}
+.db-hero .md-button:hover {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: var(--db-navy);
+}
+
+/* Alt bilgide yalnızca önceki / sonraki gezinme kalsın */
+.md-footer-meta {
   display: none;
+}
+
+/* Alt bilgi (önceki / sonraki) marka rengiyle */
+.md-footer {
+  background-color: var(--md-primary-fg-color--dark);
 }
