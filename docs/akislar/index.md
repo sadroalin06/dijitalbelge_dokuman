@@ -12,7 +12,7 @@ DijitalBelge'yi dört farklı amaçla entegre edebilirsiniz. Her akışın kendi
 | Akış | Ne zaman kullanılır | Sonuç | Sayfa |
 |---|---|---|---|
 | **Belge İmzalama** | Sözleşme, dilekçe gibi belgelerin **ıslak imza yerine geçen** nitelikli elektronik imzayla imzalanması | İmzalı PDF (PAdES) ya da ayrık imzalı dosya (ASiC-E) | [Belge İmzalama](belge-imzalama.md) |
-| **Dijital Onay** | Nitelikli imza gerekmeyen, ama **kimin, ne zaman, nereden onayladığının kanıtlanması** gereken belgeler | Onaylı PDF + zaman damgalı kanıt dosyası (JAdES) | [Dijital Onay](dijital-onay.md) |
+| **Dijital Onay** | Belgenin imzalanması değil **onaylanması** gerektiğinde; onaylayan e-posta, SMS, kimlik kartı, e-imza ya da mobil imzayla onaylar | Onaylı PDF; e-imza / mobil imza dışındaki yöntemlerde zaman damgalı kanıt dosyası (JAdES) | [Dijital Onay](dijital-onay.md) |
 | **Kimlik Doğrulama** | Belge olmadan, bir kişinin **gerçekten iddia ettiği kişi olduğunun** teyidi (üyelik, KYC) | Mühürlü kimlik doğrulama kanıtı | [Kimlik Doğrulama](kimlik-dogrulama.md) |
 | **Login** | Kullanıcılarınızın sitenize **e-imza ya da mobil imza ile giriş** yapması | Doğrulanmış kimlikle oturum + audit log | [Login](login.md) |
 

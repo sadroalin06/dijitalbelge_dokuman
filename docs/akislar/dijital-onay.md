@@ -1,15 +1,16 @@
 ---
-description: DijitalBelge dijital onay akışı — belgeleri e-posta, SMS ya da kimlik kartı doğrulamasıyla, zaman damgalı kanıtla onaylatın.
+description: DijitalBelge dijital onay akışı — belgeleri e-posta, SMS, kimlik kartı, e-imza ya da mobil imzayla onaylatın.
 ---
 
 # Dijital Onay
 
-Belgeniz, e-imzası olmayan kişilerce de onaylanabilir. Onaylayan kişi kimliğini
-e-posta, SMS kodu ya da TC kimlik kartıyla kanıtlar; verdiği tüm kanıtlar
-(SMS, konum, kimlik kartı çipi, yüz, video) **zaman damgasıyla mühürlenip** belgeye bağlanır.
+Belgeniz, onaylayanın elindeki yönteme göre onaylatılır. E-imzası ya da mobil imzası
+olan kişi onu kullanır; olmayan kişi kimliğini e-posta, SMS kodu ya da TC kimlik kartıyla
+kanıtlar. E-imza ve mobil imza dışındaki yöntemlerde verilen tüm kanıtlar (SMS, konum,
+kimlik kartı çipi, yüz, video) **zaman damgasıyla mühürlenip** belgeye bağlanır.
 
-Sonuç nitelikli elektronik imza değildir; ama **kimin, ne zaman, nereden, hangi
-belgeyi onayladığı** sonradan değiştirilemez şekilde kanıtlanır.
+Her yöntemde **kimin, ne zaman, hangi belgeyi onayladığı** sonradan değiştirilemez
+şekilde kanıtlanır. E-imza ve mobil imzayla verilen onay, nitelikli elektronik imzadır.
 
 **Kullanım örnekleri:** abonelik ve üyelik sözleşmeleri, sipariş / teklif onayı,
 KVKK ve aydınlatma metni onayı, teslim tutanağı, uzaktan müşteri sözleşmeleri.
@@ -19,7 +20,7 @@ KVKK ve aydınlatma metni onayı, teslim tutanağı, uzaktan müşteri sözleşm
 ## Onay türleri
 
 Akış her türde aynıdır; yalnızca 3. adımda onaylayana verilen tür değişir.
-Tür yükseldikçe kanıt güçlenir.
+Tür yükseldikçe kanıt güçlenir. Bir belgede her onaylayana ayrı tür verilebilir.
 
 | Kod | Ad | Onaylayanın yaptığı | Güvence |
 |---|---|---|---|
@@ -28,6 +29,8 @@ Tür yükseldikçe kanıt güçlenir.
 | `TCKK_TIMESTAMP` | Kimlik (TCKK) ile Dijital Onay | Kimlik kartını telefona okutur (NFC) + SMS + konum | Yüksek |
 | `TCKK_FACE_TIMESTAMP` | TCKK ve Yüz Tanıma | Yukarıdakiler + yüzü kimlik kartı fotoğrafıyla karşılaştırılır | Çok yüksek |
 | `TCKK_ONBOARDING` | TCKK + Yüz Tanıma Videolu | Yukarıdakiler + kimlik kartı fotoğrafı ve video kaydı | Çok yüksek+ |
+| `EIMZA` | Elektronik İmza | E-imza kartıyla onaylar ([Sümen](../sumen-api.md)) | Nitelikli imza |
+| `MOBILE_IMZA` | Mobil İmza | Telefonuna gelen isteği mobil imza PIN'iyle onaylar | Nitelikli imza |
 
 Kimlik kartı gerektiren türlerde onay, DijitalBelge mobil uygulamasıyla yapılır.
 Türlerin karşılaştırması ve kontör bilgisi: [İmzalama Türleri](../signature-types.md).
@@ -42,7 +45,7 @@ Türlerin karşılaştırması ve kontör bilgisi: [İmzalama Türleri](../signa
 | 4 | Süreç başlatılır | `PUT …/status/start` | [Süreç API](../progress.md) |
 | 5 | DijitalBelge onaylayana e-posta / SMS ile bağlantı gönderir | — | |
 | 6 | Onaylayan kimliğini kanıtlar ve belgeyi onaylar | — | |
-| 7 | Kanıtlar zaman damgasıyla mühürlenir (JAdES kanıt dosyası) | — | [İmza Formatları](../signature-verification.md) |
+| 7 | Kanıtlar zaman damgasıyla mühürlenir (JAdES kanıt dosyası); e-imza ve mobil imzada imza belgenin içine atılır | — | [İmza Formatları](../signature-verification.md) |
 | 8 | Webhook gelir | `DOCUMENT_SIGNED` | [Webhook](../webhook.md) |
 | 9 | Onaylı belge ve kanıt dosyası indirilir | `GET …/document/{documentId}/files` | [Döküman API](../documents.md) |
 

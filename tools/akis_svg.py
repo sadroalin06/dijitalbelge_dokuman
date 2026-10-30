@@ -126,22 +126,22 @@ def decision():
     edge(W / 2, 74, cols[0], 300)
     edge(W / 2, 74, cols[1], 300)
     edge(W / 2, 74, 748, 162)
-    q(748, 162, 380, "Nitelikli (yasal) imza gerekli mi?")
+    q(748, 162, 380, "İmza mı, onay mı?")
     edge(700, 214, cols[2], 300)
     edge(800, 214, cols[3], 300)
 
     pill(cols[0] + 40, 196, "Kullanıcıya giriş")
     pill(cols[1] + 30, 236, "Belgesiz kimlik teyidi")
     pill(700, 112, "Belge imzalatmak / onaylatmak")
-    pill(cols[2] + 20, 262, "Evet")
-    pill(cols[3] - 20, 262, "Hayır")
+    pill(cols[2] + 20, 262, "İmza")
+    pill(cols[3] - 20, 262, "Onay")
 
     card(cols[0], "Login", ["Şifresiz, doğrulanmış giriş", "e-imza (Sümen)", "mobil imza"], NAVY, subfill="#DCE3F5")
     card(cols[1], "Kimlik Doğrulama", ["Belgesiz kimlik teyidi", "kimlik kartı NFC + SMS", "+ konum (+ yüz / video)"],
          TEAL, subfill="#D5F0EC")
     card(cols[2], "Belge İmzalama", ["Nitelikli elektronik imza", "ıslak imza yerine geçer", "EIMZA · MOBILE_IMZA"],
          NAVY, subfill="#DCE3F5")
-    card(cols[3], "Dijital Onay", ["Kanıtlı, zaman damgalı onay", "e-posta · SMS · kimlik kartı", "*_TIMESTAMP · TCKK_*"],
+    card(cols[3], "Dijital Onay", ["Kanıtlı onay", "e-posta · SMS · kimlik kartı", "e-imza · mobil imza"],
          AMBER, text=NAVY, subfill=NAVY)
     p.append(t(W / 2, h - 28, "Dijital onay ve kimlik doğrulamada verilen kanıtlar (SMS, konum, kimlik kartı, yüz, video) "
                "JAdES ile mühürlenir.", 15, 400, MUTED))
@@ -151,7 +151,7 @@ def decision():
 
 def models():
     """Belge imzalama: merkezi imza ekranı ve uygulama içi imza modellerinin karşılaştırması."""
-    h = 440
+    h = 560
     p = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" width="{W}" height="{h}" role="img" '
          f'aria-label="Belge imzalama entegrasyon modelleri">',
          f'<defs><marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">'
@@ -181,16 +181,53 @@ def models():
     arrow(cx, 290, cx, 336)
     box(cx, 336, 330, 60, "E-imza (Sümen) · mobil imza", "kimlik doğrulama · dijital onay", NAVY, subfill="#DCE3F5")
 
-    # Sağ: uygulama içi imza
+    # Sağ: uygulama içi imza — tek uygulamanın akışı; her uygulama aynısını kendisi kurar
     rx = 750
     p.append(t(rx, 50, "B · Uygulama içi imza", 20, 700, TEAL))
-    p.append(t(rx, 74, "Her uygulama imzayı kendi ekranında alır", 14, 400, MUTED))
-    for i, x in enumerate([635, 865]):
-        box(x, 100, 200, 64, f"Uygulama {chr(65 + i)}", "kendi imza ekranı", TEAL, subfill="#D5F0EC")
-        arrow(x, 164, x, 226)
-        box(x, 226, 200, 60, "Sümen", "signDocument (yerel)", "#E6F4F1", text=TEAL, subfill=TEAL)
-        arrow(x, 286, rx + (x - rx) * 0.35, 336)
-    box(rx, 336, 330, 60, "DijitalBelge API", "imzalama token'ı · imza doğrulama", AMBER, text=NAVY, subfill=NAVY)
+    p.append(t(rx, 74, "Her uygulama bu entegrasyonu ayrı kurar", 14, 400, MUTED))
+    app_x, api_x, sumen_x = 625, 880, 752
+    box(app_x, 100, 200, 64, "Uygulama A", "kendi imza ekranı", TEAL, subfill="#D5F0EC")
+    box(api_x, 100, 200, 64, "DijitalBelge API", "token · imzalı belge", AMBER, text=NAVY, subfill=NAVY)
+    box(sumen_x, 322, 300, 64, "Sümen masaüstü uygulaması", "imzacının bilgisayarı · e-imza kartı",
+        "#E6F4F1", text=TEAL, subfill=TEAL)
+
+    def step(n, x, y, color=NAVY):
+        p.append(badge(x, y, n, color))
+
+    def line(x1, y1, x2, y2, color, dashed=False):
+        dash = ' stroke-dasharray="7 5"' if dashed else ""
+        p.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{color}" stroke-width="2.2"{dash} '
+                 f'marker-end="url(#am-{color[1:]})"/>')
+
+    for c in (NAVY, TEAL, "#B7860B"):
+        p.append(f'<defs><marker id="am-{c[1:]}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" '
+                 f'markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="{c}"/></marker></defs>')
+
+    # 1 · token al  /  5 · imzalı belgeyi al (uygulama → API)
+    line(726, 118, 774, 118, NAVY)
+    step(1, 750, 104)
+    line(726, 150, 774, 150, NAVY)
+    step(5, 750, 172)
+    # 2 · signDocument (uygulama → Sümen)
+    line(600, 166, 680, 318, NAVY)
+    step(2, 618, 236)
+    # 4 · WebSocket sonucu (Sümen → uygulama)
+    line(706, 318, 640, 168, TEAL, dashed=True)
+    step(4, 686, 236, TEAL)
+    # 3 · Sümen ↔ DijitalBelge: özet al, kartla imzala, imzayı gönder
+    line(810, 318, 870, 168, "#B7860B")
+    step(3, 842, 248, "#B7860B")
+    legend = [(1, NAVY, "Uygulama, API'den belgenin imzalama token'ını alır"),
+              (2, NAVY, "Token'ı ve PIN'i Sümen'e gönderir (signDocument)"),
+              (3, "#B7860B", "Sümen özeti alır, kartla imzalar, imzayı gönderir"),
+              (4, TEAL, "Sümen sonucu WebSocket ile uygulamaya döner"),
+              (5, NAVY, "Uygulama imzalı belgeyi API'den alır")]
+    for i, (n, c, text) in enumerate(legend):
+        y = 424 + i * 24
+        p.append(badge(560, y - 5, n, c))
+        p.append(t(582, y, text, 13.5, 400, INK, anchor="start"))
+    p.append(t(250, 436, "İmzacı imza ekranında e-imza, mobil imza", 13.5, 400, MUTED))
+    p.append(t(250, 458, "ya da dijital onay türlerinden biriyle imzalar.", 13.5, 400, MUTED))
     p.append(t(W / 2, h - 12, "", 1))
     p.append("</svg>")
     (OUT / "imzalama-modelleri.svg").write_text("".join(p), encoding="utf-8")
@@ -278,10 +315,10 @@ def main():
     flow("dijital-onay", "Dijital onay akışı", {"sys": "Sizin sisteminiz", "db": "DijitalBelge", "user": "Onaylayan"}, [
         ("call", "sys", "db", "Süreç oluştur", "POST /process-instances"),
         ("call", "sys", "db", "Belge ekle", "POST …/document/single"),
-        ("call", "sys", "db", "Onaylayan ekle (onay türüyle)", "EMAIL / SMSOTP_TIMESTAMP · TCKK_*"),
+        ("call", "sys", "db", "Onaylayan ekle (onay türüyle)", "*_TIMESTAMP · TCKK_* · EIMZA · MOBILE_IMZA"),
         ("call", "sys", "db", "Süreci başlat", "PUT …/status/start"),
         ("event", "db", "user", "Onay daveti", "e-posta / SMS bağlantısı"),
-        ("act", "user", None, "Kimliğini kanıtlar, onaylar", "e-posta · SMS · kimlik kartı"),
+        ("act", "user", None, "Kimliğini kanıtlar, onaylar", "SMS · kimlik kartı · e-imza · mobil"),
         ("act", "db", None, "Kanıtlar mühürlenir", "zaman damgalı JAdES"),
         ("event", "db", "sys", "Webhook", "DOCUMENT_SIGNED"),
         ("call", "sys", "db", "Belge ve kanıtı indir", "GET …/document/{id}/files"),
