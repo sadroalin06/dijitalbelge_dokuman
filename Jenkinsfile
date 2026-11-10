@@ -8,6 +8,8 @@ pipeline {
         IMAGE_TAG       = "${env.BUILD_NUMBER}"
         IMAGE_REPO      = "${HARBOR_REGISTRY}/${HARBOR_PROJECT}/${IMAGE_NAME}"
         NAMESPACE       = 'dijitalbelge'
+        DEPLOY_DIR      = '/dijitalbelge/dokuman'
+        SERVICE_NAME    = 'docs'
     }
 
     options {
@@ -25,7 +27,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Eski/yarım kalmış .git klasörünü temizleyip job SCM ayarlarından tek kez checkout et.
+                // Temiz workspace, eski/yarım kalmış .git klasöründen kaynaklı checkout hatalarını önler.
                 deleteDir()
                 checkout scm
             }
@@ -56,28 +58,57 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            agent { label 'vps2' }
-            steps {
-                unstash 'k8s'
-                sh '''
-                    export KUBECONFIG="$HOME/.kube/config"
-                    kubectl -n $NAMESPACE get namespace >/dev/null
-                    sed -i 's|newTag:.*|newTag: "'"$IMAGE_TAG"'"|' k8s/kustomization.yaml
-                    kubectl apply -k k8s/
-                    kubectl -n $NAMESPACE rollout status deployment/dijitalbelge-docs --timeout=5m
-                '''
+        stage('Deploy') {
+            failFast false
+            parallel {
+                stage('name1 (Docker Compose)') {
+                    steps {
+                        sh '''
+                            mkdir -p "$DEPLOY_DIR"
+                            cp docker-compose.yml "$DEPLOY_DIR/docker-compose.yml"
+                        '''
+                        dir("${DEPLOY_DIR}") {
+                            withCredentials([usernamePassword(
+                                credentialsId: 'harbor-credentials',
+                                usernameVariable: 'HARBOR_USER',
+                                passwordVariable: 'HARBOR_PASS'
+                            )]) {
+                                retry(3) {
+                                    sh '''
+                                        echo "$HARBOR_PASS" | docker login $HARBOR_REGISTRY -u "$HARBOR_USER" --password-stdin
+                                        IMAGE_REPO="$IMAGE_REPO" IMAGE_TAG="$IMAGE_TAG" docker compose pull "$SERVICE_NAME"
+                                        IMAGE_REPO="$IMAGE_REPO" IMAGE_TAG="$IMAGE_TAG" docker compose up -d --force-recreate "$SERVICE_NAME"
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('vps2 (Kubernetes)') {
+                    agent { label 'vps2' }
+                    steps {
+                        unstash 'k8s'
+                        sh '''
+                            export KUBECONFIG="$HOME/.kube/config"
+                            kubectl -n "$NAMESPACE" get namespace >/dev/null
+                            sed -i 's|newTag:.*|newTag: "'"$IMAGE_TAG"'"|' k8s/kustomization.yaml
+                            kubectl apply -k k8s/
+                            kubectl -n "$NAMESPACE" rollout status deployment/dijitalbelge-docs --timeout=5m
+                        '''
+                    }
+                }
             }
         }
     }
 
     post {
         success {
-            echo "Dokümantasyon ${IMAGE_TAG} sürümü Kubernetes'e gönderildi."
+            echo "Dokümantasyon ${IMAGE_TAG} sürümü name1 ve vps2'ye gönderildi."
             sh 'docker image prune -f || true'
         }
         failure {
-            echo 'Pipeline başarısız. vps2 ajanında kubectl erişimini ve Jenkins Harbor/GitHub credential ayarlarını kontrol edin.'
+            echo 'Dağıtım başarısız. name1 Docker Compose ve vps2 Kubernetes ajanı loglarını kontrol edin.'
         }
     }
 }
