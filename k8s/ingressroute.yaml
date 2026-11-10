@@ -1,0 +1,45 @@
+﻿# Traefik k3s üzerinden yayın: https://dokuman.dijitalbelge.com
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dijitalbelge-docs
+  namespace: dijitalbelge
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dokuman.dijitalbelge.com`)
+      kind: Rule
+      services:
+        - name: dijitalbelge-docs
+          port: 80
+  tls:
+    certResolver: letsencrypt
+---
+# HTTP isteklerini HTTPS'e yönlendir.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dijitalbelge-docs-http
+  namespace: dijitalbelge
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`dokuman.dijitalbelge.com`)
+      kind: Rule
+      middlewares:
+        - name: dijitalbelge-docs-https
+      services:
+        - name: dijitalbelge-docs
+          port: 80
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: dijitalbelge-docs-https
+  namespace: dijitalbelge
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

@@ -22,9 +22,15 @@ iki modelde de aynıdır; fark imzacının imzayı hangi ekranda attığıdır.
 | **İmza nerede atılır** | DijitalBelge imza ekranında (`https://imza.dijitalbelge.com/sign/{accessToken}`) | Sizin uygulamanızın kendi ekranında |
 | **İmzacı deneyimi** | Uygulamanızdan imza ekranına yönlendirilir ya da e-posta / SMS bağlantısıyla gelir | Uygulamanızdan hiç ayrılmaz |
 | **Sizin geliştirmeniz** | Yalnızca API: süreç, belge, imzacı, webhook | API + kendi imza ekranınız; e-imzada ayrıca Sümen entegrasyonu |
-| **Desteklenen imza türleri** | Tümü: e-imza, mobil imza, dijital onay türleri | E-imza (`EIMZA`, Sümen ile) ve mobil imza (`MOBILE_IMZA`, yalnızca API ile) |
+| **Desteklenen imza türleri** | Tümü: `EIMZA`, `MOBILE_IMZA`, `EMAIL_TIMESTAMP`, `SMSOTP_TIMESTAMP`, `TCKK_TIMESTAMP`, `TCKK_FACE_TIMESTAMP`, `TCKK_ONBOARDING` | E-imza (`EIMZA`, Sümen ile) ve mobil imza (`MOBILE_IMZA`, yalnızca API ile) |
 | **Birden çok uygulamanız varsa** | Hepsi aynı imza ekranını kullanır; imza ekranı tek yerde güncellenir | Her uygulamada ayrı ayrı entegrasyon yapılır |
 | **Ne zaman seçilir** | Hızlı entegrasyon, birden çok uygulama, farklı imza türleri | İmzanın kendi ürününüzün içinde, kesintisiz bir akışta atılması gerektiğinde |
+
+!!! info "TCKK ile imzalama gereksinimi"
+    Merkezi imza ekranında `TCKK_TIMESTAMP`, `TCKK_FACE_TIMESTAMP` veya
+    `TCKK_ONBOARDING` ile imza/doğrulama yapılacaksa imzacının Sümen'in Android ya da
+    iOS uygulamasını kullanması gerekir. İlgili uygulama imzacının mobil cihazında
+    kurulu olmalıdır.
 
 !!! tip "Hangisiyle başlamalı?"
     Çoğu entegrasyon için **A · Merkezi imza ekranı** önerilir: daha az geliştirme
