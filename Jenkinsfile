@@ -11,6 +11,7 @@ pipeline {
     }
 
     options {
+        skipDefaultCheckout(true)
         quietPeriod(30)
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '20'))
@@ -24,9 +25,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/sadroalin06/dijitalbelge_dokuman.git',
-                    credentialsId: 'github-token'
+                // Eski/yarım kalmış .git klasörünü temizleyip job SCM ayarlarından tek kez checkout et.
+                deleteDir()
+                checkout scm
             }
         }
 
